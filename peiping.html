@@ -1635,7 +1635,7 @@
                 snapshot([single(0),single(3),waterGroup(1,2,11),waterGroup(4,5,12),sulfate([])],4)
             ];
         }
-        // Suppress unchanged preparation frames and the former final packing movement.
+        // Keep reaction steps local, then move completed products to the right-hand reference positions.
         function sameState(a,b){
             function edges(state){return state.bonds.map(function(e){return Math.min(e[0],e[1])+':'+Math.max(e[0],e[1]);}).sort().join(',');}
             return edges(a)===edges(b)&&a.positions.every(function(p,i){return Math.hypot(p.x-b.positions[i].x,p.y-b.positions[i].y)<0.001;})&&
@@ -1646,6 +1646,13 @@
             if(!sameState(previous,state)){changes.push(state);previous=state;}
         });
         if(!changes.length)throw new Error('反应缺少变化步骤');
+        changes.push({
+            settling: true,
+            texts: atoms.map(function(a){return a.textTo;}),
+            positions: atoms.map(function(a){return a.to;}),
+            bonds: bondsTo,
+            groups: [], surfaceIds: [], surface: false
+        });
         var clock=T_IDLE;
         reactionFrames=[first,Object.assign({},first,{time:T_IDLE})];
         changes.forEach(function(state){
