@@ -1552,6 +1552,29 @@
                     placed[componentIndex]=true;remaining--;
                 }
             });
+            if(phase===1){
+                // One initial separation makes dissolved ions visible; later stages never reflow this layout.
+                var maxWidth=1,maxHeight=1;
+                var boxes=groups.map(function(g){
+                    var minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+                    g.ids.forEach(function(id,i){
+                        var r=atoms[id].r,x=g.xy[i][0]*scale,y=g.xy[i][1]*scale;
+                        minX=Math.min(minX,x-r);maxX=Math.max(maxX,x+r);
+                        minY=Math.min(minY,y-r);maxY=Math.max(maxY,y+r);
+                    });
+                    maxWidth=Math.max(maxWidth,maxX-minX+16);
+                    maxHeight=Math.max(maxHeight,maxY-minY+18);
+                    return {midX:(minX+maxX)/2,midY:(minY+maxY)/2};
+                });
+                var cols=Math.max(1,Math.min(4,groups.length,Math.floor((W-88)/maxWidth)));
+                var rows=Math.ceil(groups.length/cols),cellW=(W-88)/cols;
+                var cellH=Math.min(maxHeight,(H-88)/rows),top=(H-rows*cellH)/2;
+                groups.forEach(function(g,index){
+                    var box=boxes[index],cx=44+(index%cols+0.5)*cellW-box.midX;
+                    var cy=top+(Math.floor(index/cols)+0.5)*cellH-box.midY;
+                    g.ids.forEach(function(id,i){positions[id]={x:cx+g.xy[i][0]*scale,y:cy+g.xy[i][1]*scale};});
+                });
+            }
             if(Object.keys(used).length!==atoms.length)throw new Error('反应阶段缺少原子');
             // Adsorption sites have fixed identities; remaining atoms never slide into vacated slots.
             var sites=cur===1?[2,3,4,7,8,9]:[2,4,6,8,10,12];
@@ -1567,6 +1590,7 @@
                 if(phase>=2){texts[0]='Al³⁺';texts[1]='Al³⁺';}
             }
             if(cur===4) {
+                if(phase===1)texts[9]='Fe³⁺';
                 [0,3,6].forEach(function(id){texts[id]='Na⁺';});
                 [10,11,12].forEach(function(id){texts[id]='Cl⁻';});
             }
@@ -1574,7 +1598,7 @@
                 [0,3].forEach(function(id){texts[id]='Na⁺';});
                 groups.forEach(function(g){if(g.ids.length===1&&atoms[g.ids[0]].sym==='H')texts[g.ids[0]]='H⁺';});
             }
-            var state={phase:phase,texts:texts,positions:positions,bonds:bonds,groups:groups.map(function(g){return {name:g.name,ids:g.ids};}),surfaceIds:surfaceIds||[],surface:cur===1||cur===2};
+            var state={phase:phase,preparing:phase===1,texts:texts,positions:positions,bonds:bonds,groups:groups.map(function(g){return {name:g.name,ids:g.ids};}),surfaceIds:surfaceIds||[],surface:cur===1||cur===2};
             previousSnapshot=state;
             return state;
         }
