@@ -1239,7 +1239,8 @@
         }
     ];
     // ===== 时间轴 =====
-    var T_IDLE = 800, T_BREAK = 2100, T_HOLD = 3100, T_JOIN = 4900, T_DONE = 5600;
+    var STEP_MOVE = 1200, STEP_HOLD = 800, T_IDLE = 800;
+    var T_BREAK = 0, T_HOLD = 0, T_JOIN = 0, T_DONE = 0;
 
     var W = 600, H = 320;
     var atoms = [], bondsFrom = [], bondsTo = [], reactionFrames = [];
@@ -1477,7 +1478,7 @@
         function chlorate(k, cl, a, b, c) {
             return group('KClO3',[k,cl,a,b,c],[[-40,0],[0,0],[30,-30],[36,4],[12,35]],[[1,2],[1,3],[1,4]]);
         }
-        function snapshot(groups, time, surfaceIds, surface) {
+        function snapshot(groups, phase, surfaceIds, surface) {
             var maxWidth = 1, maxHeight = 1;
             groups.forEach(function (g) {
                 var minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
@@ -1513,8 +1514,8 @@
             var texts=atoms.map(function(a){return a.sym;});
             if(cur===2) {
                 [3,5,7,9,11,13].forEach(function(id){texts[id]='Cl⁻';});
-                if(time===1600)[2,4,6,8,10,12].forEach(function(id){texts[id]='H⁺';});
-                if(time>=2500){texts[0]='Al³⁺';texts[1]='Al³⁺';}
+                if(phase===1)[2,4,6,8,10,12].forEach(function(id){texts[id]='H⁺';});
+                if(phase>=2){texts[0]='Al³⁺';texts[1]='Al³⁺';}
             }
             if(cur===4) {
                 [0,3,6].forEach(function(id){texts[id]='Na⁺';});
@@ -1524,7 +1525,7 @@
                 [0,3].forEach(function(id){texts[id]='Na⁺';});
                 groups.forEach(function(g){if(g.ids.length===1&&atoms[g.ids[0]].sym==='H')texts[g.ids[0]]='H⁺';});
             }
-            return {time:time,texts:texts,positions:positions,bonds:bonds,groups:groups.map(function(g){return {name:g.name,ids:g.ids};}),surfaceIds:surfaceIds||[],surface:!!surface};
+            return {phase:phase,texts:texts,positions:positions,bonds:bonds,groups:groups.map(function(g){return {name:g.name,ids:g.ids};}),surfaceIds:surfaceIds||[],surface:!!surface};
         }
         var first={time:0,texts:atoms.map(function(a){return a.text;}),positions:atoms.map(function(a){return a.from;}),bonds:bondsFrom,groups:[]};
         var last={time:T_JOIN,texts:atoms.map(function(a){return a.textTo;}),positions:atoms.map(function(a){return a.to;}),bonds:bondsTo,groups:[]};
@@ -1532,53 +1533,69 @@
         if(cur===0) {
             // Initiation, H+O2 -> OH+O, O+H2 -> OH+H, then H+OH(+M) -> H2O(+M).
             frames=[
-                snapshot([single(0),single(1),pair('H2',2,3),pair('O2',4,5)],1600),
-                snapshot([oh(4,0),single(5),single(1),pair('H2',2,3)],2500),
-                snapshot([oh(4,0),oh(5,2),single(1),single(3)],3300),
-                snapshot([waterGroup(4,0,1),waterGroup(5,2,3)],4100)
+                snapshot([single(0),single(1),pair('H2',2,3),pair('O2',4,5)],1),
+                snapshot([oh(4,0),single(5),single(1),pair('H2',2,3)],2),
+                snapshot([oh(4,0),oh(5,2),single(1),single(3)],3),
+                snapshot([waterGroup(4,0,1),oh(5,2),single(3)],4),
+                snapshot([waterGroup(4,0,1),waterGroup(5,2,3)],5)
             ];
         } else if(cur===1) {
             // Catalyst surface engagement and oxygen desorption. Do not assign unsupported transient formulas.
             frames=[
-                snapshot([chlorate(0,1,2,3,4),chlorate(5,6,7,8,9)],1600,[],true),
-                snapshot([single(0),single(1),single(5),single(6),single(2),single(3),single(4),single(7),single(8),single(9)],2500,[2,3,4,7,8,9],true),
-                snapshot([single(0),single(1),single(5),single(6),pair('O2',2,3),single(4),single(7),single(8),single(9)],3300,[4,7,8,9],true),
-                snapshot([single(0),single(1),single(5),single(6),pair('O2',2,3),pair('O2',4,7),pair('O2',8,9)],4100,[],true)
+                snapshot([chlorate(0,1,2,3,4),chlorate(5,6,7,8,9)],1,[],true),
+                snapshot([single(0),single(1),single(5),single(6),single(2),single(3),single(4),single(7),single(8),single(9)],2,[2,3,4,7,8,9],true),
+                snapshot([single(0),single(1),single(5),single(6),pair('O2',2,3),single(4),single(7),single(8),single(9)],3,[4,7,8,9],true),
+                snapshot([single(0),single(1),single(5),single(6),pair('O2',2,3),pair('O2',4,7),single(8),single(9)],4,[8,9],true),
+                snapshot([single(0),single(1),single(5),single(6),pair('O2',2,3),pair('O2',4,7),pair('O2',8,9)],5,[],true)
             ];
         } else if(cur===2) {
             // Acid ions approach metal sites; adsorbed hydrogen pairs and desorbs, chloride remains unbonded.
             var chlorides=[single(3),single(5),single(7),single(9),single(11),single(13)];
             frames=[
-                snapshot([single(0),single(1),single(2),single(4),single(6),single(8),single(10),single(12)].concat(chlorides),1600),
-                snapshot([single(0),single(1),single(2),single(4),single(6),single(8),single(10),single(12)].concat(chlorides),2500,[2,4,6,8,10,12],true),
-                snapshot([single(0),single(1),pair('H2',2,4),single(6),single(8),single(10),single(12)].concat(chlorides),3300,[6,8,10,12],true),
-                snapshot([single(0),single(1),pair('H2',2,4),pair('H2',6,8),pair('H2',10,12)].concat(chlorides),4100)
+                snapshot([single(0),single(1),single(2),single(4),single(6),single(8),single(10),single(12)].concat(chlorides),1),
+                snapshot([single(0),single(1),single(2),single(4),single(6),single(8),single(10),single(12)].concat(chlorides),2,[2,4,6,8,10,12],true),
+                snapshot([single(0),single(1),pair('H2',2,4),single(6),single(8),single(10),single(12)].concat(chlorides),3,[6,8,10,12],true),
+                snapshot([single(0),single(1),pair('H2',2,4),pair('H2',6,8),single(10),single(12)].concat(chlorides),4,[10,12],true),
+                snapshot([single(0),single(1),pair('H2',2,4),pair('H2',6,8),pair('H2',10,12)].concat(chlorides),5)
             ];
         } else if(cur===3) {
             // Keep each incoming CO bond. FeO is a real reduced oxide phase, not disconnected Fe/O atoms.
             frames=[
-                snapshot([group('Fe2O3',[0,1,2,3,4],[[-28,-12],[28,-12],[-36,26],[0,24],[36,26]],[[0,2],[0,3],[1,3],[1,4]]),pair('CO',5,6),pair('CO',7,8),pair('CO',9,10)],1600),
-                snapshot([pair('FeO',0,2),pair('FeO',1,3),carbonDioxide(5,6,4),pair('CO',7,8),pair('CO',9,10)],2500),
-                snapshot([single(0),pair('FeO',1,3),carbonDioxide(5,6,4),carbonDioxide(7,8,2),pair('CO',9,10)],3300),
-                snapshot([single(0),single(1),carbonDioxide(5,6,4),carbonDioxide(7,8,2),carbonDioxide(9,10,3)],4100)
+                snapshot([group('Fe2O3',[0,1,2,3,4],[[-28,-12],[28,-12],[-36,26],[0,24],[36,26]],[[0,2],[0,3],[1,3],[1,4]]),pair('CO',5,6),pair('CO',7,8),pair('CO',9,10)],1),
+                snapshot([pair('FeO',0,2),pair('FeO',1,3),carbonDioxide(5,6,4),pair('CO',7,8),pair('CO',9,10)],2),
+                snapshot([single(0),pair('FeO',1,3),carbonDioxide(5,6,4),carbonDioxide(7,8,2),pair('CO',9,10)],3),
+                snapshot([single(0),single(1),carbonDioxide(5,6,4),carbonDioxide(7,8,2),carbonDioxide(9,10,3)],4)
             ];
         } else if(cur===4) {
             var spectators=[single(0),single(3),single(6),single(10),single(11),single(12)];
             frames=[
-                snapshot([single(9),oh(1,2),oh(4,5),oh(7,8)].concat(spectators),1600),
-                snapshot([hydroxideComplex([[1,2]]),oh(4,5),oh(7,8)].concat(spectators),2500),
-                snapshot([hydroxideComplex([[1,2],[4,5]]),oh(7,8)].concat(spectators),3300),
-                snapshot([hydroxideComplex([[1,2],[4,5],[7,8]])].concat(spectators),4100)
+                snapshot([single(9),oh(1,2),oh(4,5),oh(7,8)].concat(spectators),1),
+                snapshot([hydroxideComplex([[1,2]]),oh(4,5),oh(7,8)].concat(spectators),2),
+                snapshot([hydroxideComplex([[1,2],[4,5]]),oh(7,8)].concat(spectators),3),
+                snapshot([hydroxideComplex([[1,2],[4,5],[7,8]])].concat(spectators),4)
             ];
         } else {
             frames=[
-                snapshot([single(0),single(3),oh(1,2),oh(4,5),sulfate([12]),single(11)],1600),
-                snapshot([single(0),single(3),waterGroup(1,2,11),oh(4,5),sulfate([12])],2500),
-                snapshot([single(0),single(3),waterGroup(1,2,11),oh(4,5),sulfate([]),single(12)],3300),
-                snapshot([single(0),single(3),waterGroup(1,2,11),waterGroup(4,5,12),sulfate([])],4100)
+                snapshot([single(0),single(3),oh(1,2),oh(4,5),sulfate([12]),single(11)],1),
+                snapshot([single(0),single(3),waterGroup(1,2,11),oh(4,5),sulfate([12])],2),
+                snapshot([single(0),single(3),waterGroup(1,2,11),oh(4,5),sulfate([]),single(12)],3),
+                snapshot([single(0),single(3),waterGroup(1,2,11),waterGroup(4,5,12),sulfate([])],4)
             ];
         }
-        reactionFrames=[first,Object.assign({},first,{time:T_IDLE})].concat(frames,[last,Object.assign({},last,{time:T_DONE})]);
+        // Each change gets the same movement time and the same readable pause.
+        var clock = T_IDLE;
+        reactionFrames=[first,Object.assign({},first,{time:T_IDLE})];
+        frames.concat([last]).forEach(function(state) {
+            clock += STEP_MOVE;
+            reactionFrames.push(Object.assign({},state,{time:clock}));
+            clock += STEP_HOLD;
+            reactionFrames.push(Object.assign({},state,{time:clock}));
+        });
+        T_BREAK = T_IDLE + STEP_MOVE + STEP_HOLD;
+        T_HOLD = T_BREAK + STEP_MOVE;
+        T_JOIN = clock - STEP_HOLD;
+        T_DONE = clock;
+        t = Math.min(t,T_DONE);
     }
 
     function reactionAt(time) {
@@ -1586,7 +1603,7 @@
             if(time<=reactionFrames[i].time) {
                 var previous=reactionFrames[i-1],next=reactionFrames[i];
                 var progress=clamp01((time-previous.time)/(next.time-previous.time));
-                return {previous:previous,next:next,progress:easeInOut(clamp01((progress-0.12)/0.76))};
+                return {previous:previous,next:next,progress:easeInOut(progress)};
             }
         }
         var end=reactionFrames[reactionFrames.length-1];
@@ -1936,8 +1953,9 @@
         cur = ((i % ANIMS.length) + ANIMS.length) % ANIMS.length;
         anim = ANIMS[cur];
         playing = false;
-        t = reduced ? T_DONE : 0;
+        t = 0;
         resize();
+        if(reduced)t=T_DONE;
         if (autoplay && !reduced) play(true);
         syncBtn();
         draw();
@@ -1993,7 +2011,7 @@
         return { W: W, H: H, cur: cur, anim: anim, atoms: atoms, bondsFrom: bondsFrom, bondsTo: bondsTo,
                  leftLabels: leftLabels, rightLabels: rightLabels, tags: tags,
                  referenceLeft: referenceLeft, referenceRight: referenceRight, moleculeGroups: moleculeGroups,
-                 reactionFrames: reactionFrames, time: t, positions: atoms.map(function(a,i){return posOf(a,t,i);}) };
+                 reactionFrames: reactionFrames, time: t, duration: T_DONE, stepMove: STEP_MOVE, stepHold: STEP_HOLD, positions: atoms.map(function(a,i){return posOf(a,t,i);}) };
     };
 
     var rzT = null;
