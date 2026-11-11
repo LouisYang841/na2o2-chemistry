@@ -969,7 +969,7 @@
         <div class="anim-caption" id="animCaption">点播放，看原子重组。</div>
 
         <div class="anim-stage-row">
-            <span class="stage-chip" id="animStage0">① 接近</span>
+            <span class="stage-chip" id="animStage0">① 开始</span>
             <span class="stage-chip" id="animStage1">② 反应</span>
             <span class="stage-chip" id="animStage2">③ 核对</span>
         </div>
@@ -1483,37 +1483,82 @@
             return group('KClO3',[k,cl,a,b,c],[[-40,0],[0,0],[30,-30],[36,4],[12,35]],[[1,2],[1,3],[1,4]]);
         }
         function snapshot(groups, phase, surfaceIds, surface) {
-            var maxWidth = 1, maxHeight = 1;
-            groups.forEach(function (g) {
-                var minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
-                g.ids.forEach(function(id,i) {
-                    var r=atoms[id].r; minX=Math.min(minX,g.xy[i][0]*scale-r); maxX=Math.max(maxX,g.xy[i][0]*scale+r);
-                    minY=Math.min(minY,g.xy[i][1]*scale-r); maxY=Math.max(maxY,g.xy[i][1]*scale+r);
+            // Carry coordinates forward. Only newly formed bonds may move a fragment.
+            var previous=previousSnapshot;
+            var positions=previous.positions.map(function(p){return {x:p.x,y:p.y};});
+            var bonds=[],used={},oldEdges={};
+            function edgeKey(a,b){return Math.min(a,b)+':'+Math.max(a,b);}
+            previous.bonds.forEach(function(b){oldEdges[edgeKey(b[0],b[1])]=true;});
+            groups.forEach(function(g) {
+                g.ids.forEach(function(id){if(used[id])throw new Error('反应阶段重复使用原子');used[id]=true;});
+                var nextBonds=g.bonds.map(function(b){return [g.ids[b[0]],g.ids[b[1]]];});
+                bonds=bonds.concat(nextBonds);
+                // Components connected in the previous state move as rigid fragments.
+                var components=[],componentOf={};
+                g.ids.forEach(function(id){
+                    if(componentOf[id]!==undefined)return;
+                    var component=[],queue=[id],index=components.length;
+                    componentOf[id]=index;
+                    while(queue.length){
+                        var current=queue.shift();component.push(current);
+                        previous.bonds.forEach(function(b){
+                            var other=b[0]===current?b[1]:b[1]===current?b[0]:-1;
+                            if(g.ids.indexOf(other)!==-1&&componentOf[other]===undefined){componentOf[other]=index;queue.push(other);}
+                        });
+                    }
+                    components.push(component);
                 });
-                g.box={minX:minX,maxX:maxX,minY:minY,maxY:maxY};
-                maxWidth=Math.max(maxWidth,maxX-minX+14); maxHeight=Math.max(maxHeight,maxY-minY+16);
-            });
-            var cols=Math.max(1,Math.min(groups.length,4,Math.floor((W-88)/maxWidth)));
-            var floating=groups.filter(function(g){return !(surfaceIds&&g.ids.every(function(id){return surfaceIds.indexOf(id)!==-1;}));});
-            var rows=Math.ceil(floating.length/cols),cellW=(W-88)/cols;
-            var availableTop=44,availableBottom=surfaceIds&&surfaceIds.length?H*0.53:H-44;
-            var cellH=Math.min(maxHeight,(availableBottom-availableTop)/Math.max(1,rows));
-            var top=(availableTop+availableBottom-rows*cellH)/2;
-            var positions=new Array(atoms.length), bonds=[], used={};
-            groups.forEach(function(g,index) {
-                var slot=Math.max(0,floating.indexOf(g));
-                var col=slot%cols,row=Math.floor(slot/cols);
-                var cx=44+(col+0.5)*cellW,cy=top+(row+0.5)*cellH;
-                cx-=(g.box.minX+g.box.maxX)/2; cy-=(g.box.minY+g.box.maxY)/2;
-                g.ids.forEach(function(id,i) {
-                    if(used[id])throw new Error('反应阶段重复使用原子'); used[id]=true;
-                    positions[id]={x:cx+g.xy[i][0]*scale,y:cy+g.xy[i][1]*scale};
-                });
-                g.bonds.forEach(function(b){bonds.push([g.ids[b[0]],g.ids[b[1]]]);});
+                var placed={};placed[componentOf[g.ids[0]]]=true;
+                var remaining=components.length-1;
+                while(remaining>0){
+                    var connecting=null;
+                    nextBonds.some(function(b){
+                        var a=componentOf[b[0]],c=componentOf[b[1]];
+                        if(placed[a]&&!placed[c]){connecting=[b[0],b[1],c];return true;}
+                        if(placed[c]&&!placed[a]){connecting=[b[1],b[0],a];return true;}
+                        return false;
+                    });
+                    if(!connecting)break; // Unbonded counterions retain their original coordinates.
+                    var parent=connecting[0],child=connecting[1],componentIndex=connecting[2];
+                    var fragment=components[componentIndex],pivot=positions[parent],moving=positions[child];
+                    var localA=g.xy[g.ids.indexOf(parent)],localB=g.xy[g.ids.indexOf(child)];
+                    var preferred=Math.atan2(localB[1]-localA[1],localB[0]-localA[0]);
+                    // Keep existing CO and OH geometry when adding oxygen or hydrogen.
+                    var retained=nextBonds.find(function(b){return b.indexOf(parent)!==-1&&oldEdges[edgeKey(b[0],b[1])]});
+                    if(retained&&(g.name==='CO2'||g.name==='H2O')){
+                        var partner=retained[0]===parent?retained[1]:retained[0];
+                        preferred=Math.atan2(positions[partner].y-pivot.y,positions[partner].x-pivot.x)+(g.name==='CO2'?Math.PI:104.5*Math.PI/180);
+                    }
+                    var distance=(atoms[parent].r+atoms[child].r)*1.04;
+                    var best=null;
+                    for(var attempt=0;attempt<36;attempt++){
+                        var angle=preferred+(attempt===0?0:Math.ceil(attempt/2)*(attempt%2?1:-1)*Math.PI/18);
+                        var dx=pivot.x+Math.cos(angle)*distance-moving.x;
+                        var dy=pivot.y+Math.sin(angle)*distance-moving.y;
+                        var cost=(1-Math.cos(angle-preferred))*4;
+                        fragment.forEach(function(id){
+                            var x=positions[id].x+dx,y=positions[id].y+dy,r=atoms[id].r;
+                            var outside=Math.max(0,12+r-x)+Math.max(0,x+r-W+12)+Math.max(0,30+r-y)+Math.max(0,y+r-H+12);
+                            cost+=outside*outside*10000;
+                            atoms.forEach(function(other,j){
+                                if(fragment.indexOf(j)!==-1||j===parent)return;
+                                var gap=atoms[id].r+other.r+3-Math.hypot(x-positions[j].x,y-positions[j].y);
+                                if(gap>0)cost+=gap*gap*20;
+                            });
+                        });
+                        if(!best||cost<best.cost)best={dx:dx,dy:dy,cost:cost};
+                    }
+                    fragment.forEach(function(id){positions[id]={x:positions[id].x+best.dx,y:positions[id].y+best.dy};});
+                    placed[componentIndex]=true;remaining--;
+                }
             });
             if(Object.keys(used).length!==atoms.length)throw new Error('反应阶段缺少原子');
-            if(surfaceIds && surfaceIds.length)surfaceIds.forEach(function(id,index) {
-                positions[id]={x:W*0.23+(index+0.5)*W*0.54/surfaceIds.length,y:H*0.68-atoms[id].r};
+            // Adsorption sites have fixed identities; remaining atoms never slide into vacated slots.
+            var sites=cur===1?[2,3,4,7,8,9]:[2,4,6,8,10,12];
+            (surfaceIds||[]).forEach(function(id){
+                if((previous.surfaceIds||[]).indexOf(id)!==-1)return;
+                var site=sites.indexOf(id);
+                positions[id]={x:W*0.23+(site+0.5)*W*0.54/sites.length,y:H*0.68-atoms[id].r};
             });
             var texts=atoms.map(function(a){return a.sym;});
             if(cur===2) {
@@ -1529,10 +1574,14 @@
                 [0,3].forEach(function(id){texts[id]='Na⁺';});
                 groups.forEach(function(g){if(g.ids.length===1&&atoms[g.ids[0]].sym==='H')texts[g.ids[0]]='H⁺';});
             }
-            return {phase:phase,texts:texts,positions:positions,bonds:bonds,groups:groups.map(function(g){return {name:g.name,ids:g.ids};}),surfaceIds:surfaceIds||[],surface:!!surface};
+            var state={phase:phase,texts:texts,positions:positions,bonds:bonds,groups:groups.map(function(g){return {name:g.name,ids:g.ids};}),surfaceIds:surfaceIds||[],surface:cur===1||cur===2};
+            previousSnapshot=state;
+            return state;
         }
         var first={time:0,texts:atoms.map(function(a){return a.text;}),positions:atoms.map(function(a){return a.from;}),bonds:bondsFrom,groups:[]};
-        var last={time:T_JOIN,texts:atoms.map(function(a){return a.textTo;}),positions:atoms.map(function(a){return a.to;}),bonds:bondsTo,groups:[]};
+        first.surface=cur===1||cur===2;
+        first.surfaceIds=[];
+        var previousSnapshot=first;
         var frames=[];
         if(cur===0) {
             // Initiation, H+O2 -> OH+O, O+H2 -> OH+H, then H+OH(+M) -> H2O(+M).
@@ -1586,13 +1635,23 @@
                 snapshot([single(0),single(3),waterGroup(1,2,11),waterGroup(4,5,12),sulfate([])],4)
             ];
         }
-        // Each change gets the same movement time and the same readable pause.
-        var clock = T_IDLE;
+        // Suppress unchanged preparation frames and the former final packing movement.
+        function sameState(a,b){
+            function edges(state){return state.bonds.map(function(e){return Math.min(e[0],e[1])+':'+Math.max(e[0],e[1]);}).sort().join(',');}
+            return edges(a)===edges(b)&&a.positions.every(function(p,i){return Math.hypot(p.x-b.positions[i].x,p.y-b.positions[i].y)<0.001;})&&
+                JSON.stringify(a.surfaceIds||[])===JSON.stringify(b.surfaceIds||[]);
+        }
+        var changes=[],previous=first;
+        frames.forEach(function(state){
+            if(!sameState(previous,state)){changes.push(state);previous=state;}
+        });
+        if(!changes.length)throw new Error('反应缺少变化步骤');
+        var clock=T_IDLE;
         reactionFrames=[first,Object.assign({},first,{time:T_IDLE})];
-        frames.concat([last]).forEach(function(state) {
-            clock += STEP_MOVE;
+        changes.forEach(function(state){
+            clock+=STEP_MOVE;
             reactionFrames.push(Object.assign({},state,{time:clock}));
-            clock += STEP_HOLD;
+            clock+=STEP_HOLD;
             reactionFrames.push(Object.assign({},state,{time:clock}));
         });
         T_BREAK = T_IDLE + STEP_MOVE + STEP_HOLD;
@@ -1881,7 +1940,7 @@
 
         var map = {
             idle: '点击播放，一起观察原子怎样重新组合！',
-            break: '① 反应物逐渐靠近。',
+            break: '① 观察反应怎样开始。',
             hold: '仔细观察：组合在变化，原子数保持不变。',
             join: '② 新的组合逐步形成。',
             done: '✅ 原子数不变：' + atomToken() + '。'
