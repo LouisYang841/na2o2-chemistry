@@ -1249,6 +1249,8 @@
     var anim = ANIMS[0];
     var cur = 0, t = 0, playing = false, rafId = null, lastTs = 0;
     var molEl = null;
+    var REFERENCE_OPACITY = 0.18, REFERENCE_FADE_MS = 350;
+    var referenceAlpha = REFERENCE_OPACITY;
 
     function clamp01(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
     function lerp(a, b, p) { return a + (b - a) * p; }
@@ -1739,12 +1741,13 @@
     }
 
     function drawReference(list, bonds) {
+        if(referenceAlpha<=0.001)return;
         bonds.forEach(function (bond) {
             var a = list[bond[0]], b = list[bond[1]];
-            drawStick(a.pos.x, a.pos.y, b.pos.x, b.pos.y, 0.5);
+            drawStick(a.pos.x, a.pos.y, b.pos.x, b.pos.y, referenceAlpha);
         });
         ctx.save();
-        ctx.globalAlpha = 0.5;
+        ctx.globalAlpha = referenceAlpha;
         list.forEach(function (a) { drawAtom(a, a.pos.x, a.pos.y, a.text); });
         ctx.restore();
     }
@@ -1929,9 +1932,13 @@
             t += dt;
             if (t >= T_DONE) { t = T_DONE; playing = false; syncBtn(); }
         }
+        var referenceTarget=playing?0:REFERENCE_OPACITY;
+        var fadeStep=REFERENCE_OPACITY*dt/REFERENCE_FADE_MS;
+        referenceAlpha += Math.max(-fadeStep,Math.min(fadeStep,referenceTarget-referenceAlpha));
+        if(Math.abs(referenceTarget-referenceAlpha)<0.001)referenceAlpha=referenceTarget;
         draw();
         updateUI();
-        if (playing) rafId = requestAnimationFrame(frame);
+        if (playing || referenceAlpha!==referenceTarget) rafId = requestAnimationFrame(frame);
         else rafId = null;
     }
 
@@ -1952,6 +1959,7 @@
     function goTo(i, autoplay) {
         cur = ((i % ANIMS.length) + ANIMS.length) % ANIMS.length;
         anim = ANIMS[cur];
+        referenceAlpha = REFERENCE_OPACITY;
         playing = false;
         t = 0;
         resize();
@@ -1964,7 +1972,7 @@
 
     // ===== 交互 =====
     btnPlay.addEventListener('click', function () {
-        if (playing) { playing = false; syncBtn(); return; }
+        if (playing) { playing = false; syncBtn(); kick(); return; }
         if (t >= T_DONE) t = 0;
         play(false);
     });
@@ -2011,7 +2019,7 @@
         return { W: W, H: H, cur: cur, anim: anim, atoms: atoms, bondsFrom: bondsFrom, bondsTo: bondsTo,
                  leftLabels: leftLabels, rightLabels: rightLabels, tags: tags,
                  referenceLeft: referenceLeft, referenceRight: referenceRight, moleculeGroups: moleculeGroups,
-                 reactionFrames: reactionFrames, time: t, duration: T_DONE, stepMove: STEP_MOVE, stepHold: STEP_HOLD, positions: atoms.map(function(a,i){return posOf(a,t,i);}) };
+                 reactionFrames: reactionFrames, referenceAlpha: referenceAlpha, playing: playing, time: t, duration: T_DONE, stepMove: STEP_MOVE, stepHold: STEP_HOLD, positions: atoms.map(function(a,i){return posOf(a,t,i);}) };
     };
 
     var rzT = null;
