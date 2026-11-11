@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>化学方程式大解密</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #e67e22;
+            margin-top: 30px;
+        }
+        .box {
+            background: #f9f9f9;
+            border-left: 5px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .highlight {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        /* 分子模型样式 */
+        .molecule {
+            display: inline-flex;
+            align-items: center;
+            margin: 10px;
+            position: relative;
+        }
+        .atom {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: white;
+            margin: 0 2px;
+            box-shadow: inset -3px -3px 5px rgba(0,0,0,0.2);
+        }
+        .na { background-color: #9b59b6; } /* 钠原子紫色 */
+        .o { background-color: #e74c3c; }  /* 氧原子红色 */
+
+        /* 反应过程 */
+        .reaction-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            background: #fff;
+            padding: 15px;
+            border: 1px dashed #ccc;
+            border-radius: 10px;
+        }
+        .coefficient {
+            font-size: 24px;
+            color: #2ecc71;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .arrow {
+            font-size: 24px;
+            color: #7f8c8d;
+            margin: 0 15px;
+        }
+
+        /* 计算区 */
+        .math-box {
+            font-size: 18px;
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ffeeba;
+        }
+        .calc-step {
+            margin: 10px 0;
+            padding-left: 20px;
+            border-left: 3px solid #ffc107;
+        }
+
+        /* 互动按钮 */
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+        .btn:hover { background: #2980b9; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🔬 过氧化钠 (Na₂O₂) 大解密</h2>
+    <p>同学你好！别怕，化学方程式其实就像是搭积木。我们今天用模型来玩一玩！</p>
+
+    <!-- 第一部分：为什么有这么多"2" -->
+    <h3>1. 前面的2 和 里面的2 有什么区别？</h3>
+    <div class="box">
+        <p><strong>结论：里面的"2"是长相（结构），前面的"2"是数量（个数）。</strong></p>
+        <p><strong>① 里面的2（下标）：</strong> 代表 <span class="highlight">1个</span> Na₂O₂ 分子里面，包含了 2个Na原子 和 2个O原子。</p>
+        <div style="text-align: center; background: #e8f4f8; padding: 10px; border-radius: 10px;">
+            <span style="font-size: 14px; color: #666;">这是1个过氧化钠分子（它长这样）：</span><br>
+            <div class="molecule">
+                <div class="atom na">Na</div>
+                <div class="atom o">O</div>
+                <div class="atom o">O</div>
+                <div class="atom na">Na</div>
+            </div>
+        </div>
+
+        <br>
+        <p><strong>② 前面的2（系数）：</strong> 代表有 <span class="highlight">2个</span> 一模一样的 Na₂O₂ 分子。就像你有2瓶一模一样的水。</p>
+        <div style="text-align: center; background: #e8f4f8; padding: 10px; border-radius: 10px;">
+            <span style="font-size: 14px; color: #666;">这是方程式里的 2Na₂O₂（两套房子）：</span><br>
+            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <div class="molecule">
+                    <div class="atom na">Na</div><div class="atom o">O</div><div class="atom o">O</div><div class="atom na">Na</div>
+                </div>
+                <div class="molecule">
+                    <div class="atom na">Na</div><div class="atom o">O</div><div class="atom o">O</div><div class="atom na">Na</div>
+                </div>
+            </div>
+        </div>
+        <p style="text-align:center; margin-top:10px; color:#2c3e50;"><strong>划重点：</strong>前面加上数字，只代表一共有几套，<span class="highlight">里面的东西是不能拆开的！</span></p>
+    </div>
+
+    <!-- 第二部分：为什么里面的O2不叫氧气 -->
+    <h3>2. 为什么 Na₂O₂ 里的“O₂”不叫氧气？</h3>
+    <div class="box">
+        <p>这也是很多初学者容易掉进去的坑。我们对比一下这两个“O₂”：</p>
+
+        <div style="display: flex; justify-content: space-around; margin-top: 20px; flex-wrap: wrap; gap: 10px;">
+            <div style="text-align: center; width: 45%; min-width: 220px; background: #ffebee; padding: 10px; border-radius: 10px;">
+                <strong style="color: #e74c3c;">过氧化钠里的 O₂ (是被绑住的)</strong><br>
+                <div class="molecule" style="margin-top: 10px;">
+                    <div class="atom na">Na</div><div class="atom o">O</div><div class="atom o">O</div><div class="atom na">Na</div>
+                </div>
+                <p style="font-size: 14px; margin-top: 5px;">这里的两个O原子，是被Na原子<strong>死死拉住</strong>的。它们是一个整体，不能随便跑出去，<strong>不具有氧气的性质</strong>。</p>
+            </div>
+
+            <div style="text-align: center; width: 45%; min-width: 220px; background: #e8f5e9; padding: 10px; border-radius: 10px;">
+                <strong style="color: #2ecc71;">真正的氧气分子 O₂ (自由的)</strong><br>
+                <div class="molecule" style="margin-top: 10px;">
+                    <div class="atom o">O</div><div class="atom o">O</div>
+                </div>
+                <p style="font-size: 14px; margin-top: 5px;">这是两个O原子<strong>手拉手</strong>组成的独立分子。这才是我们呼吸的“氧气”，它在常温下是气体，可以到处飞。</p>
+            </div>
+        </div>
+
+        <p style="margin-top: 20px; text-align: center; color: #d35400;"><strong>打个比方：</strong>就像“蛋黄”和“鸡蛋”。Na₂O₂里的O就像在鸡蛋壳里的蛋黄（被绑住了）；而O₂是打碎了壳，掉在碗里的蛋黄（独立出来的）。你不能指着壳里的蛋黄说“这是煎蛋”对吧？</p>
+    </div>
+
+    <!-- 第三部分：化学反应到底发生了什么 -->
+    <h3>3. 方程式里的微观变化（她题目上的过程）</h3>
+    <div class="box">
+        <p>我们来看看反应物跑到哪里去了：</p>
+
+        <div class="reaction-row">
+            <span class="coefficient">2</span>
+            <div>
+                <div class="molecule">
+                    <div class="atom na">Na</div><div class="atom o">O</div><div class="atom o">O</div><div class="atom na">Na</div>
+                </div>
+                <div class="molecule">
+                    <div class="atom na">Na</div><div class="atom o">O</div><div class="atom o">O</div><div class="atom na">Na</div>
+                </div>
+            </div>
+            <span style="margin-left: 10px;">+ 水(2H₂O)</span>
+
+            <span class="arrow">➡</span>
+
+            <span>生成物：NaOH (溶于水) </span>
+            <span class="highlight"> + O₂↑ (跑出来的氧气)</span>
+        </div>
+
+        <p>反应以后，原本被Na死死拉住的O原子，和谁都不拉了，它们两两配对，变成了自由的 <span class="highlight">O₂ 气体</span> 跑掉了（图上那个向上的箭头↑就是跑掉的意思）。</p>
+        <p>这就是为什么你在坐标轴上看到了“气体质量”变成了 0.32g。那是反应跑出来的氧气！</p>
+    </div>
+
+    <!-- 第四部分：回归题目，计算演示 -->
+    <h3>4. 回到她的错题：计算过程怎么写？</h3>
+    <div class="box math-box">
+        <p>题目已知：跑出来的 O₂ 气体质量是 <strong>0.32g</strong>。求：过氧化钠的质量分数（先求纯的过氧化钠质量）。</p>
+        <p><strong>第一步：写下方程式，把已知和未知标在下面。</strong></p>
+        <p style="text-align: center; font-size: 18px;">
+            2Na₂O₂ + 2H₂O = 4NaOH + O₂↑
+        </p>
+        <p><strong>第二步：算相对分子质量。</strong></p>
+        <div class="calc-step">
+            <p>Na的原子量是23，O的原子量是16。</p>
+            <p>1个 Na₂O₂ 的相对分子质量 = 23×2 + 16×2 = 46 + 32 = <strong>78</strong>。</p>
+            <p>因为她前面有系数<strong>2</strong>，所以 2个 Na₂O₂ 的总质量是 78 × 2 = <strong>156</strong>。</p>
+            <p>生成物 O₂ 的质量是：16 × 2 = <strong>32</strong>。</p>
+        </div>
+
+        <p><strong>第三步：列比例式（就像她卷子上写的，但要注意格式）。</strong></p>
+        <div class="calc-step">
+            <p>设纯的过氧化钠质量为 x：</p>
+            <p style="font-size: 20px; text-align: center; color: #e74c3c;">
+                156 / x = 32 / 0.32g
+            </p>
+            <p>交叉相乘：32x = 156 × 0.32</p>
+            <p>解得：x = <strong>1.56g</strong>。</p>
+            <p>（计算过程在这里，孩子卷子上已经算出来了，做得很棒，但逻辑还要再顺一下）</p>
+        </div>
+        <button class="btn" onclick="showFraction()">点击查看下一步：质量分数怎么算？</button>
+
+        <div id="fractionStep" class="hidden" style="margin-top: 15px; padding: 15px; background: #d4edda; border-radius: 5px;">
+            <p><strong>第四步：求纯度（质量分数）。</strong></p>
+            <p>纯的过氧化钠质量是 1.56g，样品总质量是 2g。</p>
+            <p>质量分数 = (纯物质质量 / 样品总质量) × 100%</p>
+            <p>= (1.56g / 2g) × 100% = <strong>78%</strong></p>
+            <p>所以，这个样品的纯度是 78%。</p>
+        </div>
+    </div>
+
+    <br>
+    <p style="text-align: center; color: #7f8c8d; font-size: 14px;">耐心一点，基础薄弱就慢一点讲，把微观粒子画出来，她一定能听懂的！加油！</p>
+</div>
+
+<script>
+    function showFraction() {
+        var step = document.getElementById("fractionStep");
+        if (step.classList.contains("hidden")) {
+            step.classList.remove("hidden");
+        } else {
+            step.classList.add("hidden");
+        }
+    }
+</script>
+
+</body>
+</html>
