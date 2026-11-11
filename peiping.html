@@ -483,7 +483,117 @@
             vertical-align: -1px;
         }
 
-        /* ===== 通关弹窗 & 撒花 =====
+        /* ===== 题型二：看名称写化学式 ===== */
+        .write-area {
+            background: #f3fbf6;
+            border: 1px dashed #a8dfbe;
+            border-radius: 12px;
+            padding: 18px 16px;
+            margin-top: 14px;
+        }
+        .write-question { text-align: center; margin: 4px 0 16px; }
+        .write-label { font-size: 14px; color: #7f8c8d; }
+        .write-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 10px 0 8px;
+            letter-spacing: 2px;
+            line-height: 1.35;
+        }
+        .write-hintbox {
+            display: inline-block;
+            text-align: left;
+            background: #fff8e7;
+            border-left: 4px solid #f39c12;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #b9770e;
+            line-height: 1.7;
+            max-width: 100%;
+        }
+        .write-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        #wInput {
+            flex: 1;
+            min-width: 150px;
+            max-width: 280px;
+            height: 48px;
+            font-size: 22px;
+            text-align: center;
+            border: 2px solid #2ecc71;
+            border-radius: 10px;
+            outline: none;
+            font-family: inherit;
+            letter-spacing: 1px;
+            color: #2c3e50;
+            background: #fff;
+        }
+        #wInput:focus { border-color: #3498db; box-shadow: 0 0 6px rgba(52,152,219,0.35); }
+        #wInput.bad { border-color: #e74c3c; animation: shake 0.4s; }
+        .write-progress {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #546e7a;
+        }
+        .write-progress b { color: #27ae60; font-size: 19px; }
+        .cheat {
+            background: #fff;
+            border: 1px solid #e3edf3;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-top: 16px;
+        }
+        .cheat summary {
+            cursor: pointer;
+            font-weight: bold;
+            color: #546e7a;
+            font-size: 14px;
+            outline: none;
+        }
+        .cheat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 16px;
+            margin-top: 12px;
+        }
+        .cheat-group-title {
+            font-weight: bold;
+            color: #e67e22;
+            font-size: 14px;
+            margin-bottom: 6px;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 4px;
+        }
+        .cheat-item {
+            font-size: 13px;
+            color: #607d8b;
+            line-height: 1.9;
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .cheat-item span:last-child { color: #2c3e50; font-weight: bold; white-space: nowrap; }
+        code {
+            background: #eef3f6;
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-family: ui-monospace, Menlo, monospace;
+            font-size: 13px;
+            color: #c0392b;
+        }
+
+        /* ===== 通关弹窗 & 撒花 ===== */
         .modal-mask {
             position: fixed;
             inset: 0;
@@ -676,6 +786,47 @@
     <p style="text-align:center; color:#90a4ae; font-size:13px; margin-top:22px;">
         小口诀：先配复杂的，再配单质，最后配氧。配完记得回头验算一遍！
     </p>
+
+    <!-- ===== 题型二：看名称写化学式 ===== -->
+    <h3 id="writeSection">✍️ 题型二：看名称写化学式</h3>
+    <div class="explain-box" style="background:#fff; border-left-color:#2ecc71;">
+        <p>这次反过来：只给你物质的名字，你来写它的<strong>化学式</strong>。</p>
+        <p><strong>三步法：</strong>① 先想它由哪些元素组成 → ② 写出元素符号（<strong>第一个字母大写，第二个字母小写</strong>）→ ③ 按化合价把数字交叉写在右下角，能约分的要约掉，含氢氧根、硫酸根、碳酸根这类“团”的要加括号。</p>
+        <p style="color:#7f8c8d; font-size:14px;">括号里的俗名（烧碱、小苏打…）只是帮你认人，不用写进化学式。数字直接打普通数字就行，比如水写 <code>H2O</code>、熟石灰写 <code>Ca(OH)2</code>。</p>
+    </div>
+
+    <div class="write-area" id="writeArea">
+        <div class="qbar">
+            <button class="btn btn-mini" id="wPrev">← 上一题</button>
+            <span class="qno" id="wQno">第 1 / 52 题</span>
+            <button class="btn btn-mini" id="wNext">下一题 →</button>
+        </div>
+
+        <div class="write-question">
+            <div class="write-label">请写出下面物质的化学式</div>
+            <div class="write-name" id="wName">氯化钠</div>
+            <div class="write-hintbox hidden" id="wHint"></div>
+        </div>
+
+        <div class="write-row">
+            <input type="text" id="wInput" placeholder="在这里输入化学式" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+            <button class="btn btn-check" id="wCheck">检查</button>
+            <button class="btn btn-hint" id="wShowHint">提示</button>
+        </div>
+
+        <div class="feedback" id="wFeedback"></div>
+
+        <div class="write-progress">
+            <span>答对 <b id="wSolved">0</b> / <span id="wTotal">52</span> 题</span>
+            <button class="btn btn-mini" id="wReset">重来</button>
+        </div>
+    </div>
+
+    <details class="cheat">
+        <summary>📖 常见物质化学式速查表（按 单质 / 氧化物 / 酸 / 碱 / 盐 分类）</summary>
+        <div class="cheat-grid" id="cheatGrid"></div>
+    </details>
+
 </div>
 
 <!-- 通关弹窗 -->
@@ -1536,6 +1687,241 @@
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && isOpen()) closeDrawer();
     });
+})();
+
+
+/* ============ 5. 题型二：看名称写化学式 ============ */
+(function () {
+    var CN2SYM = {
+        '氢': 'H', '氧': 'O', '碳': 'C', '氮': 'N', '硫': 'S', '磷': 'P', '氯': 'Cl',
+        '钾': 'K', '钠': 'Na', '镁': 'Mg', '钙': 'Ca', '铝': 'Al', '铁': 'Fe', '铜': 'Cu',
+        '锌': 'Zn', '锰': 'Mn', '钡': 'Ba', '银': 'Ag', '汞': 'Hg', '硅': 'Si'
+    };
+
+    // ===== 题库：初中常见物质，给名字写化学式 =====
+    var items = [
+        // ---------------- 单质 ----------------
+        { n: '氧气', f: 'O2', c: '单质', h: '氧的元素符号是 O。氧气分子由 2 个氧原子构成，所以写 O2。' },
+        { n: '氢气', f: 'H2', c: '单质', h: '氢是 H，氢气也是双原子分子，要写 2。' },
+        { n: '氮气', f: 'N2', c: '单质', h: '氮是 N，写 N2。' },
+        { n: '氯气', f: 'Cl2', c: '单质', h: '氯是 Cl（C 大写、l 小写），写 Cl2。' },
+        { n: '碳（金刚石、石墨）', f: 'C', c: '单质', h: '单质碳直接用元素符号 C，不加数字。' },
+        { n: '硫（硫磺）', f: 'S', c: '单质', h: '硫的元素符号是 S，一个字母。' },
+        { n: '磷（红磷）', f: 'P', c: '单质', h: '磷的元素符号是 P，一个字母。' },
+        { n: '铁', f: 'Fe', c: '单质', h: '两个字母：F 大写、e 小写。' },
+        { n: '铜', f: 'Cu', c: '单质', h: 'C 大写、u 小写。' },
+        { n: '铝', f: 'Al', c: '单质', h: 'A 大写、l 小写。' },
+        { n: '锌', f: 'Zn', c: '单质', h: 'Z 大写、n 小写。' },
+        { n: '镁', f: 'Mg', c: '单质', h: 'M 大写、g 小写。' },
+        { n: '银', f: 'Ag', c: '单质', h: '银是 Ag，不是 Au（Au 是金）。' },
+        { n: '汞', f: 'Hg', c: '单质', h: '汞（水银）是 Hg。' },
+        { n: '钠', f: 'Na', c: '单质', h: 'N 大写、a 小写。' },
+
+        // ---------------- 氧化物 ----------------
+        { n: '水', f: 'H2O', c: '氧化物', h: 'H 在前、O 在后；氢 +1 价、氧 −2 价 → H2O。' },
+        { n: '过氧化氢（双氧水）', f: 'H2O2', c: '氧化物', h: '比水多一个 O：H2O2（这里氧显 −1 价）。' },
+        { n: '二氧化碳', f: 'CO2', c: '氧化物', h: '碳 +4 价、氧 −2 价，交叉得 CO2。' },
+        { n: '一氧化碳', f: 'CO', c: '氧化物', h: '碳和氧各 1 个，写 CO。' },
+        { n: '氧化钙（生石灰）', f: 'CaO', c: '氧化物', h: '钙 +2 价、氧 −2 价，约掉后各 1 个：CaO。' },
+        { n: '氧化镁', f: 'MgO', c: '氧化物', h: '镁 +2 价、氧 −2 价 → MgO。' },
+        { n: '氧化铜', f: 'CuO', c: '氧化物', h: '铜 +2 价、氧 −2 价 → CuO。' },
+        { n: '氧化铝', f: 'Al2O3', c: '氧化物', h: '铝 +3 价、氧 −2 价，交叉得 Al2O3。' },
+        { n: '氧化铁', f: 'Fe2O3', c: '氧化物', h: '铁 +3 价、氧 −2 价，交叉得 Fe2O3。' },
+        { n: '四氧化三铁（磁铁矿主要成分）', f: 'Fe3O4', c: '氧化物', h: '名字里的数字就是下标：3 个 Fe、4 个 O 直接写，不用交叉。' },
+        { n: '二氧化锰', f: 'MnO2', c: '氧化物', h: '锰 +4 价、氧 −2 价 → MnO2。' },
+        { n: '二氧化硫', f: 'SO2', c: '氧化物', h: '硫 +4 价、氧 −2 价 → SO2。' },
+        { n: '五氧化二磷', f: 'P2O5', c: '氧化物', h: '磷 +5 价、氧 −2 价 → P2O5（名字里的数字正好是下标）。' },
+
+        // ---------------- 酸 ----------------
+        { n: '盐酸（氯化氢）', f: 'HCl', c: '酸', h: '盐酸的溶质是氯化氢：H 和 Cl 各 1 个。' },
+        { n: '硫酸', f: 'H2SO4', c: '酸', h: 'H2 在前，后面把 SO4 当成一个整体。' },
+        { n: '硝酸', f: 'HNO3', c: '酸', h: '1 个 H + 1 个 N + 3 个 O：HNO3。' },
+        { n: '碳酸', f: 'H2CO3', c: '酸', h: '碳酸根 CO3 是 −2 价 → 要 2 个 H：H2CO3。' },
+
+        // ---------------- 碱 ----------------
+        { n: '氢氧化钠（烧碱、火碱）', f: 'NaOH', c: '碱', h: '钠 +1 价、氢氧根 −1 价 → 各 1 个：NaOH。' },
+        { n: '氢氧化钙（熟石灰）', f: 'Ca(OH)2', c: '碱', h: '钙 +2 价、氢氧根 −1 价 → 要 2 个 OH，所以必须加括号：(OH)2。' },
+        { n: '氢氧化钾', f: 'KOH', c: '碱', h: '钾 +1 价、氢氧根 −1 价 → KOH。' },
+        { n: '氢氧化铜', f: 'Cu(OH)2', c: '碱', h: '铜 +2 价 → 2 个氢氧根，写成 Cu(OH)2。' },
+        { n: '氢氧化铁', f: 'Fe(OH)3', c: '碱', h: '铁 +3 价 → 3 个氢氧根，括号不能省。' },
+
+        // ---------------- 盐 ----------------
+        { n: '氯化钠（食盐）', f: 'NaCl', c: '盐', h: '钠 +1 价、氯 −1 价 → NaCl。' },
+        { n: '氯化钾', f: 'KCl', c: '盐', h: '钾 +1 价、氯 −1 价 → KCl。' },
+        { n: '氯化钙', f: 'CaCl2', c: '盐', h: '钙 +2 价、氯 −1 价 → 2 个 Cl：CaCl2。' },
+        { n: '氯化铁', f: 'FeCl3', c: '盐', h: '“铁”= +3 价 → 3 个 Cl。' },
+        { n: '氯化亚铁', f: 'FeCl2', c: '盐', h: '“亚铁”是 +2 价铁 → 只要 2 个 Cl。' },
+        { n: '碳酸钙（石灰石、大理石主要成分）', f: 'CaCO3', c: '盐', h: '钙 +2 价、碳酸根 −2 价 → 各 1 个：CaCO3。' },
+        { n: '碳酸钠（纯碱、苏打）', f: 'Na2CO3', c: '盐', h: '钠 +1 价、碳酸根 −2 价 → 2 个 Na：Na2CO3。' },
+        { n: '碳酸氢钠（小苏打）', f: 'NaHCO3', c: '盐', h: '注意和碳酸钠区分：碳酸氢钠只有一个 Na、还多一个 H。' },
+        { n: '硫酸铜', f: 'CuSO4', c: '盐', h: '铜 +2 价、硫酸根 −2 价 → 各 1 个：CuSO4。' },
+        { n: '硫酸亚铁', f: 'FeSO4', c: '盐', h: '亚铁 +2 价、硫酸根 −2 价 → FeSO4。' },
+        { n: '硫酸钡', f: 'BaSO4', c: '盐', h: '钡 +2 价、硫酸根 −2 价 → BaSO4。' },
+        { n: '高锰酸钾', f: 'KMnO4', c: '盐', h: '高锰酸钾里只有 1 个 K（别和锰酸钾 K2MnO4 混了）。' },
+        { n: '氯酸钾', f: 'KClO3', c: '盐', h: '钾 +1 价、氯酸根 −1 价 → KClO3。' },
+        { n: '硝酸银', f: 'AgNO3', c: '盐', h: '银 +1 价、硝酸根 −1 价 → AgNO3。' },
+        { n: '硫酸铝', f: 'Al2(SO4)3', c: '盐', h: '铝 +3 价、硫酸根 −2 价 → 交叉得 2 个铝、3 个硫酸根，括号不能省。' }
+    ];
+
+    // ---------- DOM ----------
+    var nameEl = document.getElementById('wName');
+    var hintBox = document.getElementById('wHint');
+    var inputEl = document.getElementById('wInput');
+    var fbEl = document.getElementById('wFeedback');
+    var qnoEl = document.getElementById('wQno');
+    var solvedEl = document.getElementById('wSolved');
+    var totalEl = document.getElementById('wTotal');
+    var btnPrev = document.getElementById('wPrev');
+    var btnNext = document.getElementById('wNext');
+    var btnCheck = document.getElementById('wCheck');
+    var btnHint = document.getElementById('wShowHint');
+    var btnReset = document.getElementById('wReset');
+    var cheatGrid = document.getElementById('cheatGrid');
+    if (!inputEl) return;
+
+    // ---------- 状态 ----------
+    var cur = 0;
+    var solved = {};
+    var tries = 0;
+
+    // ---------- 工具 ----------
+    function fmt(f) { return f.replace(/(\d+)/g, '<sub>$1</sub>'); }
+
+    function norm(s) {
+        return String(s || '')
+            .replace(/[\s\u3000]+/g, '')
+            .replace(/（/g, '(')
+            .replace(/）/g, ')')
+            .replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 65248); })
+            .replace(/[·・.]/g, '')
+            .toLowerCase();
+    }
+
+    function isRight(userInput, answer) {
+        var u = norm(userInput);
+        if (!u) return false;
+        if (u === norm(answer)) return true;
+        // 允许省略括号的写法，比如 CaOH2 也算对（意思到了）
+        if (u.replace(/[()]/g, '') === norm(answer).replace(/[()]/g, '')) return true;
+        return false;
+    }
+
+    function hintOf(item) {
+        if (item.h) return item.h;
+        var syms = (item.f.match(/[A-Z][a-z]?/g) || []).filter(function (v, i, a) { return a.indexOf(v) === i; });
+        var cns = syms.map(function (s) {
+            for (var k in CN2SYM) { if (CN2SYM[k] === s) return k; }
+            return s;
+        });
+        return '这题含 ' + cns.join('、') + '。先写元素符号（第一个字母大写、第二个字母小写），再按化合价交叉配数字。';
+    }
+
+    function solvedCount() { return Object.keys(solved).length; }
+
+    function updateStats() {
+        solvedEl.textContent = solvedCount();
+    }
+
+    // ---------- 出题 ----------
+    function show(i) {
+        cur = ((i % items.length) + items.length) % items.length;
+        tries = 0;
+        var it = items[cur];
+
+        nameEl.innerHTML = it.n;
+        qnoEl.textContent = '第 ' + (cur + 1) + ' / ' + items.length + ' 题';
+        fbEl.innerHTML = '';
+        fbEl.className = 'feedback';
+        hintBox.classList.add('hidden');
+        hintBox.innerHTML = '';
+        inputEl.value = '';
+        inputEl.classList.remove('bad');
+        updateStats();
+        if (window.innerWidth > 480) inputEl.focus();
+    }
+
+    function revealHint() {
+        hintBox.innerHTML = '💡 提示：' + hintOf(items[cur]);
+        hintBox.classList.remove('hidden');
+    }
+
+    // ---------- 检查 ----------
+    function check() {
+        var it = items[cur];
+        var v = inputEl.value;
+        if (!norm(v)) {
+            fbEl.className = 'feedback error';
+            fbEl.innerHTML = '⚠️ 先写一个化学式再检查吧。';
+            inputEl.focus();
+            return;
+        }
+
+        if (isRight(v, it.f)) {
+            var isNew = !solved[cur];
+            solved[cur] = true;
+            updateStats();
+            fbEl.className = 'feedback success';
+            fbEl.innerHTML = '🎉 正确！<strong>' + it.n + '</strong> 的化学式就是 <strong>' + fmt(it.f) + '</strong>。' +
+                (isNew ? '<br><span style="font-weight:normal;color:#607d8b;">已计入进度 ✅</span>' : '');
+            if (window.burst) window.burst(24);
+            return;
+        }
+
+        tries += 1;
+        inputEl.classList.remove('bad');
+        void inputEl.offsetWidth;
+        inputEl.classList.add('bad');
+
+        if (tries === 1) {
+            fbEl.className = 'feedback error';
+            fbEl.innerHTML = '❌ 还不对哦。' +
+                (/(^|[^A-Za-z])[a-z]/.test(v) || /^[a-z]/.test(v) ? '<br><span style="font-weight:normal;">检查一下大小写：元素符号第一个字母要大写，第二个字母必须小写（比如 Ca 不是 CA、不是 ca）。</span>' : '') +
+                '<br><span style="font-weight:normal;color:#607d8b;">再试一次，也可以点“提示”。</span>';
+            revealHint();
+            return;
+        }
+
+        fbEl.className = 'feedback error';
+        fbEl.innerHTML = '❌ 看看正确答案：<strong>' + it.n + '</strong> → <strong style="color:#27ae60;">' + fmt(it.f) + '</strong>' +
+            '<br><span style="font-weight:normal;color:#7f8c8d;">' + hintOf(it) + '</span>';
+        revealHint();
+    }
+
+    // ---------- 速查表 ----------
+    function renderCheat() {
+        if (!cheatGrid) return;
+        var order = ['单质', '氧化物', '酸', '碱', '盐'];
+        var html = '';
+        order.forEach(function (cat) {
+            var list = items.filter(function (it) { return it.c === cat; });
+            if (!list.length) return;
+            html += '<div><div class="cheat-group-title">' + cat + '</div>';
+            list.forEach(function (it) {
+                html += '<div class="cheat-item"><span>' + it.n + '</span><span>' + fmt(it.f) + '</span></div>';
+            });
+            html += '</div>';
+        });
+        cheatGrid.innerHTML = html;
+    }
+
+    // ---------- 绑定 ----------
+    btnCheck.addEventListener('click', check);
+    btnHint.addEventListener('click', revealHint);
+    btnPrev.addEventListener('click', function () { show(cur - 1); });
+    btnNext.addEventListener('click', function () { show(cur + 1); });
+    btnReset.addEventListener('click', function () {
+        solved = {};
+        updateStats();
+        show(0);
+    });
+    inputEl.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') check();
+    });
+
+    totalEl.textContent = items.length;
+    renderCheat();
+    updateStats();
+    show(0);
 })();
 
 </script>
