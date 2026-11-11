@@ -1583,6 +1583,47 @@
                 var site=sites.indexOf(id);
                 positions[id]={x:W*0.23+(site+0.5)*W*0.54/sites.length,y:H*0.68-atoms[id].r};
             });
+            // After a bond-forming event, turn only that new product into its standard direction.
+            var reactionPositions=positions.map(function(p){return {x:p.x,y:p.y};}),turns={};
+            if(phase!==1)groups.forEach(function(g){
+                var formed=g.bonds.some(function(b){return !oldEdges[edgeKey(g.ids[b[0]],g.ids[b[1]])];});
+                var released=previous.bonds.some(function(b){return (g.ids.indexOf(b[0])!==-1)!==(g.ids.indexOf(b[1])!==-1);});
+                if((!formed&&!released)||g.ids.length<2)return;
+                var root=g.ids[0],pivot=positions[root];
+                var fullProduct=bondsTo.every(function(b){return g.ids.indexOf(b[0])===-1&&g.ids.indexOf(b[1])===-1||g.ids.indexOf(b[0])!==-1&&g.ids.indexOf(b[1])!==-1;})&&
+                    g.bonds.every(function(b){return bondsTo.some(function(e){return edgeKey(e[0],e[1])===edgeKey(g.ids[b[0]],g.ids[b[1]]);});});
+                var offsets=g.ids.map(function(id,i){
+                    return fullProduct?{x:atoms[id].to.x-atoms[root].to.x,y:atoms[id].to.y-atoms[root].to.y}:
+                        {x:(g.xy[i][0]-g.xy[0][0])*scale,y:(g.xy[i][1]-g.xy[0][1])*scale};
+                });
+                // The two released FeO units face outward so horizontal alignment cannot overlap them.
+                if(g.name==='FeO'&&root===0)offsets=offsets.map(function(v){return {x:-v.x,y:v.y};});
+                var needsTurn=g.ids.some(function(id,i){return Math.hypot(positions[id].x-pivot.x-offsets[i].x,positions[id].y-pivot.y-offsets[i].y)>1e-6;});
+                if(!needsTurn)return;
+                var desired={};
+                g.ids.forEach(function(id,i){desired[id]=offsets[i];});
+                var rotationDot=0,rotationCross=0;
+                g.ids.forEach(function(id,i){
+                    var x=reactionPositions[id].x-pivot.x,y=reactionPositions[id].y-pivot.y;
+                    rotationDot+=x*offsets[i].x+y*offsets[i].y;
+                    rotationCross+=x*offsets[i].y-y*offsets[i].x;
+                });
+                var halfTurnSign=Math.atan2(rotationCross,rotationDot)<0?-1:1;
+                var queue=[root],seen={};seen[root]=true;
+                turns[root]={root:root,parent:null};
+                while(queue.length){
+                    var parent=queue.shift();
+                    g.bonds.forEach(function(b){
+                        var a=g.ids[b[0]],c=g.ids[b[1]],child=a===parent?c:c===parent?a:-1;
+                        if(child===-1||seen[child])return;
+                        seen[child]=true;queue.push(child);
+                        turns[child]={root:root,parent:parent,halfTurnSign:halfTurnSign,
+                            fromOffset:{x:reactionPositions[child].x-reactionPositions[parent].x,y:reactionPositions[child].y-reactionPositions[parent].y},
+                            offset:{x:desired[child].x-desired[parent].x,y:desired[child].y-desired[parent].y}};
+                    });
+                }
+                g.ids.forEach(function(id,i){positions[id]={x:pivot.x+offsets[i].x,y:pivot.y+offsets[i].y};});
+            });
             var texts=atoms.map(function(a){return a.sym;});
             if(cur===2) {
                 [3,5,7,9,11,13].forEach(function(id){texts[id]='Cl⁻';});
@@ -1598,7 +1639,7 @@
                 [0,3].forEach(function(id){texts[id]='Na⁺';});
                 groups.forEach(function(g){if(g.ids.length===1&&atoms[g.ids[0]].sym==='H')texts[g.ids[0]]='H⁺';});
             }
-            var state={phase:phase,preparing:phase===1,texts:texts,positions:positions,bonds:bonds,groups:groups.map(function(g){return {name:g.name,ids:g.ids};}),surfaceIds:surfaceIds||[],surface:cur===1||cur===2};
+            var state={phase:phase,preparing:phase===1,reactionPositions:reactionPositions,turns:turns,texts:texts,positions:positions,bonds:bonds,groups:groups.map(function(g){return {name:g.name,ids:g.ids};}),surfaceIds:surfaceIds||[],surface:cur===1||cur===2};
             previousSnapshot=state;
             return state;
         }
@@ -1763,6 +1804,27 @@
     function posOf(a, time, index) {
         var state=reactionAt(time),p=state.progress;
         var from=state.previous.positions[index],to=state.next.positions[index];
+        var next=state.next;
+        if(next.turns&&Object.keys(next.turns).length&&state.previous.positions!==next.positions){
+            // Orientation corrects continuously within the same reaction step.
+            var reaction=next.reactionPositions[index],approach=clamp01(p/0.7);
+            var turn=next.turns[index];
+            if(!turn)return {x:lerp(from.x,reaction.x,approach),y:lerp(from.y,reaction.y,approach)};
+            var q=clamp01((p-0.3)/0.7);
+            function turnPosition(id){
+                var node=next.turns[id];
+                if(node.parent===null)return next.reactionPositions[node.root];
+                var parent=turnPosition(node.parent),before=node.fromOffset,after=node.offset;
+                var startAngle=Math.atan2(before.y,before.x),endAngle=Math.atan2(after.y,after.x);
+                var delta=Math.atan2(Math.sin(endAngle-startAngle),Math.cos(endAngle-startAngle));
+                if(Math.abs(Math.abs(delta)-Math.PI)<1e-6)delta=node.halfTurnSign*Math.PI;
+                var length=lerp(Math.hypot(before.x,before.y),Math.hypot(after.x,after.y),q);
+                var angle=startAngle+delta*q;
+                return {x:parent.x+length*Math.cos(angle),y:parent.y+length*Math.sin(angle)};
+            }
+            var oriented=turnPosition(index);
+            return {x:oriented.x+(from.x-reaction.x)*(1-approach),y:oriented.y+(from.y-reaction.y)*(1-approach)};
+        }
         return {x:lerp(from.x,to.x,p),y:lerp(from.y,to.y,p)};
     }
 
@@ -1915,17 +1977,18 @@
         var pos = atoms.map(function (a, i) { return posOf(a, t, i); });
 
         var state = reactionAt(t), p = state.progress;
+        var bondProgress=state.next.turns&&Object.keys(state.next.turns).length?clamp01(p/0.7):p;
         var previousBonds = {}, nextBonds = {};
         function bondKey(b) { return Math.min(b[0],b[1]) + ':' + Math.max(b[0],b[1]); }
         state.previous.bonds.forEach(function (b) { previousBonds[bondKey(b)] = b; });
         state.next.bonds.forEach(function (b) { nextBonds[bondKey(b)] = b; });
         Object.keys(previousBonds).forEach(function (key) {
-            var b=previousBonds[key],alpha=nextBonds[key]?1:1-clamp01(p*2);
+            var b=previousBonds[key],alpha=nextBonds[key]?1:1-clamp01(bondProgress*2);
             drawStick(pos[b[0]].x,pos[b[0]].y,pos[b[1]].x,pos[b[1]].y,alpha);
         });
         Object.keys(nextBonds).forEach(function (key) {
             if(previousBonds[key])return;
-            var b=nextBonds[key],alpha=clamp01((p-0.5)*2);
+            var b=nextBonds[key],alpha=clamp01((bondProgress-0.5)*2);
             drawStick(pos[b[0]].x,pos[b[0]].y,pos[b[1]].x,pos[b[1]].y,alpha);
         });
         var surfaceAlpha = lerp(state.previous.surface?1:0,state.next.surface?1:0,p);
