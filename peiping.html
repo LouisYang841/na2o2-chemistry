@@ -969,8 +969,8 @@
         <div class="anim-caption" id="animCaption">点播放，看原子重组。</div>
 
         <div class="anim-stage-row">
-            <span class="stage-chip" id="animStage0">① 拆开</span>
-            <span class="stage-chip" id="animStage1">② 重组</span>
+            <span class="stage-chip" id="animStage0">① 接近</span>
+            <span class="stage-chip" id="animStage1">② 反应</span>
             <span class="stage-chip" id="animStage2">③ 核对</span>
         </div>
 
@@ -1197,7 +1197,7 @@
     var water = model('H₂O', [['O',0,0],['H',-25,-19],['H',25,-19]], [[0,1],[0,2]]);
     var hydrogen = model('H₂', [['H',-15,0],['H',15,0]], [[0,1]]);
     var oxygen = model('O₂', [['O',-23,0],['O',23,0]], [[0,1]]);
-    var hcl = model('HCl', [['H',-20,0],['Cl',20,0]], [[0,1]]);
+    var hcl = model('HCl', [['H',-20,0,{label:'H⁺'}],['Cl',20,0,{label:'Cl⁻'}]]);
     var fecl3 = model('FeCl₃', [['Fe',0,0],['Cl',-32,-24],['Cl',32,-24],['Cl',0,34]]);
     var naoh = model('NaOH', [['Na',-36,0],['O',0,0],['H',27,-12]], [[1,2]]);
     var nacl = model('NaCl', [['Na',-22,0],['Cl',22,0]]);
@@ -1210,7 +1210,7 @@
         {
             type: '例 2 · 氯酸钾制氧气', eq: '2KClO₃ → 2KCl + 3O₂↑', cond: '加热，MnO₂ 作催化剂',
             note: '3 和 2 的最小公倍数是 6。↑ 表示气体逸出。',
-            left: copies(2, model('KClO₃', [['K',-40,0],['Cl',0,0],['O',30,-30],['O',36,4],['O',12,35]])),
+            left: copies(2, model('KClO₃', [['K',-40,0],['Cl',0,0],['O',30,-30],['O',36,4],['O',12,35]], [[1,2],[1,3],[1,4]])),
             right: copies(2, model('KCl', [['K',-22,0],['Cl',22,0]])).concat(copies(3, oxygen))
         },
         {
@@ -1222,19 +1222,19 @@
         {
             type: '例 4 · 从氧化铁中炼出铁', eq: 'Fe₂O₃ + 3CO → 2Fe + 3CO₂', cond: '高温',
             note: '氧要加总：Fe₂O₃ 中的氧 ＋ CO 中的氧。',
-            left: [model('Fe₂O₃', [['Fe',-28,-12],['Fe',28,-12],['O',-36,26],['O',0,24],['O',36,26]])].concat(copies(3, model('CO', [['C',-21,0],['O',21,0]], [[0,1]]))),
+            left: [model('Fe₂O₃', [['Fe',-28,-12],['Fe',28,-12],['O',-36,26],['O',0,24],['O',36,26]], [[0,2],[0,3],[1,3],[1,4]])].concat(copies(3, model('CO', [['C',-21,0],['O',21,0]], [[0,1]]))),
             right: copies(2, model('Fe', [['Fe',0,0]])).concat(copies(3, model('CO₂', [['C',0,0],['O',-35,0],['O',35,0]], [[0,1],[0,2]])))
         },
         {
             type: '例 5 · 生成红褐色沉淀', eq: '3NaOH + FeCl₃ → Fe(OH)₃↓ + 3NaCl', cond: '溶液中反应',
             note: 'Fe(OH)₃ 有 3 组 OH。↓ 表示沉淀。',
             left: copies(3, naoh).concat([fecl3]),
-            right: [model('Fe(OH)₃↓', [['Fe',0,0],['O',-32,-24],['H',-52,-42],['O',32,-24],['H',52,-42],['O',0,32],['H',20,48]], [[1,2],[3,4],[5,6]])].concat(copies(3, nacl))
+            right: [model('Fe(OH)₃↓', [['Fe',0,0],['O',-32,-24],['H',-52,-42],['O',32,-24],['H',52,-42],['O',0,32],['H',20,48]], [[0,1],[1,2],[0,3],[3,4],[0,5],[5,6]])].concat(copies(3, nacl))
         },
         {
             type: '例 6 · 酸和碱生成水', eq: '2NaOH + H₂SO₄ → Na₂SO₄ + 2H₂O', cond: '溶液中反应',
             note: '氢、氧都来自两种反应物，分别加总。',
-            left: copies(2, naoh).concat([model('H₂SO₄', [['S',0,0],['O',-30,-25],['O',30,-25],['O',-30,25],['O',30,25],['H',-50,40],['H',50,40]], [[0,1],[0,2],[0,3],[0,4]])]),
+            left: copies(2, naoh).concat([model('H₂SO₄', [['S',0,0],['O',-30,-25],['O',30,-25],['O',-30,25],['O',30,25],['H',-50,40],['H',50,40]], [[0,1],[0,2],[0,3],[0,4],[3,5],[4,6]])]),
             right: [model('Na₂SO₄', [['S',0,0],['O',-30,-25],['O',30,-25],['O',-30,25],['O',30,25],['Na',-53,0],['Na',53,0]], [[0,1],[0,2],[0,3],[0,4]])].concat(copies(2, water))
         }
     ];
@@ -1242,7 +1242,7 @@
     var T_IDLE = 800, T_BREAK = 2100, T_HOLD = 3100, T_JOIN = 4900, T_DONE = 5600;
 
     var W = 600, H = 320;
-    var atoms = [], bondsFrom = [], bondsTo = [];
+    var atoms = [], bondsFrom = [], bondsTo = [], reactionFrames = [];
     var leftLabels = [], rightLabels = [], tags = [];
     var referenceLeft = [], referenceRight = [], referenceBondsRight = [], moleculeGroups = [];
     var anim = ANIMS[0];
@@ -1337,8 +1337,6 @@
         referenceLeft = []; referenceRight = []; moleculeGroups = [];
         tags = anim.tags ? anim.tags.slice() : [];
 
-        var padTop = 32, padBot = 32;
-        var areaH = H - padTop - padBot;
         var layout = animationLayout();
         var layoutScale = layout.scale, columns = layout.columns;
         function center(i, length, right) {
@@ -1400,6 +1398,10 @@
             });
         });
 
+        if(cur===2)ratoms.forEach(function(a) {
+            if(a.sym==='Al')a.text='Al³⁺';
+            if(a.sym==='Cl')a.text='Cl⁻';
+        });
         referenceBondsRight = rightBonds;
         referenceLeft = atoms.map(function (a) {
             return { sym: a.sym, r: a.r, text: a.text, pos: { x: a.from.x, y: a.from.y } };
@@ -1411,11 +1413,18 @@
         // 按元素符号顺序配对
         var pool = {};
         ratoms.forEach(function (a, i) { (pool[a.sym] = pool[a.sym] || []).push(i); });
+        var targetMap = [[4,0,1,5,2,3],[0,1,5,6,2,3,4,7,8,9],[0,3,5,7,1,9,11,13,2,4,6,8,10,12],[0,1,5,6,4,7,8,2,9,10,3],[9,1,2,4,5,7,8,0,10,3,11,6,12],[6,7,8,9,10,0,3,1,2,11,4,5,12]][cur];
+        var sourceToTarget = {};
+        targetMap.forEach(function (source, target) {
+            if (!atoms[source] || atoms[source].sym !== ratoms[target].sym) throw new Error('反应路径的原子对应不正确');
+            sourceToTarget[source] = target;
+        });
         var r2l = {};
         atoms.forEach(function (a, i) {
             var q = pool[a.sym];
             if (!q || !q.length) throw new Error('动画原子数不一致：' + a.sym);
-            var ri = q.shift();
+            var ri = sourceToTarget[i];
+            q.splice(q.indexOf(ri), 1);
             a.to = ratoms[ri].pos;
             a.textTo = ratoms[ri].text;
             a.rTo = ratoms[ri].r;
@@ -1428,27 +1437,160 @@
             return [r2l[b[0]], r2l[b[1]]];
         }).filter(function (b) { return b[0] !== undefined && b[1] !== undefined; });
 
-        // ---- 拆散后的自由位置（网格 + 抖动，避免重叠） ----
-        var n = atoms.length;
-        var cols = Math.max(2, Math.min(6, Math.floor(W * 0.84 / 60)));
-        var freeW = W * 0.84;               // 中间“乱跑”区域可用宽度
-        if (freeW / cols < 46 && cols > 2) cols = 2;   // 窄屏时少排一列，避免原子挤在一起
-        var rows = Math.ceil(n / cols);
-        var cellW = freeW / cols;
-        var cellH = areaH / Math.max(1, rows);
-        atoms.forEach(function (a, i) {
-            var c = i % cols, r = Math.floor(i / cols);
-            var jx = Math.sin(i * 12.9898) * cellW * 0.12;
-            var jy = Math.cos(i * 4.1414) * cellH * 0.12;
-            a.free = {
-                x: W * 0.08 + (c + 0.5) * cellW + jx,
-                y: padTop + (r + 0.5) * cellH + jy
-            };
-        });
+        buildReactionFrames(layoutScale);
+        atoms.forEach(function (a, i) { a.free = reactionFrames[2].positions[i]; });
 
         renderMeta();
         draw();
         updateUI();
+    }
+
+    // Reaction-specific keyframes, not an all-atoms dissociation grid.
+    // H/O elementary steps: https://raw.githubusercontent.com/Cantera/cantera/main/data/h2o2.yaml
+    // Chlorate catalysis: https://doi.org/10.1246/bcsj.25.245 (surface complex; no invented chlorite route).
+    // Iron oxide phases: https://www.sciencedirect.com/science/article/abs/pii/S0926860X07002062
+    // Neutralization: https://pmc.ncbi.nlm.nih.gov/articles/PMC3251043/
+    // Frames conserve the displayed atoms. Solvent/bath and catalyst lattice atoms are not in this inventory.
+    function buildReactionFrames(scale) {
+        function group(name, ids, xy, bonds) {
+            return { name: name, ids: ids, xy: xy, bonds: bonds || [] };
+        }
+        function single(i) { return group(atoms[i].sym, [i], [[0,0]]); }
+        function pair(name, a, b) { return group(name, [a,b], [[-19,0],[19,0]], [[0,1]]); }
+        function oh(o, hydrogen) { return group('OH', [o,hydrogen], [[0,0],[25,-18]], [[0,1]]); }
+        function waterGroup(o, a, b) { return group('H2O', [o,a,b], [[0,0],[-25,-19],[25,-19]], [[0,1],[0,2]]); }
+        function carbonDioxide(c, oldO, newO) { return group('CO2', [c,oldO,newO], [[0,0],[-35,0],[35,0]], [[0,1],[0,2]]); }
+        function sulfate(protons) {
+            var ids = [6,7,8,9,10], xy = [[0,0],[-30,-25],[30,-25],[-30,25],[30,25]];
+            var bonds = [[0,1],[0,2],[0,3],[0,4]];
+            protons.forEach(function (id) { ids.push(id); xy.push(id === 11 ? [-50,40] : [50,40]); bonds.push([id === 11 ? 3 : 4, ids.length-1]); });
+            return group(protons.length === 2 ? 'H2SO4' : protons.length === 1 ? 'HSO4' : 'SO4',ids,xy,bonds);
+        }
+        function hydroxideComplex(pairs) {
+            var ids = [9], xy = [[0,0]], bonds = [];
+            var offsets = [[-32,-24,-52,-42],[32,-24,52,-42],[0,32,20,48]];
+            pairs.forEach(function (p, i) {
+                var k = ids.length, d = offsets[i]; ids.push(p[0],p[1]); xy.push([d[0],d[1]],[d[2],d[3]]); bonds.push([0,k],[k,k+1]);
+            });
+            return group('Fe(OH)'+pairs.length,ids,xy,bonds);
+        }
+        function chlorate(k, cl, a, b, c) {
+            return group('KClO3',[k,cl,a,b,c],[[-40,0],[0,0],[30,-30],[36,4],[12,35]],[[1,2],[1,3],[1,4]]);
+        }
+        function snapshot(groups, time, surfaceIds, surface) {
+            var maxWidth = 1, maxHeight = 1;
+            groups.forEach(function (g) {
+                var minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+                g.ids.forEach(function(id,i) {
+                    var r=atoms[id].r; minX=Math.min(minX,g.xy[i][0]*scale-r); maxX=Math.max(maxX,g.xy[i][0]*scale+r);
+                    minY=Math.min(minY,g.xy[i][1]*scale-r); maxY=Math.max(maxY,g.xy[i][1]*scale+r);
+                });
+                g.box={minX:minX,maxX:maxX,minY:minY,maxY:maxY};
+                maxWidth=Math.max(maxWidth,maxX-minX+14); maxHeight=Math.max(maxHeight,maxY-minY+16);
+            });
+            var cols=Math.max(1,Math.min(groups.length,4,Math.floor((W-88)/maxWidth)));
+            var floating=groups.filter(function(g){return !(surfaceIds&&g.ids.every(function(id){return surfaceIds.indexOf(id)!==-1;}));});
+            var rows=Math.ceil(floating.length/cols),cellW=(W-88)/cols;
+            var availableTop=44,availableBottom=surfaceIds&&surfaceIds.length?H*0.53:H-44;
+            var cellH=Math.min(maxHeight,(availableBottom-availableTop)/Math.max(1,rows));
+            var top=(availableTop+availableBottom-rows*cellH)/2;
+            var positions=new Array(atoms.length), bonds=[], used={};
+            groups.forEach(function(g,index) {
+                var slot=Math.max(0,floating.indexOf(g));
+                var col=slot%cols,row=Math.floor(slot/cols);
+                var cx=44+(col+0.5)*cellW,cy=top+(row+0.5)*cellH;
+                cx-=(g.box.minX+g.box.maxX)/2; cy-=(g.box.minY+g.box.maxY)/2;
+                g.ids.forEach(function(id,i) {
+                    if(used[id])throw new Error('反应阶段重复使用原子'); used[id]=true;
+                    positions[id]={x:cx+g.xy[i][0]*scale,y:cy+g.xy[i][1]*scale};
+                });
+                g.bonds.forEach(function(b){bonds.push([g.ids[b[0]],g.ids[b[1]]]);});
+            });
+            if(Object.keys(used).length!==atoms.length)throw new Error('反应阶段缺少原子');
+            if(surfaceIds && surfaceIds.length)surfaceIds.forEach(function(id,index) {
+                positions[id]={x:W*0.23+(index+0.5)*W*0.54/surfaceIds.length,y:H*0.68-atoms[id].r};
+            });
+            var texts=atoms.map(function(a){return a.sym;});
+            if(cur===2) {
+                [3,5,7,9,11,13].forEach(function(id){texts[id]='Cl⁻';});
+                if(time===1600)[2,4,6,8,10,12].forEach(function(id){texts[id]='H⁺';});
+                if(time>=2500){texts[0]='Al³⁺';texts[1]='Al³⁺';}
+            }
+            if(cur===4) {
+                [0,3,6].forEach(function(id){texts[id]='Na⁺';});
+                [10,11,12].forEach(function(id){texts[id]='Cl⁻';});
+            }
+            if(cur===5) {
+                [0,3].forEach(function(id){texts[id]='Na⁺';});
+                groups.forEach(function(g){if(g.ids.length===1&&atoms[g.ids[0]].sym==='H')texts[g.ids[0]]='H⁺';});
+            }
+            return {time:time,texts:texts,positions:positions,bonds:bonds,groups:groups.map(function(g){return {name:g.name,ids:g.ids};}),surfaceIds:surfaceIds||[],surface:!!surface};
+        }
+        var first={time:0,texts:atoms.map(function(a){return a.text;}),positions:atoms.map(function(a){return a.from;}),bonds:bondsFrom,groups:[]};
+        var last={time:T_JOIN,texts:atoms.map(function(a){return a.textTo;}),positions:atoms.map(function(a){return a.to;}),bonds:bondsTo,groups:[]};
+        var frames=[];
+        if(cur===0) {
+            // Initiation, H+O2 -> OH+O, O+H2 -> OH+H, then H+OH(+M) -> H2O(+M).
+            frames=[
+                snapshot([single(0),single(1),pair('H2',2,3),pair('O2',4,5)],1600),
+                snapshot([oh(4,0),single(5),single(1),pair('H2',2,3)],2500),
+                snapshot([oh(4,0),oh(5,2),single(1),single(3)],3300),
+                snapshot([waterGroup(4,0,1),waterGroup(5,2,3)],4100)
+            ];
+        } else if(cur===1) {
+            // Catalyst surface engagement and oxygen desorption. Do not assign unsupported transient formulas.
+            frames=[
+                snapshot([chlorate(0,1,2,3,4),chlorate(5,6,7,8,9)],1600,[],true),
+                snapshot([single(0),single(1),single(5),single(6),single(2),single(3),single(4),single(7),single(8),single(9)],2500,[2,3,4,7,8,9],true),
+                snapshot([single(0),single(1),single(5),single(6),pair('O2',2,3),single(4),single(7),single(8),single(9)],3300,[4,7,8,9],true),
+                snapshot([single(0),single(1),single(5),single(6),pair('O2',2,3),pair('O2',4,7),pair('O2',8,9)],4100,[],true)
+            ];
+        } else if(cur===2) {
+            // Acid ions approach metal sites; adsorbed hydrogen pairs and desorbs, chloride remains unbonded.
+            var chlorides=[single(3),single(5),single(7),single(9),single(11),single(13)];
+            frames=[
+                snapshot([single(0),single(1),single(2),single(4),single(6),single(8),single(10),single(12)].concat(chlorides),1600),
+                snapshot([single(0),single(1),single(2),single(4),single(6),single(8),single(10),single(12)].concat(chlorides),2500,[2,4,6,8,10,12],true),
+                snapshot([single(0),single(1),pair('H2',2,4),single(6),single(8),single(10),single(12)].concat(chlorides),3300,[6,8,10,12],true),
+                snapshot([single(0),single(1),pair('H2',2,4),pair('H2',6,8),pair('H2',10,12)].concat(chlorides),4100)
+            ];
+        } else if(cur===3) {
+            // Keep each incoming CO bond. FeO is a real reduced oxide phase, not disconnected Fe/O atoms.
+            frames=[
+                snapshot([group('Fe2O3',[0,1,2,3,4],[[-28,-12],[28,-12],[-36,26],[0,24],[36,26]],[[0,2],[0,3],[1,3],[1,4]]),pair('CO',5,6),pair('CO',7,8),pair('CO',9,10)],1600),
+                snapshot([pair('FeO',0,2),pair('FeO',1,3),carbonDioxide(5,6,4),pair('CO',7,8),pair('CO',9,10)],2500),
+                snapshot([single(0),pair('FeO',1,3),carbonDioxide(5,6,4),carbonDioxide(7,8,2),pair('CO',9,10)],3300),
+                snapshot([single(0),single(1),carbonDioxide(5,6,4),carbonDioxide(7,8,2),carbonDioxide(9,10,3)],4100)
+            ];
+        } else if(cur===4) {
+            var spectators=[single(0),single(3),single(6),single(10),single(11),single(12)];
+            frames=[
+                snapshot([single(9),oh(1,2),oh(4,5),oh(7,8)].concat(spectators),1600),
+                snapshot([hydroxideComplex([[1,2]]),oh(4,5),oh(7,8)].concat(spectators),2500),
+                snapshot([hydroxideComplex([[1,2],[4,5]]),oh(7,8)].concat(spectators),3300),
+                snapshot([hydroxideComplex([[1,2],[4,5],[7,8]])].concat(spectators),4100)
+            ];
+        } else {
+            frames=[
+                snapshot([single(0),single(3),oh(1,2),oh(4,5),sulfate([12]),single(11)],1600),
+                snapshot([single(0),single(3),waterGroup(1,2,11),oh(4,5),sulfate([12])],2500),
+                snapshot([single(0),single(3),waterGroup(1,2,11),oh(4,5),sulfate([]),single(12)],3300),
+                snapshot([single(0),single(3),waterGroup(1,2,11),waterGroup(4,5,12),sulfate([])],4100)
+            ];
+        }
+        reactionFrames=[first,Object.assign({},first,{time:T_IDLE})].concat(frames,[last,Object.assign({},last,{time:T_DONE})]);
+    }
+
+    function reactionAt(time) {
+        for(var i=1;i<reactionFrames.length;i++) {
+            if(time<=reactionFrames[i].time) {
+                var previous=reactionFrames[i-1],next=reactionFrames[i];
+                var progress=clamp01((time-previous.time)/(next.time-previous.time));
+                return {previous:previous,next:next,progress:easeInOut(clamp01((progress-0.12)/0.76))};
+            }
+        }
+        var end=reactionFrames[reactionFrames.length-1];
+        return {previous:end,next:end,progress:1};
     }
 
     // ===== 元信息（标题 / 图例 / 计数 / 说明 / 圆点） =====
@@ -1491,7 +1633,7 @@
             Object.keys(counts).forEach(function (k) {
                 h += '<div class="tally-item keep">' + sub(k) + ' <small>左</small> <b>' + counts[k] + '</b> <small>＝右</small> <b>' + counts[k] + '</b></div>';
             });
-            h += '<div class="tally-item change">图中份数 <b id="tallyMol">' + anim.left.length + '</b> <small>反应前 → 后</small></div>';
+            h += '<div class="tally-item change">份数 <b id="tallyMol">' + anim.left.length + '→' + anim.right.length + '</b> <small>反应前 → 后</small></div>';
             tallyEl.innerHTML = h;
             molEl = document.getElementById('tallyMol');
         }
@@ -1507,23 +1649,10 @@
     }
 
     // ===== 绘制 =====
-    function posOf(a, time) {
-        var pBreak = clamp01((time - T_IDLE) / (T_BREAK - T_IDLE));
-        var pJoin = clamp01((time - T_HOLD) / (T_JOIN - T_HOLD));
-        var x, y;
-        if (time < T_BREAK) {
-            var e1 = easeInOut(pBreak);
-            x = lerp(a.from.x, a.free.x, e1);
-            y = lerp(a.from.y, a.free.y, e1);
-        } else {
-            var e2 = easeInOut(pJoin);
-            x = lerp(a.free.x, a.to.x, e2);
-            y = lerp(a.free.y, a.to.y, e2);
-            y += Math.sin(e2 * Math.PI) * (a.r > 18 ? 10 : -10);
-        }
-        var amp = time < T_IDLE ? 1.6 : (time > T_DONE - 300 ? 1.1 : 0);
-        if (amp) y += Math.sin(time / 300 + a.from.x) * amp;
-        return { x: x, y: y };
+    function posOf(a, time, index) {
+        var state=reactionAt(time),p=state.progress;
+        var from=state.previous.positions[index],to=state.next.positions[index];
+        return {x:lerp(from.x,to.x,p),y:lerp(from.y,to.y,p)};
     }
 
     function drawStick(x1, y1, x2, y2, alpha) {
@@ -1671,20 +1800,39 @@
         drawReference(referenceLeft, bondsFrom);
         drawReference(referenceRight, referenceBondsRight);
 
-        var pos = atoms.map(function (a) { return posOf(a, t); });
+        var pos = atoms.map(function (a, i) { return posOf(a, t, i); });
 
-        var alphaFrom = 1 - clamp01((t - T_IDLE) / ((T_BREAK - T_IDLE) * 0.5));
-        bondsFrom.forEach(function (b) {
-            drawStick(pos[b[0]].x, pos[b[0]].y, pos[b[1]].x, pos[b[1]].y, alphaFrom);
+        var state = reactionAt(t), p = state.progress;
+        var previousBonds = {}, nextBonds = {};
+        function bondKey(b) { return Math.min(b[0],b[1]) + ':' + Math.max(b[0],b[1]); }
+        state.previous.bonds.forEach(function (b) { previousBonds[bondKey(b)] = b; });
+        state.next.bonds.forEach(function (b) { nextBonds[bondKey(b)] = b; });
+        Object.keys(previousBonds).forEach(function (key) {
+            var b=previousBonds[key],alpha=nextBonds[key]?1:1-clamp01(p*2);
+            drawStick(pos[b[0]].x,pos[b[0]].y,pos[b[1]].x,pos[b[1]].y,alpha);
         });
-
-        var pJoin = clamp01((t - T_HOLD) / (T_JOIN - T_HOLD));
-        var alphaTo = clamp01((pJoin - 0.45) / 0.45);
-        bondsTo.forEach(function (b) {
-            drawStick(pos[b[0]].x, pos[b[0]].y, pos[b[1]].x, pos[b[1]].y, alphaTo);
+        Object.keys(nextBonds).forEach(function (key) {
+            if(previousBonds[key])return;
+            var b=nextBonds[key],alpha=clamp01((p-0.5)*2);
+            drawStick(pos[b[0]].x,pos[b[0]].y,pos[b[1]].x,pos[b[1]].y,alpha);
         });
+        var surfaceAlpha = lerp(state.previous.surface?1:0,state.next.surface?1:0,p);
+        if(surfaceAlpha>0.01) {
+            ctx.save(); ctx.globalAlpha=surfaceAlpha;
+            roundRect(ctx,W*0.18,H*0.72,W*0.64,22,7);
+            ctx.fillStyle=cur===1?'#6b655e':'#a7b2b8'; ctx.fill();
+            ctx.font='bold 11px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+            ctx.fillStyle='#fff';ctx.fillText(cur===1?'MnO₂':'Al',W/2,H*0.72+11);
+            var attached=(p<0.5?state.previous.surfaceIds:state.next.surfaceIds)||[];
+            ctx.setLineDash([3,3]);ctx.strokeStyle='#8a7f68';ctx.lineWidth=2;
+            attached.forEach(function(id){ctx.beginPath();ctx.moveTo(pos[id].x,pos[id].y);ctx.lineTo(pos[id].x,H*0.72);ctx.stroke();});
+            ctx.restore();
+        }
 
-        atoms.forEach(function (a, i) { drawAtom(a, pos[i].x, pos[i].y); });
+        atoms.forEach(function (a, i) {
+            var texts=p<0.5?state.previous.texts:state.next.texts;
+            drawAtom(a,pos[i].x,pos[i].y,texts[i]);
+        });
 
         // 物质名
         ctx.save();
@@ -1710,9 +1858,9 @@
 
         var map = {
             idle: '点播放，看原子重组。',
-            break: '① 拆开原来的组合。',
-            hold: '数一数：' + atomToken() + '。',
-            join: '② 原子重新组合。',
+            break: '① 反应物逐渐靠近。',
+            hold: '反应正在进行，原子数保持不变。',
+            join: '② 新的组合逐步形成。',
             done: '✅ 原子数不变：' + atomToken() + '。'
         };
         return map[stage];
@@ -1744,8 +1892,7 @@
         setStage(idx);
 
         if (molEl) {
-            var v = t < T_BREAK ? String(anim.left.length)
-                : (t < T_JOIN - 250 ? anim.left.length + '→' + anim.right.length : String(anim.right.length));
+            var v = anim.left.length + '→' + anim.right.length;
             if (molEl.textContent !== v) molEl.textContent = v;
         }
     }
@@ -1845,7 +1992,8 @@
     window.__ballAnimDebug = function () {
         return { W: W, H: H, cur: cur, anim: anim, atoms: atoms, bondsFrom: bondsFrom, bondsTo: bondsTo,
                  leftLabels: leftLabels, rightLabels: rightLabels, tags: tags,
-                 referenceLeft: referenceLeft, referenceRight: referenceRight, moleculeGroups: moleculeGroups };
+                 referenceLeft: referenceLeft, referenceRight: referenceRight, moleculeGroups: moleculeGroups,
+                 reactionFrames: reactionFrames, time: t, positions: atoms.map(function(a,i){return posOf(a,t,i);}) };
     };
 
     var rzT = null;
