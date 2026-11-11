@@ -2143,7 +2143,9 @@
                 if (e.key === 'Enter') checkAnswer();
             });
         });
-        if (inputs.length && window.innerWidth > 480) inputs[0].focus();
+        if (inputs.length && window.innerWidth > 480 && quizArea.contains(document.activeElement)) {
+            inputs[0].focus({ preventScroll: true });
+        }
     }
 
     function updateNav() {
@@ -2545,7 +2547,9 @@
         inputEl.value = '';
         inputEl.classList.remove('bad');
         updateStats();
-        if (window.innerWidth > 480) inputEl.focus();
+        if (window.innerWidth > 480 && document.getElementById('writeArea').contains(document.activeElement)) {
+            inputEl.focus({ preventScroll: true });
+        }
     }
 
     function revealHint() {
@@ -3038,9 +3042,9 @@
                 if (e.key === 'Enter') check();
             });
         });
-        if (window.innerWidth > 480) {
+        if (window.innerWidth > 480 && document.getElementById('eqArea').contains(document.activeElement)) {
             var first = document.getElementById('e-coef-0');
-            if (first) first.focus();
+            if (first) first.focus({ preventScroll: true });
         }
     }
 
