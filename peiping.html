@@ -951,7 +951,7 @@
 
     <!-- ===== 球棍动画演示（多反应，左右箭头切换） ===== -->
     <h3>🎬 看步骤，学配平</h3>
-    <p>用 <strong>← →</strong> 或左右滑动切换反应，动画会自动播放。观察原子怎样重新组合，再对照下方的数量。</p>
+    <p>用 <strong>← →</strong> 或左右滑动切换反应，动画会自动播放。半透明分子保留在两侧，大括号旁的数字表示各类分子的数量。</p>
 
     <div class="anim-wrap">
         <div class="anim-nav">
@@ -1244,6 +1244,7 @@
     var W = 600, H = 320;
     var atoms = [], bondsFrom = [], bondsTo = [];
     var leftLabels = [], rightLabels = [], tags = [];
+    var referenceLeft = [], referenceRight = [], referenceBondsRight = [], moleculeGroups = [];
     var anim = ANIMS[0];
     var cur = 0, t = 0, playing = false, rafId = null, lastTs = 0;
     var molEl = null;
@@ -1284,27 +1285,38 @@
                 maxRadius = Math.max(maxRadius, (a[3] && a[3].r) || RAD[a[0]] || 16);
             });
         });
-        var scale = Math.min(1, (W / (columns * 2) - 20) / (2 * maxExtent));
+        var scale = Math.min(1, ((W / 2 - 56) / columns - 12) / (2 * maxExtent));
         function side(species) {
-            var rows = [], total = 0;
-            for (var i = 0; i < species.length; i += columns) {
-                var above = 0, below = 0;
-                species.slice(i, i + columns).forEach(function (sp) {
-                    var box = speciesBox(sp);
-                    above = Math.max(above, -box.minY * scale);
-                    below = Math.max(below, box.maxY * scale);
-                });
-                rows.push({ cy: total + above + 6 });
-                total += above + below + 34;
+            var positions = [], groups = [], total = 0, i = 0;
+            while (i < species.length) {
+                var end = i + 1;
+                while (end < species.length && species[end].label === species[i].label) end++;
+                var group = { label: species[i].label, count: end - i, top: total, bottom: 0 };
+                for (var row = i; row < end; row += columns) {
+                    var above = 0, below = 0;
+                    species.slice(row, Math.min(row + columns, end)).forEach(function (sp) {
+                        var box = speciesBox(sp);
+                        above = Math.max(above, -box.minY * scale);
+                        below = Math.max(below, box.maxY * scale);
+                    });
+                    for (var j = row; j < Math.min(row + columns, end); j++) {
+                        positions[j] = { col: j - row, cy: total + above + 6 };
+                    }
+                    total += above + below + 26;
+                }
+                group.bottom = total - 8;
+                groups.push(group);
+                total += 8;
+                i = end;
             }
-            return { rows: rows, height: total };
+            return { positions: positions, groups: groups, height: total };
         }
         var left = side(anim.left), right = side(anim.right);
         var freeColumns = Math.max(2, Math.min(6, Math.floor(W * 0.84 / 60)));
         var atomCount = anim.left.reduce(function (n, sp) { return n + sp.atoms.length; }, 0);
         var freeHeight = Math.ceil(atomCount / freeColumns) * (2 * maxRadius * scale + 12);
         return { columns: columns, scale: scale, left: left, right: right,
-                 height: Math.ceil(Math.max(260, left.height + 64, right.height + 64, freeHeight + 64)) };
+                 height: Math.ceil(Math.max(260, left.height + 60, right.height + 60, freeHeight + 64)) };
     }
 
     function resize() {
@@ -1322,6 +1334,7 @@
     function build() {
         atoms = []; bondsFrom = []; bondsTo = [];
         leftLabels = []; rightLabels = [];
+        referenceLeft = []; referenceRight = []; moleculeGroups = [];
         tags = anim.tags ? anim.tags.slice() : [];
 
         var padTop = 32, padBot = 32;
@@ -1330,9 +1343,18 @@
         var layoutScale = layout.scale, columns = layout.columns;
         function center(i, length, right) {
             var side = right ? layout.right : layout.left;
-            return { x: W * (right ? 0.5 : 0) + W * 0.5 * ((i % columns + 0.5) / columns),
-                     y: (H - side.height) / 2 + side.rows[Math.floor(i / columns)].cy };
+            var point = side.positions[i];
+            var contentWidth = W / 2 - 56;
+            return { x: (right ? W / 2 + 12 : 44) + contentWidth * ((point.col + 0.5) / columns),
+                     y: (H - side.height) / 2 + point.cy };
         }
+        [layout.left, layout.right].forEach(function (side, index) {
+            var offset = (H - side.height) / 2;
+            side.groups.forEach(function (group) {
+                moleculeGroups.push({ label: group.label, count: group.count, right: index === 1,
+                    top: offset + group.top, bottom: offset + group.bottom });
+            });
+        });
 
         // ---- 左边 ----
         var startL = [];
@@ -1376,6 +1398,14 @@
             (sp.bonds || []).forEach(function (b) {
                 rightBonds.push([rStart[i] + b[0], rStart[i] + b[1]]);
             });
+        });
+
+        referenceBondsRight = rightBonds;
+        referenceLeft = atoms.map(function (a) {
+            return { sym: a.sym, r: a.r, text: a.text, pos: { x: a.from.x, y: a.from.y } };
+        });
+        referenceRight = ratoms.map(function (a) {
+            return { sym: a.sym, r: a.r, text: a.text, pos: { x: a.pos.x, y: a.pos.y } };
         });
 
         // 按元素符号顺序配对
@@ -1510,11 +1540,11 @@
         ctx.restore();
     }
 
-    function drawAtom(a, x, y) {
+    function drawAtom(a, x, y, fixedText) {
         var pal = PAL[a.sym] || ['#d7dee2', '#78909c', '#ffffff'];
         var r = a.r;
         var joined = t >= T_HOLD + (T_JOIN - T_HOLD) * 0.55;
-        var txt = (joined && a.textTo) ? a.textTo : a.text;
+        var txt = fixedText || ((joined && a.textTo) ? a.textTo : a.text);
         ctx.save();
         var g = ctx.createRadialGradient(x - r * 0.34, y - r * 0.40, r * 0.12, x, y, r * 1.05);
         g.addColorStop(0, pal[0]);
@@ -1562,6 +1592,49 @@
         ctx.restore();
     }
 
+    function drawReference(list, bonds) {
+        bonds.forEach(function (bond) {
+            var a = list[bond[0]], b = list[bond[1]];
+            drawStick(a.pos.x, a.pos.y, b.pos.x, b.pos.y, 0.5);
+        });
+        ctx.save();
+        ctx.globalAlpha = 0.5;
+        list.forEach(function (a) { drawAtom(a, a.pos.x, a.pos.y, a.text); });
+        ctx.restore();
+    }
+
+    function drawGroupBrackets() {
+        moleculeGroups.forEach(function (group) {
+            var x = group.right ? W - 34 : 34;
+            var direction = group.right ? -1 : 1;
+            var top = group.top, bottom = group.bottom, mid = (top + bottom) / 2;
+            var bend = Math.min(12, (bottom - top) / 4);
+            ctx.save();
+            ctx.strokeStyle = group.right ? '#278653' : '#2980b9';
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(x + direction * 8, top);
+            ctx.bezierCurveTo(x, top, x, top + bend, x, top + bend);
+            ctx.lineTo(x, mid - bend);
+            ctx.bezierCurveTo(x, mid - 3, x - direction * 7, mid - 3, x - direction * 7, mid);
+            ctx.bezierCurveTo(x - direction * 7, mid + 3, x, mid + 3, x, mid + bend);
+            ctx.lineTo(x, bottom - bend);
+            ctx.bezierCurveTo(x, bottom - bend, x, bottom, x + direction * 8, bottom);
+            ctx.stroke();
+            ctx.font = 'bold 17px "Microsoft YaHei", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            var labelX = group.right ? W - 15 : 15;
+            roundRect(ctx, labelX - 13, mid - 14, 26, 28, 7);
+            ctx.fillStyle = 'rgba(255,255,255,0.94)';
+            ctx.fill();
+            ctx.fillStyle = group.right ? '#237a46' : '#236e9c';
+            ctx.fillText('×' + group.count, labelX, mid);
+            ctx.restore();
+        });
+    }
+
     function draw() {
         ctx.clearRect(0, 0, W, H);
         var pad = Math.max(8, W * 0.016);
@@ -1595,6 +1668,9 @@
         ctx.fillText('反应后', W - pad - 10, pad + 6);
         ctx.restore();
 
+        drawReference(referenceLeft, bondsFrom);
+        drawReference(referenceRight, referenceBondsRight);
+
         var pos = atoms.map(function (a) { return posOf(a, t); });
 
         var alphaFrom = 1 - clamp01((t - T_IDLE) / ((T_BREAK - T_IDLE) * 0.5));
@@ -1615,19 +1691,13 @@
         ctx.font = '11px "Microsoft YaHei", sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
-        var aL = 1 - clamp01((t - T_IDLE * 0.6) / (T_IDLE * 0.6));
-        if (aL > 0.02) {
-            ctx.globalAlpha = aL;
-            ctx.fillStyle = '#78909c';
-            leftLabels.forEach(function (l) { ctx.fillText(l.text, l.x, l.y); });
-        }
-        var aR = clamp01((t - (T_HOLD + (T_JOIN - T_HOLD) * 0.6)) / 500);
-        if (aR > 0.02) {
-            ctx.globalAlpha = aR;
-            ctx.fillStyle = '#2e7d32';
-            rightLabels.forEach(function (l) { ctx.fillText(l.text, l.x, l.y); });
-        }
+        ctx.fillStyle = '#607d8b';
+        leftLabels.forEach(function (l) { ctx.fillText(l.text, l.x, l.y); });
+        ctx.fillStyle = '#2e7d32';
+        rightLabels.forEach(function (l) { ctx.fillText(l.text, l.x, l.y); });
         ctx.restore();
+
+        drawGroupBrackets();
 
         // 标注（氧化还原 / 离子反应）
         var aTag = clamp01((t - T_JOIN + 200) / 600);
@@ -1774,7 +1844,8 @@
     // 调试钩子（也方便以后加新反应时自检布局）
     window.__ballAnimDebug = function () {
         return { W: W, H: H, cur: cur, anim: anim, atoms: atoms, bondsFrom: bondsFrom, bondsTo: bondsTo,
-                 leftLabels: leftLabels, rightLabels: rightLabels, tags: tags };
+                 leftLabels: leftLabels, rightLabels: rightLabels, tags: tags,
+                 referenceLeft: referenceLeft, referenceRight: referenceRight, moleculeGroups: moleculeGroups };
     };
 
     var rzT = null;
