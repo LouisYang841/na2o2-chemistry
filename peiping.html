@@ -593,6 +593,127 @@
             color: #c0392b;
         }
 
+        /* ===== 题型三：化学方程式完整填空 ===== */
+        .eq-area {
+            background: #f4f7fd;
+            border: 1px dashed #b9cdf0;
+            border-radius: 12px;
+            padding: 16px 12px;
+            margin-top: 14px;
+        }
+        .eq-desc {
+            background: #fff;
+            border-left: 4px solid #5c6bc0;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 15px;
+            color: #37474f;
+            line-height: 1.75;
+            margin-bottom: 16px;
+        }
+        .eq-desc .tag {
+            display: inline-block;
+            min-width: 18px;
+            text-align: center;
+            font-size: 12px;
+            color: #fff;
+            background: #7986cb;
+            border-radius: 999px;
+            padding: 1px 7px;
+            margin-right: 7px;
+            vertical-align: 1px;
+        }
+        .eq-line {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+        .term {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            margin: 0 1px;
+        }
+        .term-top { display: flex; align-items: center; gap: 3px; }
+        .eq-line input {
+            height: 38px;
+            border-radius: 8px;
+            border: 2px solid #9fa8da;
+            background: #fff;
+            outline: none;
+            font-family: inherit;
+            color: #283593;
+            text-align: center;
+        }
+        .eq-line input.coef { width: 34px; font-size: 16px; border-color: #b39ddb; }
+        .eq-line input.fml { width: 90px; font-size: 15px; }
+        .eq-line input:focus { border-color: #e74c3c; box-shadow: 0 0 5px rgba(231,76,60,0.3); }
+        .eq-line input.ok { border-color: #2ecc71; background: #eafaf1; }
+        .eq-line input.bad { border-color: #e74c3c; background: #fdecea; }
+        .term-name {
+            font-size: 11px;
+            color: #78909c;
+            text-align: center;
+            max-width: 120px;
+            line-height: 1.3;
+            min-height: 15px;
+        }
+        .term-name.dim { color: #cfd8dc; }
+        .term-mark {
+            font-size: 11px;
+            color: #27ae60;
+            font-weight: bold;
+            min-height: 14px;
+            line-height: 1.2;
+        }
+        .eq-op { font-size: 20px; font-weight: bold; color: #90a4ae; padding: 0 2px 16px; }
+        .arrow-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 4px 14px;
+        }
+        .arrow-cond { font-size: 11px; color: #e67e22; font-weight: bold; min-height: 14px; }
+        .arrow-line { font-size: 20px; color: #546e7a; }
+        .eq-actions { text-align: center; margin-top: 14px; }
+        .eq-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            color: #546e7a;
+            margin-left: 8px;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        /* ===== 抽屉 tab ===== */
+        .drawer-tabs {
+            display: flex;
+            gap: 6px;
+            padding: 10px 12px 4px;
+        }
+        .dtab {
+            flex: 1;
+            border: 1.5px solid #dfe9ee;
+            background: #fff;
+            border-radius: 9px;
+            padding: 7px 4px;
+            font-size: 12px;
+            color: #78909c;
+            cursor: pointer;
+            line-height: 1.3;
+            transition: 0.2s;
+        }
+        .dtab .dcnt { display: block; font-size: 11px; color: #b0bec5; margin-top: 1px; }
+        .dtab.active { background: #3498db; border-color: #3498db; color: #fff; }
+        .dtab.active .dcnt { color: rgba(255,255,255,0.8); }
+        .dpanel { padding-top: 8px; }
+
         /* ===== 通关弹窗 & 撒花 ===== */
         .modal-mask {
             position: fixed;
@@ -827,6 +948,39 @@
         <div class="cheat-grid" id="cheatGrid"></div>
     </details>
 
+    <!-- ===== 题型三：化学方程式完整填空 ===== -->
+    <h3 id="eqSection">🧩 题型三：化学方程式完整填空</h3>
+    <div class="explain-box" style="background:#fff; border-left-color:#5c6bc0;">
+        <p>这是中考卷上最常见的写法：给一句话描述，把<strong>整条方程式挖空</strong>——每种物质的化学式要你自己写，系数也要你自己配。</p>
+        <p>每个空下面写着物质的中文名（勾掉“显示中文名”就能练纯默写）。写完点“检查答案”，它会逐个空判：是<strong>化学式写错</strong>了，还是<strong>只差配平</strong>，一眼看得出来。</p>
+    </div>
+
+    <div class="eq-area" id="eqArea">
+        <div class="qbar">
+            <button class="btn btn-mini" id="ePrev">← 上一题</button>
+            <span class="qno" id="eQno">第 1 / 51 题</span>
+            <button class="btn btn-mini" id="eNext">下一题 →</button>
+        </div>
+
+        <div class="eq-desc" id="eDesc"></div>
+        <div class="eq-line" id="eLine"></div>
+
+        <div class="eq-actions">
+            <button class="btn btn-check" id="eCheck">检查答案</button>
+            <button class="btn btn-hint" id="eShowHint">提示</button>
+            <label class="eq-toggle"><input type="checkbox" id="eShowName" checked> 显示中文名</label>
+        </div>
+
+        <div class="feedback" id="eFeedback"></div>
+        <div id="eHint" class="hidden" style="margin-top:10px; color:#d35400; font-weight:bold; text-align:left; font-size:14px; line-height:1.8;"></div>
+
+        <div class="write-progress">
+            <span>答对 <b id="eSolved">0</b> / <span id="eTotal">51</span> 题</span>
+            <button class="btn btn-mini" id="eReset">重来</button>
+        </div>
+    </div>
+
+
 </div>
 
 <!-- 通关弹窗 -->
@@ -852,11 +1006,17 @@
 <aside class="drawer" id="drawer">
     <div class="drawer-head">
         <strong>📋 选题列表</strong>
-        <span class="drawer-sub" id="mapSummary">0 / 34 已完成</span>
         <button class="drawer-close" id="btnCloseDrawer" aria-label="关闭">✕</button>
     </div>
+    <div class="drawer-tabs">
+        <button class="dtab active" data-tab="t1">① 配平<span class="dcnt" id="tabCount1">0/34</span></button>
+        <button class="dtab" data-tab="t2">② 写化学式<span class="dcnt" id="tabCount2">0/52</span></button>
+        <button class="dtab" data-tab="t3">③ 方程式<span class="dcnt" id="tabCount3">0/51</span></button>
+    </div>
     <div class="drawer-body">
-        <div class="qmap" id="qmap"></div>
+        <div class="dpanel" id="panel-t1"><div class="qmap" id="qmap"></div></div>
+        <div class="dpanel hidden" id="panel-t2"><div class="qmap" id="qmap2"></div></div>
+        <div class="dpanel hidden" id="panel-t3"><div class="qmap" id="qmap3"></div></div>
     </div>
     <p class="drawer-tip">
         <i style="background:#2ecc71"></i>已答对　<i style="background:#3498db"></i>当前题　<i style="background:#fff;border:2px solid #dfe9ee"></i>未完成
@@ -871,6 +1031,7 @@
     var canvas = document.getElementById('balAnim');
     if (!canvas || !canvas.getContext) return;
     var ctx = canvas.getContext('2d');
+    if (!ctx) return;   // 浏览器禁用 canvas 时，不要让整个脚本挂掉
 
     var captionEl = document.getElementById('animCaption');
     var tallyMolEl = document.getElementById('tallyMol');
@@ -1329,7 +1490,6 @@
     var btnNext = document.getElementById('btnNext');
     var qnoEl = document.getElementById('qno');
     var qmapEl = document.getElementById('qmap');
-    var mapSummary = document.getElementById('mapSummary');
     var statScore = document.getElementById('statScore');
     var statCombo = document.getElementById('statCombo');
     var statBest = document.getElementById('statBest');
@@ -1407,7 +1567,8 @@
         statBest.textContent = best;
         statSolved.textContent = solvedCount() + '/' + cases.length;
         progressFill.style.width = (solvedCount() / cases.length * 100) + '%';
-        if (mapSummary) mapSummary.textContent = solvedCount() + ' / ' + cases.length + ' 已完成';
+        var tc1 = document.getElementById('tabCount1');
+        if (tc1) tc1.textContent = solvedCount() + '/' + cases.length;
     }
 
     // ---------- 出题 ----------
@@ -1647,14 +1808,13 @@
     var drawer = document.getElementById('drawer');
     var mask = document.getElementById('drawerMask');
     var btnClose = document.getElementById('btnCloseDrawer');
-    var qmap = document.getElementById('qmap');
     if (!fab || !drawer) return;
 
     function isOpen() { return drawer.classList.contains('open'); }
 
     function openDrawer() {
         drawer.classList.add('open');
-        mask.classList.add('show');
+        if (mask) mask.classList.add('show');
         fab.classList.add('active');
         fab.querySelector('.fab-icon').textContent = '✕';
         fab.querySelector('.fab-label').textContent = '收起';
@@ -1662,33 +1822,39 @@
 
     function closeDrawer() {
         drawer.classList.remove('open');
-        mask.classList.remove('show');
+        if (mask) mask.classList.remove('show');
         fab.classList.remove('active');
         fab.querySelector('.fab-icon').textContent = '☰';
         fab.querySelector('.fab-label').textContent = '选题';
     }
 
-    fab.addEventListener('click', function () {
-        if (isOpen()) closeDrawer(); else openDrawer();
-    });
+    fab.addEventListener('click', function () { if (isOpen()) closeDrawer(); else openDrawer(); });
     if (mask) mask.addEventListener('click', closeDrawer);
     if (btnClose) btnClose.addEventListener('click', closeDrawer);
 
-    // 点题号跳题后自动收起抽屉
-    if (qmap) {
-        qmap.addEventListener('click', function (e) {
-            var t = e.target;
-            if (t && t.classList && t.classList.contains('map-chip')) {
-                setTimeout(closeDrawer, 120);
-            }
-        });
-    }
+    // 三个题型的 tab 切换 + 点题号后收起
+    drawer.addEventListener('click', function (e) {
+        var t = e.target;
+        if (!t || !t.classList) return;
+
+        if (t.classList.contains('dtab')) {
+            var tab = t.getAttribute('data-tab');
+            Array.prototype.forEach.call(drawer.querySelectorAll('.dtab'), function (b) {
+                b.classList.toggle('active', b === t);
+            });
+            Array.prototype.forEach.call(drawer.querySelectorAll('.dpanel'), function (p) {
+                p.classList.toggle('hidden', p.id !== 'panel-' + tab);
+            });
+            return;
+        }
+
+        if (t.classList.contains('map-chip')) setTimeout(closeDrawer, 120);
+    });
 
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && isOpen()) closeDrawer();
     });
 })();
-
 
 /* ============ 5. 题型二：看名称写化学式 ============ */
 (function () {
@@ -1820,6 +1986,22 @@
 
     function updateStats() {
         solvedEl.textContent = solvedCount();
+        var tc = document.getElementById('tabCount2');
+        if (tc) tc.textContent = solvedCount() + '/' + items.length;
+        renderMap();
+    }
+
+    function renderMap() {
+        var el = document.getElementById('qmap2');
+        if (!el) return;
+        var html = '';
+        for (var i = 0; i < items.length; i++) {
+            var cls = 'map-chip';
+            if (i === cur) cls += ' current';
+            else if (solved[i]) cls += ' done';
+            html += '<button class="' + cls + '" data-i="' + i + '">' + (i + 1) + '</button>';
+        }
+        el.innerHTML = html;
     }
 
     // ---------- 出题 ----------
@@ -1918,8 +2100,603 @@
         if (e.key === 'Enter') check();
     });
 
+    var mapEl2 = document.getElementById('qmap2');
+    if (mapEl2) {
+        mapEl2.addEventListener('click', function (e) {
+            var t = e.target;
+            if (!t || !t.classList || !t.classList.contains('map-chip')) return;
+            var i = parseInt(t.getAttribute('data-i'), 10);
+            if (isNaN(i)) return;
+            show(i);
+            var area = document.getElementById('writeArea');
+            if (area && area.scrollIntoView) area.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    }
+
     totalEl.textContent = items.length;
     renderCheat();
+    updateStats();
+    show(0);
+})();
+
+
+/* ============ 6. 题型三：化学方程式完整填空 ============ */
+(function () {
+    // 术语格式：[化学式, 中文名, 箭头符号(可选：↑/↓)]
+    var items = [
+        { d: '实验室用高锰酸钾受热分解制取氧气（试管口要塞一团棉花）', cond: '△',
+          left: [['KMnO4', '高锰酸钾']],
+          right: [['K2MnO4', '锰酸钾'], ['MnO2', '二氧化锰'], ['O2', '氧气', '↑']],
+          ans: [2, 1, 1, 1], h: '生成三种物质：锰酸钾 + 二氧化锰 + 氧气，注意 K 和 Mn 都要凑成 2 个。' },
+
+        { d: '实验室用过氧化氢溶液和二氧化锰制取氧气（不需要加热）', cond: 'MnO2',
+          left: [['H2O2', '过氧化氢']],
+          right: [['H2O', '水'], ['O2', '氧气', '↑']],
+          ans: [2, 2, 1], h: '写 H₂O₂ 时别漏掉后面那个 2，它就是“过”氧化氢。' },
+
+        { d: '实验室加热氯酸钾和二氧化锰的混合物制取氧气', cond: 'MnO2 / △',
+          left: [['KClO3', '氯酸钾']],
+          right: [['KCl', '氯化钾'], ['O2', '氧气', '↑']],
+          ans: [2, 2, 3], h: 'O 左边 3 个、右边 2 个 → 最小公倍数 6。' },
+
+        { d: '水在直流电作用下分解（电解水实验，“正氧负氢”）', cond: '通电',
+          left: [['H2O', '水']],
+          right: [['H2', '氢气', '↑'], ['O2', '氧气', '↑']],
+          ans: [2, 2, 1] },
+
+        { d: '加热小苏打（碳酸氢钠）固体，它受热会分解', cond: '△',
+          left: [['NaHCO3', '碳酸氢钠']],
+          right: [['Na2CO3', '碳酸钠'], ['H2O', '水'], ['CO2', '二氧化碳', '↑']],
+          ans: [2, 1, 1, 1], h: 'Na 要凑成 2 个 → NaHCO₃ 前加 2。' },
+
+        { d: '工业上高温煅烧石灰石制取生石灰和二氧化碳', cond: '高温',
+          left: [['CaCO3', '碳酸钙']],
+          right: [['CaO', '氧化钙'], ['CO2', '二氧化碳', '↑']],
+          ans: [1, 1, 1] },
+
+        { d: '碳酸不稳定，受热后分解（二氧化碳通入石蕊试液后加热，红色变回紫色）', cond: '',
+          left: [['H2CO3', '碳酸']],
+          right: [['H2O', '水'], ['CO2', '二氧化碳', '↑']],
+          ans: [1, 1, 1] },
+
+        { d: '镁条在空气中燃烧，发出耀眼的白光，生成白色固体', cond: '点燃',
+          left: [['Mg', '镁'], ['O2', '氧气']],
+          right: [['MgO', '氧化镁']],
+          ans: [2, 1, 2] },
+
+        { d: '铁丝在氧气中剧烈燃烧，火星四射，生成黑色固体（瓶底要放水或细沙）', cond: '点燃',
+          left: [['Fe', '铁'], ['O2', '氧气']],
+          right: [['Fe3O4', '四氧化三铁']],
+          ans: [3, 2, 1], h: '产物是 Fe₃O₄，不是 Fe₂O₃。' },
+
+        { d: '红磷在空气中燃烧，产生大量白烟（常用于测定空气中氧气的含量）', cond: '点燃',
+          left: [['P', '磷'], ['O2', '氧气']],
+          right: [['P2O5', '五氧化二磷']],
+          ans: [4, 5, 2] },
+
+        { d: '硫粉在氧气中燃烧，发出明亮的蓝紫色火焰，生成有刺激性气味的气体', cond: '点燃',
+          left: [['S', '硫'], ['O2', '氧气']],
+          right: [['SO2', '二氧化硫']],
+          ans: [1, 1, 1] },
+
+        { d: '木炭在氧气中充分燃烧，发出白光（生成的气体能使澄清石灰水变浑浊）', cond: '点燃',
+          left: [['C', '碳'], ['O2', '氧气']],
+          right: [['CO2', '二氧化碳']],
+          ans: [1, 1, 1] },
+
+        { d: '木炭在氧气中不充分燃烧，生成有毒的一氧化碳', cond: '点燃',
+          left: [['C', '碳'], ['O2', '氧气']],
+          right: [['CO', '一氧化碳']],
+          ans: [2, 1, 2] },
+
+        { d: '一氧化碳在空气中燃烧，产生蓝色火焰', cond: '点燃',
+          left: [['CO', '一氧化碳'], ['O2', '氧气']],
+          right: [['CO2', '二氧化碳']],
+          ans: [2, 1, 2] },
+
+        { d: '氢气在空气中燃烧，产生淡蓝色火焰（烧杯内壁出现水雾）', cond: '点燃',
+          left: [['H2', '氢气'], ['O2', '氧气']],
+          right: [['H2O', '水']],
+          ans: [2, 1, 2] },
+
+        { d: '天然气的主要成分甲烷在空气中完全燃烧', cond: '点燃',
+          left: [['CH4', '甲烷'], ['O2', '氧气']],
+          right: [['CO2', '二氧化碳'], ['H2O', '水']],
+          ans: [1, 2, 1, 2], h: '甲烷的化学式是 CH₄，4 个氢 → 生成 2 个水。' },
+
+        { d: '酒精（乙醇）在空气中完全燃烧', cond: '点燃',
+          left: [['C2H5OH', '乙醇'], ['O2', '氧气']],
+          right: [['CO2', '二氧化碳'], ['H2O', '水']],
+          ans: [1, 3, 2, 3], h: '乙醇 C₂H₅OH 里有 2 个 C、6 个 H、1 个 O。' },
+
+        { d: '常温下铝与氧气反应，表面生成致密氧化膜（铝制品耐腐蚀的原因）', cond: '',
+          left: [['Al', '铝'], ['O2', '氧气']],
+          right: [['Al2O3', '氧化铝']],
+          ans: [4, 3, 2] },
+
+        { d: '铜在空气中加热，红色固体逐渐变成黑色', cond: '△',
+          left: [['Cu', '铜'], ['O2', '氧气']],
+          right: [['CuO', '氧化铜']],
+          ans: [2, 1, 2] },
+
+        { d: '二氧化碳通入紫色石蕊试液，试液由紫色变成红色', cond: '',
+          left: [['CO2', '二氧化碳'], ['H2O', '水']],
+          right: [['H2CO3', '碳酸']],
+          ans: [1, 1, 1] },
+
+        { d: '二氧化碳通过灼热的炭层，生成一氧化碳（吸热反应）', cond: '高温',
+          left: [['CO2', '二氧化碳'], ['C', '碳']],
+          right: [['CO', '一氧化碳']],
+          ans: [1, 1, 2] },
+
+        { d: '生石灰与水反应放出大量热（可作干燥剂，也是制熟石灰的原理）', cond: '',
+          left: [['CaO', '氧化钙'], ['H2O', '水']],
+          right: [['Ca(OH)2', '氢氧化钙']],
+          ans: [1, 1, 1], h: '熟石灰要写成 Ca(OH)₂，括号不能省。' },
+
+        { d: '二氧化碳使澄清的石灰水变浑浊（检验二氧化碳的方法）', cond: '',
+          left: [['CO2', '二氧化碳'], ['Ca(OH)2', '氢氧化钙']],
+          right: [['CaCO3', '碳酸钙', '↓'], ['H2O', '水']],
+          ans: [1, 1, 1, 1] },
+
+        { d: '用氢氧化钠溶液吸收二氧化碳（除去混合气体中的 CO₂）', cond: '',
+          left: [['CO2', '二氧化碳'], ['NaOH', '氢氧化钠']],
+          right: [['Na2CO3', '碳酸钠'], ['H2O', '水']],
+          ans: [1, 2, 1, 1] },
+
+        { d: '氢气还原氧化铜，黑色固体逐渐变成红色', cond: '△',
+          left: [['H2', '氢气'], ['CuO', '氧化铜']],
+          right: [['Cu', '铜'], ['H2O', '水']],
+          ans: [1, 1, 1, 1] },
+
+        { d: '木炭在高温下还原氧化铜，黑色固体变成红色，同时产生使石灰水变浑浊的气体', cond: '高温',
+          left: [['C', '碳'], ['CuO', '氧化铜']],
+          right: [['Cu', '铜'], ['CO2', '二氧化碳', '↑']],
+          ans: [1, 2, 2, 1] },
+
+        { d: '一氧化碳还原氧化铜（尾气要点燃处理，防止污染空气）', cond: '△',
+          left: [['CO', '一氧化碳'], ['CuO', '氧化铜']],
+          right: [['Cu', '铜'], ['CO2', '二氧化碳']],
+          ans: [1, 1, 1, 1] },
+
+        { d: '一氧化碳还原氧化铁（高炉炼铁的主要反应）', cond: '高温',
+          left: [['Fe2O3', '氧化铁'], ['CO', '一氧化碳']],
+          right: [['Fe', '铁'], ['CO2', '二氧化碳']],
+          ans: [1, 3, 2, 3], h: 'Fe 定 2 个 → CO₂ 定 3 个 → CO 就是 3 个。' },
+
+        { d: '氢气还原氧化铁', cond: '高温',
+          left: [['Fe2O3', '氧化铁'], ['H2', '氢气']],
+          right: [['Fe', '铁'], ['H2O', '水']],
+          ans: [1, 3, 2, 3] },
+
+        { d: '锌粒与稀硫酸反应制取氢气（实验室制氢气的常用反应）', cond: '',
+          left: [['Zn', '锌'], ['H2SO4', '硫酸']],
+          right: [['ZnSO4', '硫酸锌'], ['H2', '氢气', '↑']],
+          ans: [1, 1, 1, 1] },
+
+        { d: '铁与稀盐酸反应，铁钉表面产生气泡，溶液由无色变成浅绿色', cond: '',
+          left: [['Fe', '铁'], ['HCl', '盐酸(氯化氢)']],
+          right: [['FeCl2', '氯化亚铁'], ['H2', '氢气', '↑']],
+          ans: [1, 2, 1, 1], h: '铁与酸反应生成的是“亚铁”FeCl₂，不是 FeCl₃。' },
+
+        { d: '镁与稀盐酸反应', cond: '',
+          left: [['Mg', '镁'], ['HCl', '盐酸(氯化氢)']],
+          right: [['MgCl2', '氯化镁'], ['H2', '氢气', '↑']],
+          ans: [1, 2, 1, 1] },
+
+        { d: '铝与稀硫酸反应', cond: '',
+          left: [['Al', '铝'], ['H2SO4', '硫酸']],
+          right: [['Al2(SO4)3', '硫酸铝'], ['H2', '氢气', '↑']],
+          ans: [2, 3, 1, 3], h: '硫酸铝是 Al₂(SO₄)₃，括号要加，别写成 AlSO₄。' },
+
+        { d: '铁与硫酸铜溶液反应，铁钉表面析出红色固体，溶液由蓝色变成浅绿色（“湿法炼铜”）', cond: '',
+          left: [['Fe', '铁'], ['CuSO4', '硫酸铜']],
+          right: [['FeSO4', '硫酸亚铁'], ['Cu', '铜']],
+          ans: [1, 1, 1, 1] },
+
+        { d: '锌与硫酸铜溶液反应', cond: '',
+          left: [['Zn', '锌'], ['CuSO4', '硫酸铜']],
+          right: [['ZnSO4', '硫酸锌'], ['Cu', '铜']],
+          ans: [1, 1, 1, 1] },
+
+        { d: '铜丝浸入硝酸银溶液，表面析出银白色固体，溶液变蓝', cond: '',
+          left: [['Cu', '铜'], ['AgNO3', '硝酸银']],
+          right: [['Cu(NO3)2', '硝酸铜'], ['Ag', '银']],
+          ans: [1, 2, 1, 2], h: '银是 Ag；硝酸铜里硝酸根要写 2 个：(NO₃)₂。' },
+
+        { d: '氢氧化钠溶液与稀盐酸反应（中和反应，没有明显现象，需要指示剂判断）', cond: '',
+          left: [['NaOH', '氢氧化钠'], ['HCl', '盐酸(氯化氢)']],
+          right: [['NaCl', '氯化钠'], ['H2O', '水']],
+          ans: [1, 1, 1, 1] },
+
+        { d: '熟石灰与稀盐酸反应（可用于改良酸性土壤）', cond: '',
+          left: [['Ca(OH)2', '氢氧化钙'], ['HCl', '盐酸(氯化氢)']],
+          right: [['CaCl2', '氯化钙'], ['H2O', '水']],
+          ans: [1, 2, 1, 2] },
+
+        { d: '氢氧化钠溶液与稀硫酸反应', cond: '',
+          left: [['NaOH', '氢氧化钠'], ['H2SO4', '硫酸']],
+          right: [['Na2SO4', '硫酸钠'], ['H2O', '水']],
+          ans: [2, 1, 1, 2] },
+
+        { d: '用氢氧化铝治疗胃酸过多（氢氧化铝与盐酸反应）', cond: '',
+          left: [['Al(OH)3', '氢氧化铝'], ['HCl', '盐酸(氯化氢)']],
+          right: [['AlCl3', '氯化铝'], ['H2O', '水']],
+          ans: [1, 3, 1, 3] },
+
+        { d: '用氢氧化镁治疗胃酸过多（氢氧化镁与盐酸反应）', cond: '',
+          left: [['Mg(OH)2', '氢氧化镁'], ['HCl', '盐酸(氯化氢)']],
+          right: [['MgCl2', '氯化镁'], ['H2O', '水']],
+          ans: [1, 2, 1, 2] },
+
+        { d: '用稀盐酸除铁锈，铁锈逐渐溶解，溶液变成黄色', cond: '',
+          left: [['Fe2O3', '氧化铁'], ['HCl', '盐酸(氯化氢)']],
+          right: [['FeCl3', '氯化铁'], ['H2O', '水']],
+          ans: [1, 6, 2, 3], h: 'Fe₂O₃ 有 2 个 Fe → FeCl₃ 前加 2（要 6 个 Cl）→ HCl 前加 6。' },
+
+        { d: '氧化铜与稀硫酸反应，黑色固体溶解，溶液变成蓝色', cond: '',
+          left: [['CuO', '氧化铜'], ['H2SO4', '硫酸']],
+          right: [['CuSO4', '硫酸铜'], ['H2O', '水']],
+          ans: [1, 1, 1, 1] },
+
+        { d: '实验室用大理石（或石灰石）与稀盐酸反应制取二氧化碳', cond: '',
+          left: [['CaCO3', '碳酸钙'], ['HCl', '盐酸(氯化氢)']],
+          right: [['CaCl2', '氯化钙'], ['H2O', '水'], ['CO2', '二氧化碳', '↑']],
+          ans: [1, 2, 1, 1, 1] },
+
+        { d: '碳酸钠与稀盐酸反应（泡沫灭火器的原理之一）', cond: '',
+          left: [['Na2CO3', '碳酸钠'], ['HCl', '盐酸(氯化氢)']],
+          right: [['NaCl', '氯化钠'], ['H2O', '水'], ['CO2', '二氧化碳', '↑']],
+          ans: [1, 2, 2, 1, 1], h: 'Na₂CO₃ 有 2 个 Na → NaCl 前加 2，HCl 前也加 2。' },
+
+        { d: '用小苏打（碳酸氢钠）治疗胃酸过多', cond: '',
+          left: [['NaHCO3', '碳酸氢钠'], ['HCl', '盐酸(氯化氢)']],
+          right: [['NaCl', '氯化钠'], ['H2O', '水'], ['CO2', '二氧化碳', '↑']],
+          ans: [1, 1, 1, 1, 1], h: '小苏打只有 1 个 Na，所以系数全是 1。' },
+
+        { d: '氢氧化钠溶液与硫酸铜溶液反应，产生蓝色沉淀', cond: '',
+          left: [['NaOH', '氢氧化钠'], ['CuSO4', '硫酸铜']],
+          right: [['Cu(OH)2', '氢氧化铜', '↓'], ['Na2SO4', '硫酸钠']],
+          ans: [2, 1, 1, 1] },
+
+        { d: '氢氧化钠溶液与氯化铁溶液反应，产生红褐色沉淀', cond: '',
+          left: [['NaOH', '氢氧化钠'], ['FeCl3', '氯化铁']],
+          right: [['Fe(OH)3', '氢氧化铁', '↓'], ['NaCl', '氯化钠']],
+          ans: [3, 1, 1, 3], h: 'FeCl₃ 有 3 个 Cl → NaOH 前加 3，NaCl 前加 3。' },
+
+        { d: '氢氧化钙溶液与碳酸钠溶液反应（工业上用纯碱和熟石灰制取烧碱）', cond: '',
+          left: [['Ca(OH)2', '氢氧化钙'], ['Na2CO3', '碳酸钠']],
+          right: [['CaCO3', '碳酸钙', '↓'], ['NaOH', '氢氧化钠']],
+          ans: [1, 1, 1, 2] },
+
+        { d: '氯化钡溶液与稀硫酸反应，产生不溶于稀硝酸的白色沉淀（检验硫酸根）', cond: '',
+          left: [['BaCl2', '氯化钡'], ['H2SO4', '硫酸']],
+          right: [['BaSO4', '硫酸钡', '↓'], ['HCl', '盐酸(氯化氢)']],
+          ans: [1, 1, 1, 2] },
+
+        { d: '硝酸银溶液与稀盐酸反应，产生白色沉淀（检验氯离子）', cond: '',
+          left: [['AgNO3', '硝酸银'], ['HCl', '盐酸(氯化氢)']],
+          right: [['AgCl', '氯化银', '↓'], ['HNO3', '硝酸']],
+          ans: [1, 1, 1, 1] }
+    ];
+
+    // ---------- DOM ----------
+    var lineEl = document.getElementById('eLine');
+    var descEl = document.getElementById('eDesc');
+    var fbEl = document.getElementById('eFeedback');
+    var hintEl = document.getElementById('eHint');
+    var qnoEl = document.getElementById('eQno');
+    var solvedEl = document.getElementById('eSolved');
+    var totalEl = document.getElementById('eTotal');
+    var btnPrev = document.getElementById('ePrev');
+    var btnNext = document.getElementById('eNext');
+    var btnCheck = document.getElementById('eCheck');
+    var btnHint = document.getElementById('eShowHint');
+    var btnReset = document.getElementById('eReset');
+    var chkName = document.getElementById('eShowName');
+    var mapEl = document.getElementById('qmap3');
+    if (!lineEl) return;
+
+    var cur = 0;
+    var solved = {};
+    var tries = 0;
+    var showName = true;
+
+    // ---------- 工具 ----------
+    function fmt(f) { return f.replace(/(\d+)/g, '<sub>$1</sub>'); }
+
+    function norm(s) {
+        return String(s || '')
+            .replace(/[\s\u3000]+/g, '')
+            .replace(/（/g, '(')
+            .replace(/）/g, ')')
+            .replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 65248); })
+            .replace(/[·・.]/g, '')
+            .toLowerCase();
+    }
+
+    function sameFormula(a, b) {
+        var x = norm(a), y = norm(b);
+        if (!x) return false;
+        return x === y || x.replace(/[()]/g, '') === y.replace(/[()]/g, '');
+    }
+
+    function parseFormula(f) {
+        var i = 0;
+        function readNum() {
+            var m = /^\d+/.exec(f.slice(i));
+            if (!m) return 1;
+            i += m[0].length;
+            return parseInt(m[0], 10);
+        }
+        function parseGroup() {
+            var out = {};
+            while (i < f.length && f[i] !== ')') {
+                if (f[i] === '(') {
+                    i++;
+                    var sub = parseGroup();
+                    if (f[i] === ')') i++;
+                    var n = readNum();
+                    for (var k in sub) out[k] = (out[k] || 0) + sub[k] * n;
+                } else {
+                    var m = /^[A-Z][a-z]?/.exec(f.slice(i));
+                    if (!m) { i++; continue; }
+                    var sym = m[0];
+                    i += sym.length;
+                    var c = readNum();
+                    out[sym] = (out[sym] || 0) + c;
+                }
+            }
+            return out;
+        }
+        return parseGroup();
+    }
+
+    var ELEM_CN = {
+        H: '氢', O: '氧', C: '碳', N: '氮', S: '硫', P: '磷', Cl: '氯',
+        K: '钾', Na: '钠', Mg: '镁', Ca: '钙', Al: '铝', Fe: '铁', Cu: '铜',
+        Zn: '锌', Mn: '锰', Ba: '钡', Ag: '银'
+    };
+    function elemName(s) { return ELEM_CN[s] ? ELEM_CN[s] + '(' + s + ')' : s; }
+
+    function terms() {
+        var it = items[cur];
+        return it.left.concat(it.right);
+    }
+
+    function solvedCount() { return Object.keys(solved).length; }
+
+    function updateStats() {
+        solvedEl.textContent = solvedCount();
+        var tc = document.getElementById('tabCount3');
+        if (tc) tc.textContent = solvedCount() + '/' + items.length;
+        renderMap();
+    }
+
+    // ---------- 渲染 ----------
+    function termHTML(term, gi, idx, isRight) {
+        var f = term[0], name = term[1];
+        var nameShown = showName ? name : '（自己回忆）';
+        return '<div class="term">' +
+            '<div class="term-top">' +
+                '<input class="coef" type="number" min="1" inputmode="numeric" id="e-coef-' + idx + '">' +
+                '<input class="fml" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="化学式" id="e-fml-' + idx + '">' +
+            '</div>' +
+            '<div class="term-name' + (showName ? '' : ' dim') + '">' + nameShown + '</div>' +
+            '<div class="term-mark" id="e-mark-' + idx + '"></div>' +
+        '</div>';
+    }
+
+    function render() {
+        var it = items[cur];
+        descEl.innerHTML = '<span class="tag">' + (cur + 1) + '</span>' + it.d;
+        qnoEl.textContent = '第 ' + (cur + 1) + ' / ' + items.length + ' 题';
+
+        var html = '';
+        var idx = 0;
+        it.left.forEach(function (t) {
+            html += idx ? '<div class="eq-op">+</div>' : '';
+            html += termHTML(t, 0, idx, false);
+            idx++;
+        });
+        html += '<div class="arrow-wrap"><div class="arrow-cond">' + (it.cond || '') + '</div><div class="arrow-line">➡</div></div>';
+        it.right.forEach(function (t) {
+            html += idx > it.left.length ? '<div class="eq-op">+</div>' : '';
+            html += termHTML(t, 1, idx, true);
+            idx++;
+        });
+        lineEl.innerHTML = html;
+
+        Array.prototype.forEach.call(lineEl.querySelectorAll('input'), function (inp) {
+            inp.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') check();
+            });
+        });
+        if (window.innerWidth > 480) {
+            var first = document.getElementById('e-coef-0');
+            if (first) first.focus();
+        }
+    }
+
+    function renderMap() {
+        if (!mapEl) return;
+        var html = '';
+        for (var i = 0; i < items.length; i++) {
+            var cls = 'map-chip';
+            if (i === cur) cls += ' current';
+            else if (solved[i]) cls += ' done';
+            html += '<button class="' + cls + '" data-i="' + i + '">' + (i + 1) + '</button>';
+        }
+        mapEl.innerHTML = html;
+    }
+
+    function show(i) {
+        cur = ((i % items.length) + items.length) % items.length;
+        tries = 0;
+        fbEl.innerHTML = '';
+        fbEl.className = 'feedback';
+        hintEl.classList.add('hidden');
+        hintEl.innerHTML = '';
+        render();
+        updateStats();
+    }
+
+    function fullEquation() {
+        var it = items[cur];
+        var all = it.left.concat(it.right);
+        var parts = [], k = 0;
+        it.left.forEach(function (t) {
+            var c = it.ans[k++];
+            parts.push((c > 1 ? c : '') + fmt(t[0]));
+        });
+        var s = parts.join(' + ');
+        s += ' <span style="color:#e67e22;font-size:13px;">' + (it.cond || '') + '</span> ➡ ';
+        parts = [];
+        it.right.forEach(function (t) {
+            var c = it.ans[k++];
+            parts.push((c > 1 ? c : '') + fmt(t[0]) + (t[2] || ''));
+        });
+        return s + parts.join(' + ');
+    }
+
+    // ---------- 检查 ----------
+    function check() {
+        var it = items[cur];
+        var all = it.left.concat(it.right);
+        var vals = [], coefs = [], fmls = [];
+        var anyEmpty = false;
+
+        all.forEach(function (t, i) {
+            var cEl = document.getElementById('e-coef-' + i);
+            var fEl = document.getElementById('e-fml-' + i);
+            var cv = cEl.value.trim();
+            var fv = fEl.value.trim();
+            if (!cv || !fv) anyEmpty = true;
+            coefs.push(cv ? parseInt(cv, 10) : NaN);
+            fmls.push(fv);
+        });
+
+        if (anyEmpty) {
+            fbEl.className = 'feedback error';
+            fbEl.innerHTML = '⚠️ 每个空都要填：先写化学式，再填系数（系数是 1 也要写 1）。';
+            return;
+        }
+
+        var fmlWrong = [], coefWrong = [];
+        all.forEach(function (t, i) {
+            var fOk = sameFormula(fmls[i], t[0]);
+            var cOk = coefs[i] === it.ans[i];
+            var cEl = document.getElementById('e-coef-' + i);
+            var fEl = document.getElementById('e-fml-' + i);
+            cEl.classList.toggle('ok', cOk);
+            cEl.classList.toggle('bad', !cOk);
+            fEl.classList.toggle('ok', fOk);
+            fEl.classList.toggle('bad', !fOk);
+            if (!fOk) fmlWrong.push(i);
+            else if (!cOk) coefWrong.push(i);
+            var mk = document.getElementById('e-mark-' + i);
+            if (mk) mk.innerHTML = '';
+        });
+
+        if (!fmlWrong.length && !coefWrong.length) {
+            var isNew = !solved[cur];
+            solved[cur] = true;
+            updateStats();
+            fbEl.className = 'feedback success';
+            fbEl.innerHTML = '🎉 完全正确！完整方程式：<br><span style="font-size:17px;">' + fullEquation() + '</span>' +
+                (isNew ? '<br><span style="font-weight:normal;color:#607d8b;">这题已计入进度 ✅</span>' : '');
+            if (window.burst) window.burst(40);
+            return;
+        }
+
+        tries += 1;
+
+        // 化学式写错了
+        if (fmlWrong.length) {
+            var list = fmlWrong.map(function (i) {
+                return '<li>' + all[i][1] + ' → 你写的是 <strong>' + (fmls[i] || '空') + '</strong></li>';
+            });
+            fbEl.className = 'feedback error';
+            if (tries >= 2) {
+                fmlWrong.forEach(function (i) {
+                    var mk = document.getElementById('e-mark-' + i);
+                    if (mk) mk.innerHTML = '应写 ' + fmt(all[i][0]);
+                });
+                fbEl.innerHTML = '❌ 有 ' + fmlWrong.length + ' 个化学式写错了（红色框）：<ul>' + list.join('') +
+                    '</ul>正确答案已写在下面绿色小字里，对照着记一遍。<br><span style="font-weight:normal;">完整方程式：' + fullEquation() + '</span>';
+            } else {
+                fbEl.innerHTML = '❌ 有 ' + fmlWrong.length + ' 个化学式写得不对（红色框）：<ul>' + list.join('') +
+                    '</ul><span style="font-weight:normal;">对照框下面的中文名再想想；点“提示”可以看这句话的关键点。</span>';
+            }
+            return;
+        }
+
+        // 化学式都对，只是系数没配平
+        var leftC = {}, rightC = {};
+        it.left.forEach(function (t, i) {
+            var c = parseFormula(t[0]);
+            for (var k in c) leftC[k] = (leftC[k] || 0) + c[k] * coefs[i];
+        });
+        it.right.forEach(function (t, i) {
+            var c = parseFormula(t[0]);
+            var ci = coefs[it.left.length + i];
+            for (var k in c) rightC[k] = (rightC[k] || 0) + c[k] * ci;
+        });
+        var elems = Object.keys(leftC);
+        Object.keys(rightC).forEach(function (k) { if (elems.indexOf(k) === -1) elems.push(k); });
+        var bad = elems.filter(function (e) { return (leftC[e] || 0) !== (rightC[e] || 0); });
+
+        var lines = bad.map(function (e) {
+            var l = leftC[e] || 0, r = rightC[e] || 0;
+            return '<li>' + elemName(e) + '：左边 <strong>' + l + '</strong> 个，右边 <strong>' + r + '</strong> 个</li>';
+        });
+
+        fbEl.className = 'feedback error';
+        fbEl.innerHTML = '👏 化学式全部写对了！只是系数还没配平：<ul>' + lines.join('') + '</ul>' +
+            '<span style="font-weight:normal;">只改前面的系数，让每种原子两边个数相等（系数 1 要写 1）。</span>';
+    }
+
+    function showHint() {
+        var it = items[cur];
+        hintEl.innerHTML = '💡 提示：' + (it.h || '先按描述判断反应物和生成物，写出各自的化学式，再配系数。') +
+            '<br><span style="font-weight:normal;color:#7f8c8d;">化学式写不出来时，可以回到上面“题型二”练一练。</span>';
+        hintEl.classList.remove('hidden');
+    }
+
+    // ---------- 绑定 ----------
+    btnCheck.addEventListener('click', check);
+    btnHint.addEventListener('click', showHint);
+    btnPrev.addEventListener('click', function () { show(cur - 1); });
+    btnNext.addEventListener('click', function () { show(cur + 1); });
+    btnReset.addEventListener('click', function () { solved = {}; updateStats(); show(0); });
+    if (chkName) {
+        chkName.addEventListener('change', function () {
+            showName = chkName.checked;
+            var saved = {};
+            Array.prototype.forEach.call(lineEl.querySelectorAll('input'), function (inp) {
+                saved[inp.id] = inp.value;
+            });
+            render();
+            for (var id in saved) {
+                var el = document.getElementById(id);
+                if (el) el.value = saved[id];
+            }
+        });
+    }
+
+    if (mapEl) {
+        mapEl.addEventListener('click', function (e) {
+            var t = e.target;
+            if (!t || !t.classList || !t.classList.contains('map-chip')) return;
+            var i = parseInt(t.getAttribute('data-i'), 10);
+            if (isNaN(i)) return;
+            show(i);
+            var area = document.getElementById('eqArea');
+            if (area && area.scrollIntoView) area.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    }
+
+    totalEl.textContent = items.length;
     updateStats();
     show(0);
 })();
