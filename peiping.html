@@ -97,6 +97,22 @@
         .k { background-color: #9b59b6; }
         .na { background-color: #8e44ad; }
 
+        .balanced-summary { width: 100%; text-align: center; }
+        .balanced-diagram { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; width: 100%; }
+        .balanced-diagram .side { min-width: 0; padding: 6px 0; }
+        .balanced-diagram .molecule-group { min-height: 140px; justify-content: center; }
+        .balanced-equals { align-self: center; color: #27ae60; font-size: 30px; font-weight: bold; }
+        .balanced-count { font-size: 14px; font-weight: bold; color: #237a46; margin: 12px 0 0; }
+        @media (max-width: 480px) {
+            .balance-success { padding: 12px; }
+            .balanced-diagram { gap: 4px; }
+            .balanced-diagram .side-title { font-size: 13px; }
+            .balanced-diagram .molecule { padding: 5px; }
+            .balanced-diagram .atom { width: 22px; height: 22px; margin: 0 1px; }
+            .balanced-count { font-size: 12px; }
+            .balanced-equals { font-size: 24px; }
+        }
+
         /* ===== 球棍动画演示 ===== */
         .anim-wrap {
             background: #f7fbfd;
@@ -899,14 +915,34 @@
     <p><strong>① 先在 H₂O 前写 2。</strong>现在右边有 2 个水分子，氧原子就配齐了。不过，每个水分子还带着 2 个 H，所以右边的氢也变成了 4 个。</p>
     <p><strong>② 再在 H₂ 前写 2。</strong>左边的氢也有了 2×2＝4 个。这样，氢和氧都对上了，得到下面的结果。</p>
 
-    <div class="balance-area" style="border: 2px solid #2ecc71; background: #eafaf1;">
-        <div class="side">
-            <div class="side-title">正确的配平结果：</div>
+    <div class="balance-area balance-success" style="border: 2px solid #2ecc71; background: #eafaf1;">
+        <div class="balanced-summary">
+            <div class="side-title">配平后，两边每种原子一样多</div>
             <div class="equation" style="margin: 10px 0; font-size: 20px;">
                 <strong>2</strong>H₂ + <strong>1</strong>O₂ → <strong>2</strong>H₂O
             </div>
-            <p style="font-size:14px;">系数 1 省略：<strong>2H₂ + O₂ → 2H₂O</strong></p>
         </div>
+        <div class="balanced-diagram" role="img" aria-label="配平后：左边两个氢气分子和一个氧气分子，右边两个水分子；两边都有四个氢原子、两个氧原子。">
+            <div class="side" data-side="left">
+                <div class="side-title">反应前（左边）</div>
+                <div class="molecule-group">
+                    <div class="molecule"><div class="atom h">H</div><div class="atom h">H</div></div>
+                    <div class="molecule"><div class="atom h">H</div><div class="atom h">H</div></div>
+                    <div class="molecule"><div class="atom o">O</div><div class="atom o">O</div></div>
+                </div>
+                <p class="balanced-count">4 个 H，2 个 O</p>
+            </div>
+            <div class="balanced-equals" aria-hidden="true">＝</div>
+            <div class="side" data-side="right">
+                <div class="side-title">反应后（右边）</div>
+                <div class="molecule-group">
+                    <div class="molecule"><div class="atom h">H</div><div class="atom h">H</div><div class="atom o">O</div></div>
+                    <div class="molecule"><div class="atom h">H</div><div class="atom h">H</div><div class="atom o">O</div></div>
+                </div>
+                <p class="balanced-count">4 个 H，2 个 O</p>
+            </div>
+        </div>
+        <p class="balanced-summary" style="font-size:14px; margin:0;">系数 1 省略：<strong>2H₂ + O₂ → 2H₂O</strong></p>
     </div>
 
     <div class="explain-box" style="background: #fff; border-left-color: #3498db;">
