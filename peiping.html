@@ -1327,7 +1327,8 @@
     function resize() {
         var rect = canvas.getBoundingClientRect();
         W = Math.max(280, Math.round(rect.width) || 320);
-        H = animationLayout().height;
+        var layout=animationLayout();
+        H = Math.max(layout.height,cur===3?Math.ceil(3*(72*layout.scale+8)+88):0);
         var dpr = Math.min(window.devicePixelRatio || 1, 2);
         canvas.style.height = H + 'px';
         canvas.width = Math.round(W * dpr);
@@ -1442,7 +1443,12 @@
             return [r2l[b[0]], r2l[b[1]]];
         }).filter(function (b) { return b[0] !== undefined && b[1] !== undefined; });
 
-        buildReactionFrames(layoutScale);
+        var productOffset=0;
+        var productGroups=anim.right.map(function(sp){
+            var ids=targetMap.slice(productOffset,productOffset+sp.atoms.length);productOffset+=sp.atoms.length;
+            return {name:sp.label,ids:ids};
+        });
+        buildReactionFrames(layoutScale,productGroups);
         atoms.forEach(function (a, i) { a.free = reactionFrames[2].positions[i]; });
 
         renderMeta();
@@ -1456,7 +1462,7 @@
     // Iron oxide phases: https://www.sciencedirect.com/science/article/abs/pii/S0926860X07002062
     // Neutralization: https://pmc.ncbi.nlm.nih.gov/articles/PMC3251043/
     // Frames conserve the displayed atoms. Solvent/bath and catalyst lattice atoms are not in this inventory.
-    function buildReactionFrames(scale) {
+    function buildReactionFrames(scale,productGroups) {
         function group(name, ids, xy, bonds) {
             return { name: name, ids: ids, xy: xy, bonds: bonds || [] };
         }
@@ -1566,12 +1572,34 @@
                     maxHeight=Math.max(maxHeight,maxY-minY+18);
                     return {midX:(minX+maxX)/2,midY:(minY+maxY)/2};
                 });
-                var cols=Math.max(1,Math.min(4,groups.length,Math.floor((W-88)/maxWidth)));
-                var rows=Math.ceil(groups.length/cols),cellW=(W-88)/cols;
-                var cellH=Math.min(maxHeight,(H-88)/rows),top=(H-rows*cellH)/2;
+                anim.right.forEach(function(sp){
+                    var box=speciesBox(sp);
+                    maxWidth=Math.max(maxWidth,(box.maxX-box.minX)*scale+16);
+                    maxHeight=Math.max(maxHeight,(box.maxY-box.minY)*scale+18);
+                });
+                var spectatorIds=cur===2?[3,5,7,9,11,13]:cur===4?[0,3,6,10,11,12]:cur===5?[0,3]:[];
+                var spectators=groups.filter(function(g){return g.ids.every(function(id){return spectatorIds.indexOf(id)!==-1;});});
+                var reactive=groups.filter(function(g){return spectators.indexOf(g)===-1;});
+                var spectatorRadius=spectatorIds.reduce(function(r,id){return Math.max(r,atoms[id].r);},0);
+                var reserved=spectators.length?2*spectatorRadius+26:0;
+                var cols=cur===0?2:Math.max(1,Math.min(4,reactive.length,Math.floor((W-88)/maxWidth)));
+                var rows=Math.ceil(reactive.length/cols),cellW=(W-88)/cols;
+                if(cur===0)maxHeight=Math.max(maxHeight,72*scale+24);
+                var availableBottom=H-44-reserved;
+                var cellH=Math.min(maxHeight,(availableBottom-44)/rows),top=(44+availableBottom-rows*cellH)/2;
                 groups.forEach(function(g,index){
-                    var box=boxes[index],cx=44+(index%cols+0.5)*cellW-box.midX;
-                    var cy=top+(Math.floor(index/cols)+0.5)*cellH-box.midY;
+                    var box=boxes[index],slot=reactive.indexOf(g);
+                    var cx=44+(slot%cols+0.5)*cellW-box.midX;
+                    var cy=top+(Math.floor(slot/cols)+0.5)*cellH-box.midY;
+                    if(slot===-1){
+                        var spectatorSlot=spectators.indexOf(g);
+                        cx=44+(spectatorSlot+0.5)*(W-88)/spectators.length-box.midX;
+                        cy=H-spectatorRadius-10-box.midY;
+                    }
+                    if(cur===3){
+                        if(index===0){cx=W*0.30-box.midX;cy=H*0.5-box.midY;}
+                        else{cx=W*0.73-g.xy[0][0]*scale;cy=44+(index-0.5)*(H-88)/3-box.midY;}
+                    }
                     g.ids.forEach(function(id,i){positions[id]={x:cx+g.xy[i][0]*scale,y:cy+g.xy[i][1]*scale};});
                 });
             }
@@ -1581,8 +1609,17 @@
             (surfaceIds||[]).forEach(function(id){
                 if((previous.surfaceIds||[]).indexOf(id)!==-1)return;
                 var site=sites.indexOf(id);
-                positions[id]={x:W*0.23+(site+0.5)*W*0.54/sites.length,y:H*0.68-atoms[id].r};
+                var left=Math.max(44,W*0.18),width=Math.min(W-88,W*0.64);
+                var center=left+(Math.floor(site/2)+0.5)*width/3;
+                positions[id]={x:center+(site%2?1:-1)*(cur===1?23:15)*scale,y:H*0.68-atoms[id].r};
             });
+            if(cur===1&&phase>=2)[0,1,5,6].forEach(function(id){positions[id]={x:atoms[id].to.x,y:atoms[id].to.y};});
+            // A released proton moves clear of the donor oxygen before the following transfer.
+            if(cur===5&&phase===3){
+                var donor=positions[10],proton=positions[12],dx=proton.x-donor.x,dy=proton.y-donor.y;
+                var length=Math.hypot(dx,dy)||1,distance=atoms[10].r+atoms[12].r+8;
+                if(length<distance)positions[12]={x:donor.x+dx*distance/length,y:donor.y+dy*distance/length};
+            }
             // After a bond-forming event, turn only that new product into its standard direction.
             var reactionPositions=positions.map(function(p){return {x:p.x,y:p.y};}),turns={};
             if(phase!==1)groups.forEach(function(g){
@@ -1649,9 +1686,9 @@
         var previousSnapshot=first;
         var frames=[];
         if(cur===0) {
-            // Initiation, H+O2 -> OH+O, O+H2 -> OH+H, then H+OH(+M) -> H2O(+M).
+            // O2(+M) -> 2O(+M); O+H2 -> OH+H twice, then H+OH(+M) -> H2O(+M).
             frames=[
-                snapshot([single(0),single(1),pair('H2',2,3),pair('O2',4,5)],1),
+                snapshot([pair('H2',0,1),single(4),pair('H2',2,3),single(5)],1),
                 snapshot([oh(4,0),single(5),single(1),pair('H2',2,3)],2),
                 snapshot([oh(4,0),oh(5,2),single(1),single(3)],3),
                 snapshot([waterGroup(4,0,1),oh(5,2),single(3)],4),
@@ -1716,7 +1753,7 @@
             texts: atoms.map(function(a){return a.textTo;}),
             positions: atoms.map(function(a){return a.to;}),
             bonds: bondsTo,
-            groups: [], surfaceIds: [], surface: false
+            groups: productGroups, surfaceIds: [], surface: false
         });
         var clock=T_IDLE;
         reactionFrames=[first,Object.assign({},first,{time:T_IDLE})];
@@ -2004,9 +2041,11 @@
             ctx.restore();
         }
 
-        atoms.forEach(function (a, i) {
+        var backgroundIds=cur===2?[3,5,7,9,11,13]:cur===4?[0,3,6,10,11,12]:cur===5?[0,3]:[];
+        var drawOrder=atoms.map(function(a,i){return i;}).sort(function(a,b){return (backgroundIds.indexOf(a)===-1?1:0)-(backgroundIds.indexOf(b)===-1?1:0);});
+        drawOrder.forEach(function(i){
             var texts=p<0.5?state.previous.texts:state.next.texts;
-            drawAtom(a,pos[i].x,pos[i].y,texts[i]);
+            drawAtom(atoms[i],pos[i].x,pos[i].y,texts[i]);
         });
 
         // 停止时标签完全清晰；播放时按参照分子的渐隐进度淡出。
