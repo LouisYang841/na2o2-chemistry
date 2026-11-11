@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>化学配平大闯关</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background-color: #eef2f5;
+            color: #333;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        h3 {
+            color: #d35400;
+            margin-top: 30px;
+        }
+        .explain-box {
+            background: #fdfbf7;
+            border-left: 5px solid #e67e22;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            line-height: 1.6;
+        }
+
+        /* 天平与微观模型样式 */
+        .balance-area {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #f4f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px dashed #bdc3c7;
+        }
+        .side {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            padding: 10px;
+        }
+        .side-title {
+            font-weight: bold;
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+        .molecule-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+        .molecule {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .atom {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            color: white;
+            margin: 0 2px;
+            font-weight: bold;
+        }
+        .h { background-color: #95a5a6; } /* 氢原子灰色 */
+        .o { background-color: #e74c3c; } /* 氧原子红色 */
+        .c { background-color: #34495e; } /* 碳原子黑色 */
+        .mg { background-color: #27ae60; } /* 镁原子绿色 */
+        .cl { background-color: #f1c40f; color: #333; } /* 氯原子黄色 */
+        .k { background-color: #9b59b6; } /* 钾原子紫色 */
+        .na { background-color: #8e44ad; }
+
+        /* 输入框样式 */
+        .quiz-area {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .equation {
+            font-size: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 20px 0;
+        }
+        .equation input {
+            width: 45px;
+            height: 40px;
+            font-size: 20px;
+            text-align: center;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            margin: 0 5px;
+            outline: none;
+        }
+        .equation input:focus {
+            border-color: #e74c3c;
+            box-shadow: 0 0 5px rgba(231, 76, 60, 0.5);
+        }
+        .equation span {
+            font-weight: bold;
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: 0.3s;
+        }
+        .btn:hover { background: #2980b9; }
+        .btn-check { background: #2ecc71; }
+        .btn-check:hover { background: #27ae60; }
+        .btn-hint { background: #f39c12; }
+        .btn-hint:hover { background: #d68910; }
+
+        .feedback {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            min-height: 25px;
+        }
+        .success { color: #2ecc71; }
+        .error { color: #e74c3c; }
+
+        .hidden { display: none; }
+
+        /* 导航 */
+        .nav {
+            text-align: center;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        .nav a {
+            color: #3498db;
+            text-decoration: none;
+            padding: 4px 10px;
+            border: 1px solid #cfe4f5;
+            border-radius: 20px;
+        }
+        .nav a:hover { background: #eaf4fc; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="nav"><a href="./index.html">🔬 另有：Na₂O₂ 过氧化钠大解密</a></div>
+
+    <h2>⚖️ 化学方程式：配平大闯关</h2>
+
+    <div class="explain-box">
+        <h3 style="margin-top:0;">💡 什么是配平？</h3>
+        <p><strong>配平就像是在搭跷跷板（天平）：</strong></p>
+        <p>化学反应就像拆积木再重新拼装，<strong>反应前有多少个原子，反应后也必须有多少个原子</strong>，原子不能凭空消失，也不能凭空变出来。</p>
+        <p><span style="color: #e74c3c; font-weight: bold;">重点：</span>我们只能在化学式<strong>前面</strong>加数字（系数），用来增加分子的数量；<strong>千万不能改里面的下标</strong>，改了里面的数字，物质就变成另一种东西了！（比如 H₂O 是水，你改成 H₂O₂ 就变成双氧水了！）</p>
+    </div>
+
+    <!-- 演示部分 -->
+    <h3>🪄 演示：氢气和氧气怎么变成水？</h3>
+    <p>未配平时：<strong>H₂ + O₂ → H₂O</strong>，我们来数一数左右两边的原子。</p>
+
+    <div class="balance-area">
+        <div class="side">
+            <div class="side-title">反应前 (左边)</div>
+            <div class="molecule-group">
+                <div class="molecule">
+                    <div class="atom h">H</div><div class="atom h">H</div>
+                </div>
+                <div class="molecule">
+                    <div class="atom o">O</div><div class="atom o">O</div>
+                </div>
+            </div>
+            <p style="font-size:14px; margin-top:10px;">有 2 个H原子，2 个O原子</p>
+        </div>
+        <div style="font-size: 30px; display: flex; align-items: center;">≠</div>
+        <div class="side">
+            <div class="side-title">反应后 (右边)</div>
+            <div class="molecule-group">
+                <div class="molecule">
+                    <div class="atom h">H</div><div class="atom h">H</div><div class="atom o">O</div>
+                </div>
+            </div>
+            <p style="font-size:14px; margin-top:10px;">只有 2 个H原子，1 个O原子</p>
+        </div>
+    </div>
+
+    <p>发现了没？左边的O有2个，右边只有1个，O原子不守恒！天平歪了！</p>
+    <p>怎么调整呢？<strong>我们不能把右边的O拆了，只能多拿几个水分子（H₂O）过来。</strong></p>
+
+    <div class="balance-area" style="border: 2px solid #2ecc71; background: #eafaf1;">
+        <div class="side">
+            <div class="side-title">正确的配平结果：</div>
+            <div class="equation" style="margin: 10px 0; font-size: 20px;">
+                <strong>2</strong>H₂ + <strong>1</strong>O₂ → <strong>2</strong>H₂O
+            </div>
+            <p style="font-size:14px;">(数字 1 通常省略不写，写为 <strong>2H₂ + O₂ → 2H₂O</strong>)</p>
+        </div>
+    </div>
+
+    <div class="explain-box" style="background: #fff; border-left-color: #3498db;">
+        <p><strong>验算一下：</strong></p>
+        <p>左边：2个氢气分子(2×2=4个H)，1个氧气分子(1×2=2个O) ➡️ 共 4个H，2个O。</p>
+        <p>右边：2个水分子(2×2=4个H，2×1=2个O) ➡️ 共 4个H，2个O。</p>
+        <p>两边相等，完美配平！</p>
+    </div>
+
+    <!-- 练习部分 -->
+    <h3>🎮 轮到你了：随机配平挑战</h3>
+    <div class="quiz-area">
+        <p style="color:#7f8c8d;">请在方框中填入正确的系数（数字为1也要填）。</p>
+        <div class="equation" id="equation-display">
+            <!-- 动态生成输入框 -->
+        </div>
+
+        <div>
+            <button class="btn btn-check" onclick="checkAnswer()">检查答案</button>
+            <button class="btn btn-hint" onclick="showHint()">提示一下</button>
+            <button class="btn" onclick="nextQuestion()">换一题</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+        <div id="hint-text" class="hidden" style="margin-top:10px; color:#d35400; font-weight:bold;"></div>
+    </div>
+</div>
+
+<script>
+    // 题库：预设了初中常见的化学反应，确保反应真实存在
+    const cases = [
+        {
+            left: ["H2", "O2"],
+            right: ["H2O"],
+            answer: [2, 1, 2],
+            hint: "左边O原子有2个，右边只有1个，水分子前面要加2试试。"
+        },
+        {
+            left: ["C", "O2"],
+            right: ["CO2"],
+            answer: [1, 1, 1],
+            hint: "C是单质，自带1个碳。数一数两边的O，刚刚好哦。"
+        },
+        {
+            left: ["Mg", "O2"],
+            right: ["MgO"],
+            answer: [2, 1, 2],
+            hint: "右边有1个O，左边有2个，所以右边MgO要乘2，左边Mg也要乘2。"
+        },
+        {
+            left: ["CH4", "O2"],
+            right: ["CO2", "H2O"],
+            answer: [1, 2, 1, 2],
+            hint: "先配碳，再配氢，最后配氧。左边有4个H，右边水前面要加2。"
+        },
+        {
+            left: ["KClO3"],
+            right: ["KCl", "O2"],
+            answer: [2, 2, 3],
+            hint: "氧气分子里有2个O，左边KClO3有3个O。找2和3的最小公倍数，也就是6。"
+        },
+        {
+            left: ["Fe", "O2"],
+            right: ["Fe3O4"],
+            answer: [3, 2, 1],
+            hint: "先看最复杂的Fe3O4，有3个Fe，4个O。左边Fe前面加3，O2前面加2。"
+        }
+    ];
+
+    let currentQuestion = null;
+    let lastIndex = -1;
+
+    // 格式化化学式，让数字变成下标
+    function formatFormula(formula) {
+        return formula.replace(/(\d+)/g, "<sub>$1</sub>");
+    }
+
+    // 生成随机题目（避免连续重复）
+    function nextQuestion() {
+        // 清空反馈和提示
+        document.getElementById("feedback").innerHTML = "";
+        document.getElementById("hint-text").classList.add("hidden");
+
+        // 随机抽取题目
+        let randomIndex = Math.floor(Math.random() * cases.length);
+        if (cases.length > 1 && randomIndex === lastIndex) {
+            randomIndex = (randomIndex + 1) % cases.length;
+        }
+        lastIndex = randomIndex;
+        currentQuestion = cases[randomIndex];
+
+        let html = "";
+
+        // 生成反应物
+        currentQuestion.left.forEach((formula, index) => {
+            html += `<input type="number" id="ans-left-${index}" min="1" inputmode="numeric">` + formatFormula(formula);
+            if (index < currentQuestion.left.length - 1) html += ` + `;
+        });
+
+        html += ` <span>➡</span> `;
+
+        // 生成生成物
+        currentQuestion.right.forEach((formula, index) => {
+            html += `<input type="number" id="ans-right-${index}" min="1" inputmode="numeric">` + formatFormula(formula);
+            if (index < currentQuestion.right.length - 1) html += ` + `;
+        });
+
+        document.getElementById("equation-display").innerHTML = html;
+    }
+
+    // 检查答案
+    function checkAnswer() {
+        if (!currentQuestion) return;
+
+        let inputs = [];
+        let isAllFilled = true;
+
+        // 获取左侧输入
+        currentQuestion.left.forEach((_, index) => {
+            let val = document.getElementById(`ans-left-${index}`).value;
+            if (!val) isAllFilled = false;
+            inputs.push(parseInt(val));
+        });
+
+        // 获取右侧输入
+        currentQuestion.right.forEach((_, index) => {
+            let val = document.getElementById(`ans-right-${index}`).value;
+            if (!val) isAllFilled = false;
+            inputs.push(parseInt(val));
+        });
+
+        const feedback = document.getElementById("feedback");
+
+        if (!isAllFilled) {
+            feedback.className = "feedback error";
+            feedback.innerHTML = "⚠️ 请把所有的方框都填上数字（如果没有数字就填 1）！";
+            return;
+        }
+
+        // 比对答案
+        let isCorrect = true;
+        for (let i = 0; i < currentQuestion.answer.length; i++) {
+            if (inputs[i] !== currentQuestion.answer[i]) {
+                isCorrect = false;
+                break;
+            }
+        }
+
+        if (isCorrect) {
+            feedback.className = "feedback success";
+            feedback.innerHTML = "🎉 太棒了！完全正确！你已经掌握配平的秘诀啦！";
+        } else {
+            feedback.className = "feedback error";
+            feedback.innerHTML = "❌ 哎呀，天平还是歪的，再数一数两边的原子个数，或者点一下提示吧！";
+        }
+    }
+
+    // 显示提示
+    function showHint() {
+        if (!currentQuestion) return;
+        const hint = document.getElementById("hint-text");
+        hint.innerHTML = "💡 提示：" + currentQuestion.hint;
+        hint.classList.remove("hidden");
+    }
+
+    // 初始化第一题
+    window.onload = nextQuestion;
+</script>
+
+</body>
+</html>
