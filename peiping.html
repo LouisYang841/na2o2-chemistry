@@ -861,16 +861,15 @@
     <h2>⚖️ 化学方程式：一步步理解配平</h2>
 
     <div class="explain-box">
-        <h3 style="margin-top:0;">💡 反应物和生成物写对了，为什么还要配平？</h3>
-        <p>氢气在氧气中燃烧会生成水。用化学式可以把这个反应写成 H₂ + O₂ → H₂O，但这只说明了<strong>什么物质参与反应、生成什么物质</strong>，还没有说明它们的数量关系。</p>
-        <p>化学反应中，原子会重新组合，但<strong>每种原子的种类和数量不变</strong>。因此，方程式不仅要写对物质，还必须让左右两边每种原子的数量相等。这个过程就叫<strong>配平</strong>。</p>
-        <p>配平时，我们调整化学式前面的数字，叫<strong>系数</strong>。例如 <strong>2H₂O</strong> 表示 2 个水分子，总共有 2×2＝4 个 H 和 2×1＝2 个 O。</p>
-        <p>为什么不能改右下角的小数字？因为它说明物质的组成。H₂O 是水，H₂O₂ 则是过氧化氢，已经是另一种物质。因此，<strong>配平只改变系数，不改变化学式</strong>。</p>
+        <h3 style="margin-top:0;">💡 配平：让两边每种原子一样多</h3>
+        <p><strong>只改前面的系数，下标不变。</strong></p>
+        <p>例如 <strong>2H₂O</strong>：2 个水分子，共 <strong>4 个 H、2 个 O</strong>。</p>
+        <p>数原子：<strong>系数 × 下标</strong>。没写数字就按 1 算。</p>
     </div>
 
     <!-- 演示部分 -->
-    <h3>🔍 从一个数量不符的问题开始：氢气燃烧生成水</h3>
-    <p>先检查草稿 <strong>H₂ + O₂ → H₂O</strong>。没有写系数时，按 1 份计算，分别数出左右两边的 H 和 O。</p>
+    <h3>🔍 先看水：先配氧，再配氢</h3>
+    <p><strong>H₂ + O₂ → H₂O</strong>：氧原子左边 2 个，右边 1 个。</p>
 
     <div class="balance-area">
         <div class="side">
@@ -897,9 +896,8 @@
         </div>
     </div>
 
-    <p>比较后可以发现：氢原子都是 2 个，氧原子却是左边 2 个、右边 1 个。<strong>这说明草稿还没有正确表达反应的数量关系。</strong></p>
-    <p><strong>先使氧原子数相等：</strong>在 H₂O 前写 2，右边就有 2 个 O。但这个系数乘的是整个 H₂O，所以右边的 H 也变成了 2×2＝4 个。</p>
-    <p><strong>再使氢原子数相等：</strong>在 H₂ 前写 2，左边也有 2×2＝4 个 H。H₂ 不含氧，所以这一步不会改变刚才已经配好的氧原子数。</p>
+    <p><strong>① H₂O 前写 2：</strong>氧配齐了，右边的氢变成 4 个。</p>
+    <p><strong>② H₂ 前写 2：</strong>左边也有 4 个氢。完成。</p>
 
     <div class="balance-area" style="border: 2px solid #2ecc71; background: #eafaf1;">
         <div class="side">
@@ -907,21 +905,19 @@
             <div class="equation" style="margin: 10px 0; font-size: 20px;">
                 <strong>2</strong>H₂ + <strong>1</strong>O₂ → <strong>2</strong>H₂O
             </div>
-            <p style="font-size:14px;">(数字 1 通常省略不写，写为 <strong>2H₂ + O₂ → 2H₂O</strong>)</p>
+            <p style="font-size:14px;">系数 1 省略：<strong>2H₂ + O₂ → 2H₂O</strong></p>
         </div>
     </div>
 
     <div class="explain-box" style="background: #fff; border-left-color: #3498db;">
-        <p><strong>验算一下：</strong></p>
-        <p>左边：2个氢气分子(2×2=4个H)，1个氧气分子(1×2=2个O) ➡️ 共 4个H，2个O。</p>
-        <p>右边：2个水分子(2×2=4个H，2×1=2个O) ➡️ 共 4个H，2个O。</p>
-        <p>H、O 两种原子的数量分别相等，而且系数不能再同时约小，因此配平完成。</p>
+        <p><strong>验算：左边 ＝ 右边</strong></p>
+        <p>H：2×2 ＝ 2×2 ＝ <strong>4</strong></p>
+        <p>O：1×2 ＝ 2×1 ＝ <strong>2</strong></p>
     </div>
 
     <!-- ===== 球棍动画演示（多反应，左右箭头切换） ===== -->
-    <h3>🎬 从计数到推导：六个反应的配平过程</h3>
-    <p>一共 <strong>6 个反应</strong>，用下面的 <strong>← →</strong> 箭头切换（手机上直接在图上左右滑动也行）。<br>
-       从生成水开始，逐步比较含有 <strong>2、3、6</strong> 等不同系数的反应。每个例子都按<strong>发现数量不符 → 推导系数 → 逐种验算</strong>展开。点击“下一步”阅读推导，再用动画追踪原子数量。<br>球代表原子，连线帮助认出一份物质。<strong>这是清点和重组的示意，不代表真实反应先把所有物质拆成自由原子；固体和溶液中的组合也不一定是独立分子。</strong></p>
+    <h3>🎬 看步骤，学配平</h3>
+    <p><strong>下一步</strong>看推导，<strong>播放</strong>看原子重组。用 <strong>← →</strong> 切换 6 个反应。</p>
 
     <div class="anim-wrap">
         <div class="anim-nav">
@@ -937,7 +933,6 @@
         <div class="balance-guide" aria-label="逐步配平讲解">
             <strong id="balanceStepTitle"></strong>
             <p id="balanceStepEquation" class="balance-step-equation"></p>
-            <small>推导中的草稿可能尚未配平；下方动画始终展示最终配平后的数量。</small>
             <p id="balanceStepText" aria-live="polite"></p>
             <div class="anim-btns">
                 <button class="btn btn-mini" id="balanceStepPrev">← 上一步</button>
@@ -947,12 +942,12 @@
         </div>
         <canvas id="balAnim" role="img" aria-label="原子重组动画，文字讲解和原子数核对见上下方"></canvas>
 
-        <div class="anim-caption" id="animCaption">点“播放动画”，观察配平后的原子数量关系。</div>
+        <div class="anim-caption" id="animCaption">点播放，看原子重组。</div>
 
         <div class="anim-stage-row">
-            <span class="stage-chip" id="animStage0">① 看清原来的组合</span>
-            <span class="stage-chip" id="animStage1">② 追踪每种原子</span>
-            <span class="stage-chip" id="animStage2">③ 核对新的组合</span>
+            <span class="stage-chip" id="animStage0">① 拆开</span>
+            <span class="stage-chip" id="animStage1">② 重组</span>
+            <span class="stage-chip" id="animStage2">③ 核对</span>
         </div>
 
         <div class="tally" id="animTally"></div>
@@ -962,20 +957,19 @@
             <button class="btn btn-hint" id="btnReplayAnim">⟲ 重播</button>
         </div>
 
-        <div class="anim-hintswipe">← 左右滑动图片可切换反应 →</div>
+        <div class="anim-hintswipe">← 滑动切换反应 →</div>
 
         <div class="anim-note" id="animNote"></div>
     </div>
 
     <div class="explain-box" style="background:#fff; border-left-color:#2ecc71;">
-        <p><strong>怎样判断一个方程式已经配平？</strong></p>
-        <p>① 反应物和生成物的化学式正确。② 每种原子在左右两边的数量分别相等。③ 系数都是正整数，而且没有大于 1 的共同因数。</p>
-        <p>比如 4H₂ + 2O₂ → 4H₂O，原子数也对得上，但所有系数还能一起除以 2，所以最后写成 <strong>2H₂ + O₂ → 2H₂O</strong>。</p>
-        <p>验算时不能只比较原子的总个数：<strong>必须逐种比较，氢与氢相等，氧与氧相等，其他元素也一样。</strong>系数为 1 通常省略；下面练习为了方便检查，请把 1 也填上。</p>
+        <p><strong>考场检查：式子对 · 原子齐 · 系数最简</strong></p>
+        <p>每种原子分别数。系数能一起约分，就约到最小。</p>
+        <p>例如 4∶2∶4 → <strong>2∶1∶2</strong>。</p>
     </div>
 
     <!-- ===== 练习部分 ===== -->
-    <h3>✏️ 应用刚才的方法：配平练习</h3>
+    <h3>✏️ 配平练习</h3>
 
     <div class="stat-row">
         <div class="stat" id="statScoreBox"><span>得分</span><b id="statScore">0</b></div>
@@ -992,7 +986,7 @@
             <button class="btn btn-mini" id="btnNext">下一题 →</button>
         </div>
 
-        <p style="color:#7f8c8d; margin:0; font-size:14px;">按题号顺序练习，填好系数后点“检查答案”（数字为 1 也要填 1）。</p>
+        <p style="color:#7f8c8d; margin:0; font-size:14px;">填系数，再检查。<strong>1 也要填。</strong></p>
         <div class="equation" id="equation-display"></div>
 
         <div>
@@ -1005,17 +999,17 @@
     </div>
 
     <p style="text-align:center; color:#90a4ae; font-size:13px; margin-top:22px;">
-        小提示：先挑一种容易数的原子，把它两边配齐；改一个系数后，再看看它带动了哪些原子。最后逐种验算！
+        先配一种 → 检查其他原子 → 逐种验算。
     </p>
 
     <!-- ===== 题型二：看名称写化学式 ===== -->
     <h3 id="writeSection">✍️ 题型二：看名称写化学式</h3>
     <div class="explain-box" style="background:#fff; border-left-color:#2ecc71;">
-        <p>这次反过来：只给你物质的名字，你来写它的<strong>化学式</strong>。</p>
-        <p>配平之前，需要先写对化学式。例如氯化钠写 <code>NaCl</code>：元素符号的<strong>第一个字母大写，第二个字母小写</strong>，不能写成 NACL。</p>
-        <p>学过化合价后，可以用它检查中性化合物：正、负化合价的总和要等于 0。例如 Mg 是 +2，Cl 是 −1，需要 2 个 Cl，所以氯化镁写 <code>MgCl2</code>。单质和一些常见物质的化学式还需要记住，不能都套用这个方法。</p>
-        <p>遇到 OH、SO₄ 这样的原子团，可以把它当作一个小组。<strong>同一组要取多份时，先加括号，再写数字：</strong><code>Ca(OH)2</code> 中有 2 个 O、2 个 H；只取一组时不用括号，如 <code>NaOH</code>。</p>
-        <p style="color:#7f8c8d; font-size:14px;">括号里的俗名（烧碱、小苏打…）只是帮你认人，不用写进化学式。数字直接打普通数字就行，比如水写 <code>H2O</code>、熟石灰写 <code>Ca(OH)2</code>。</p>
+        <p><strong>看名称，写化学式。</strong>如氯化钠 → <code>NaCl</code>。</p>
+        <p><strong>大小写：</strong>首字母大写，第二个字母小写。</p>
+        <p><strong>化合价：</strong>Mg 为 +2，Cl 为 −1 → <code>MgCl2</code>。</p>
+        <p><strong>括号：</strong><code>Ca(OH)2</code> 有 2 组 OH，即 2 个 O、2 个 H。</p>
+        <p>直接输入普通数字：<code>H2O</code>、<code>Ca(OH)2</code>。</p>
     </div>
 
     <div class="write-area" id="writeArea">
@@ -1053,8 +1047,8 @@
     <!-- ===== 题型三：化学方程式完整填空 ===== -->
     <h3 id="eqSection">🧩 题型三：化学方程式完整填空</h3>
     <div class="explain-box" style="background:#fff; border-left-color:#5c6bc0;">
-        <p>把方法用到完整的反应描述中：先根据题意确定<strong>反应物、生成物和反应条件</strong>，写出正确的化学式，再用原子计数推导系数。最后检查每种原子的数量是否相等。</p>
-        <p>每个空下面写着物质的中文名（勾掉“显示中文名”就能练纯默写）。写完点“检查答案”，它会逐个空判：是<strong>化学式写错</strong>了，还是<strong>只差配平</strong>，一眼看得出来。</p>
+        <p><strong>找物质 → 写化学式 → 配系数 → 验算。</strong></p>
+        <p>取消“显示中文名”可练默写。系数 1 也要填。</p>
     </div>
 
     <div class="eq-area" id="eqArea">
@@ -1188,74 +1182,146 @@
     var ANIMS = [
         {
             type: '例 1 · 氢气燃烧', eq: '2H₂ + O₂ → 2H₂O', cond: '点燃',
-            note: '2 份氢气、1 份氧气，恰好生成 2 份水。前面的 2 管的是整份物质，不是只管紧挨着的 H。',
+            note: '系数乘整个化学式：2H₂O 中，H 和 O 的数量都加倍。',
             left: copies(2, hydrogen).concat([oxygen]), right: copies(2, water),
             steps: [
-                ['先数氧','H₂ + O₂ → H₂O','左边有 2 个 O，右边只有 1 个。保持 O₂ 的系数为 1，在 H₂O 前写 2，就能先使氧原子数相等。'],
-                ['水加倍，氢也跟着变','H₂ + O₂ → 2H₂O','右边现在有 4 个 H，左边还只有 2 个，所以氢气也要取 2 份。'],
-                ['逐种验算','2H₂ + O₂ → 2H₂O','H：左 2×2＝4，右 2×2＝4；O：左 2，右 2×1＝2。最小整数系数为 2、1、2。']
+                [
+                    "先配氧",
+                    "H₂ + O₂ → H₂O",
+                    "O：左 2，右 1。H₂O 前写 2。"
+                ],
+                [
+                    "再配氢",
+                    "H₂ + O₂ → 2H₂O",
+                    "H：左 2，右 4。H₂ 前也写 2。"
+                ],
+                [
+                    "验算",
+                    "2H₂ + O₂ → 2H₂O",
+                    "H：4＝4；O：2＝2。系数 2∶1∶2。"
+                ]
             ]
         },
         {
             type: '例 2 · 氯酸钾制氧气', eq: '2KClO₃ → 2KCl + 3O₂↑', cond: '加热，MnO₂ 作催化剂',
-            note: '一份氯酸钾带 3 个 O，一份氧气只有 2 个 O。先凑到 6 个 O，就能看懂为什么是 2 和 3。MnO₂ 是催化剂，不算进这些系数里。',
+            note: '3 和 2 的最小公倍数是 6。↑ 表示气体逸出。',
             left: copies(2, model('KClO₃', [['K',-40,0],['Cl',0,0],['O',30,-30],['O',36,4],['O',12,35]])),
             right: copies(2, model('KCl', [['K',-22,0],['Cl',22,0]])).concat(copies(3, oxygen)),
             steps: [
-                ['3 个一组，2 个一组','KClO₃ → KCl + O₂','左边每份 KClO₃ 有 3 个 O，右边每份 O₂ 有 2 个 O。要让两边相等，可以取 3 和 2 的最小公倍数，也就是 6。'],
-                ['两边都凑到 6 个氧','2KClO₃ → KCl + 3O₂','取 2 份 KClO₃，有 2×3＝6 个 O；取 3 份 O₂，也有 3×2＝6 个 O。'],
-                ['别忘了钾和氯','2KClO₃ → 2KCl + 3O₂↑','左边 K、Cl 各有 2 个，KCl 也要取 2 份。检查：K 为 2＝2，Cl 为 2＝2，O 为 6＝6。系数 2、2、3。↑ 表示生成的氧气逸出。']
+                [
+                    "氧先凑 6",
+                    "KClO₃ → KCl + O₂",
+                    "每份含氧 3 个和 2 个，最小公倍数是 6。"
+                ],
+                [
+                    "填 2 和 3",
+                    "2KClO₃ → KCl + 3O₂",
+                    "KClO₃ 前写 2，O₂ 前写 3。两边都有 6 个 O。"
+                ],
+                [
+                    "补齐钾和氯",
+                    "2KClO₃ → 2KCl + 3O₂↑",
+                    "KCl 前写 2。K：2＝2；Cl：2＝2；O：6＝6。"
+                ]
             ]
         },
         {
             type: '例 3 · 铝和盐酸', eq: '2Al + 6HCl → 2AlCl₃ + 3H₂↑', cond: '',
-            note: '这个反应需要同时满足两种数量关系：AlCl₃ 中每个 Al 对应 3 个 Cl，而 H₂ 中每个分子有 2 个 H。推导系数时，需要兼顾这两个条件。图中的盐按化学式组成示意。',
+            note: '氯按 3 个一组，氢按 2 个一组：先凑成 6。',
             left: copies(2, model('Al', [['Al',0,0]])).concat(copies(6, hcl)),
             right: copies(2, model('AlCl₃', [['Al',0,0],['Cl',-32,-24],['Cl',32,-24],['Cl',0,34]])).concat(copies(3, hydrogen)),
             steps: [
-                ['先试一份，发现落单的氢','Al + 3HCl → AlCl₃ + ?H₂','先取 1 份 AlCl₃，需要 1 份 Al 和 3 份 HCl。此时有 3 个 H，不能对应整数份的 H₂，因此还需调整。问号表示尚未确定的系数。'],
-                ['把整套数量加倍','2Al + 6HCl → 2AlCl₃ + ?H₂','把 Al、HCl、AlCl₃ 的系数同时乘以 2，铝和氯的数量关系保持不变；氢原子数变成 6，H₂ 的系数就可以取整数 3。'],
-                ['检查系数 2、6、2、3','2Al + 6HCl → 2AlCl₃ + 3H₂↑','Al：2＝2；Cl：6＝2×3；H：6＝3×2。四个系数没有大于 1 的共同因数，所以最小整数系数为 2、6、2、3。']
+                [
+                    "先配铝和氯",
+                    "Al + 3HCl → AlCl₃ + ?H₂",
+                    "1 份 AlCl₃ 需要 3 份 HCl，带来 3 个 H。"
+                ],
+                [
+                    "整体加倍",
+                    "2Al + 6HCl → 2AlCl₃ + ?H₂",
+                    "H₂ 要两个 H 一组。把前面三个系数加倍，6 个 H 刚好组成 3 份 H₂。"
+                ],
+                [
+                    "验算",
+                    "2Al + 6HCl → 2AlCl₃ + 3H₂↑",
+                    "Al：2＝2；Cl：6＝6；H：6＝6。系数 2∶6∶2∶3。"
+                ]
             ]
         },
         {
             type: '例 4 · 从氧化铁中炼出铁', eq: 'Fe₂O₃ + 3CO → 2Fe + 3CO₂', cond: '高温',
-            note: '比较 CO 和 CO₂ 的组成：碳原子数相同，每份 CO₂ 比 CO 多 1 个 O。Fe₂O₃ 提供的 3 个 O 因而对应 3 份 CO。这是从组成差异推导数量关系，不表示真实反应的具体步骤。',
+            note: '氧要加总：Fe₂O₃ 中的氧 ＋ CO 中的氧。',
             left: [model('Fe₂O₃', [['Fe',-28,-12],['Fe',28,-12],['O',-36,26],['O',0,24],['O',36,26]])].concat(copies(3, model('CO', [['C',-21,0],['O',21,0]], [[0,1]]))),
             right: copies(2, model('Fe', [['Fe',0,0]])).concat(copies(3, model('CO₂', [['C',0,0],['O',-35,0],['O',35,0]], [[0,1],[0,2]]))),
             steps: [
-                ['先找到两份铁','Fe₂O₃ + CO → 2Fe + CO₂','一份 Fe₂O₃ 里有 2 个 Fe，右边的 Fe 前先写 2。'],
-                ['想想三个氧交给谁','Fe₂O₃ + 3CO → 2Fe + 3CO₂','每份 CO 变成 CO₂，要再带上 1 个 O。Fe₂O₃ 带来 3 个 O，因此需要 3 份 CO，生成 3 份 CO₂。'],
-                ['氧要把两处的加起来','Fe₂O₃ + 3CO → 2Fe + 3CO₂','Fe：2＝2；C：3＝3；O：左边 3＋3×1＝6，右边 3×2＝6。别漏掉 CO 本来就带着的氧！系数 1、3、2、3。']
+                [
+                    "先配铁",
+                    "Fe₂O₃ + CO → 2Fe + CO₂",
+                    "Fe₂O₃ 含 2 个 Fe，右边 Fe 前写 2。"
+                ],
+                [
+                    "再配碳和氧",
+                    "Fe₂O₃ + 3CO → 2Fe + 3CO₂",
+                    "每份 CO 变成 CO₂，多带 1 个 O。3 个 O 对应 3 份 CO、3 份 CO₂。"
+                ],
+                [
+                    "氧要加总",
+                    "Fe₂O₃ + 3CO → 2Fe + 3CO₂",
+                    "O：左 3＋3＝6，右 3×2＝6。Fe 各 2 个，C 各 3 个。"
+                ]
             ]
         },
         {
             type: '例 5 · 生成红褐色沉淀', eq: '3NaOH + FeCl₃ → Fe(OH)₃↓ + 3NaCl', cond: '溶液中反应',
-            note: 'Fe(OH)₃ 中，括号外的 3 表示有 3 组 OH，也就是 3 个 O 和 3 个 H。↓ 表示生成难溶的沉淀。图中按化学式分组方便计数；溶液里的 Na⁺、Cl⁻ 仍分散着。',
+            note: 'Fe(OH)₃ 有 3 组 OH。↓ 表示沉淀。',
             left: copies(3, naoh).concat([fecl3]),
             right: [model('Fe(OH)₃↓', [['Fe',0,0],['O',-32,-24],['H',-52,-42],['O',32,-24],['H',52,-42],['O',0,32],['H',20,48]], [[1,2],[3,4],[5,6]])].concat(copies(3, nacl)),
             steps: [
-                ['认清括号里的小组','NaOH + FeCl₃ → Fe(OH)₃↓ + NaCl','反应前后都含有 OH，可以先按一个整体计数：右边 Fe(OH)₃ 有 3 组 OH，左边每份 NaOH 只有 1 组，因此 NaOH 的系数为 3。'],
-                ['钠也要一起跟上','3NaOH + FeCl₃ → Fe(OH)₃↓ + 3NaCl','左边现在有 3 个 Na，右边就要 3 份 NaCl。它们正好也对应 FeCl₃ 中的 3 个 Cl。'],
-                ['把小组展开再验一次','3NaOH + FeCl₃ → Fe(OH)₃↓ + 3NaCl','Na：3＝3；Fe：1＝1；Cl：3＝3；O：3＝3；H：3＝3。系数 3、1、1、3。括号外的 3 同时乘 O 和 H。']
+                [
+                    "把 OH 整组配",
+                    "NaOH + FeCl₃ → Fe(OH)₃↓ + NaCl",
+                    "右边有 3 组 OH，NaOH 前写 3。"
+                ],
+                [
+                    "再配钠和氯",
+                    "3NaOH + FeCl₃ → Fe(OH)₃↓ + 3NaCl",
+                    "左边有 3 个 Na、3 个 Cl，NaCl 前写 3。"
+                ],
+                [
+                    "验算",
+                    "3NaOH + FeCl₃ → Fe(OH)₃↓ + 3NaCl",
+                    "Na 各 3；Fe 各 1；Cl 各 3；O、H 各 3。"
+                ]
             ]
         },
         {
             type: '例 6 · 酸和碱生成水', eq: '2NaOH + H₂SO₄ → Na₂SO₄ + 2H₂O', cond: '溶液中反应',
-            note: '硫酸每份提供 2 个 H⁺，需要 2 份 NaOH 提供的 OH⁻ 来生成 2 份水。图中按化学式分组来清点，Na⁺ 和硫酸根仍留在溶液里，并没有变成独立的 Na₂SO₄ 分子。',
+            note: '氢、氧都来自两种反应物，分别加总。',
             left: copies(2, naoh).concat([model('H₂SO₄', [['S',0,0],['O',-30,-25],['O',30,-25],['O',-30,25],['O',30,25],['H',-50,40],['H',50,40]], [[0,1],[0,2],[0,3],[0,4]])]),
             right: [model('Na₂SO₄', [['S',0,0],['O',-30,-25],['O',30,-25],['O',-30,25],['O',30,25],['Na',-53,0],['Na',53,0]], [[0,1],[0,2],[0,3],[0,4]])].concat(copies(2, water)),
             steps: [
-                ['先对齐两个钠','NaOH + H₂SO₄ → Na₂SO₄ + H₂O','右边的 Na₂SO₄ 每份需要 2 个 Na，左边每份 NaOH 只有 1 个，所以取 2 份 NaOH。'],
-                ['数一数一共几个氢','2NaOH + H₂SO₄ → Na₂SO₄ + 2H₂O','左边的氢来自两处：NaOH 带来 2 个，H₂SO₄ 也带来 2 个，共 4 个 H，正好组成 2 份水。'],
-                ['最后检查氧','2NaOH + H₂SO₄ → Na₂SO₄ + 2H₂O','Na：2＝2；S：1＝1；H：2＋2＝4；O：左边 2＋4＝6，右边 4＋2＝6。每种原子数都相等，最小整数系数为 2、1、1、2。']
+                [
+                    "先配钠",
+                    "NaOH + H₂SO₄ → Na₂SO₄ + H₂O",
+                    "右边有 2 个 Na，NaOH 前写 2。"
+                ],
+                [
+                    "再配氢",
+                    "2NaOH + H₂SO₄ → Na₂SO₄ + 2H₂O",
+                    "左边 H 共 2＋2＝4 个，H₂O 前写 2。"
+                ],
+                [
+                    "检查氧",
+                    "2NaOH + H₂SO₄ → Na₂SO₄ + 2H₂O",
+                    "O：左 2＋4＝6，右 4＋2＝6。Na 各 2，S 各 1，H 各 4。"
+                ]
             ]
         }
     ];
     var balanceStep = 0;
     function renderBalanceStep() {
         var step = anim.steps[balanceStep];
-        document.getElementById('balanceStepTitle').textContent = '配平推导 · ' + step[0];
+        document.getElementById('balanceStepTitle').textContent = step[0];
         document.getElementById('balanceStepEquation').textContent = step[1];
         document.getElementById('balanceStepText').textContent = step[2];
         document.getElementById('balanceStepCount').textContent = (balanceStep + 1) + ' / ' + anim.steps.length;
@@ -1467,7 +1533,7 @@
             Object.keys(counts).forEach(function (k) {
                 h += '<div class="tally-item keep">' + sub(k) + ' <small>左</small> <b>' + counts[k] + '</b> <small>＝右</small> <b>' + counts[k] + '</b></div>';
             });
-            h += '<div class="tally-item change">图中份数 <b id="tallyMol">' + anim.left.length + '</b> <small>按化学式分组</small></div>';
+            h += '<div class="tally-item change">图中份数 <b id="tallyMol">' + anim.left.length + '</b> <small>反应前 → 后</small></div>';
             tallyEl.innerHTML = h;
             molEl = document.getElementById('tallyMol');
         }
@@ -1645,11 +1711,11 @@
         var nl = anim.left.length, nr = anim.right.length;
 
         var map = {
-            idle: '已配平：' + anim.eq + '。反应前共 ' + nl + ' 份模型；点播放，看原子如何对应到生成物。',
-            break: '① 在模型中分开原来的组合，方便追踪原子；这不代表真实反应步骤。',
-            hold: '② 暂停清点：' + atomToken() + '，一种都没多，一种都没少。',
-            join: '② 看这些原子怎样对应到生成物，再清点一次。',
-            done: '✅ 反应完成：原子种类和个数都没变（' + atomToken() + '），图中份数 ' + nl + ' → ' + nr
+            idle: '点播放，看原子重组。',
+            break: '① 拆开原来的组合。',
+            hold: '数一数：' + atomToken() + '。',
+            join: '② 原子重新组合。',
+            done: '✅ 原子数不变：' + atomToken() + '。'
         };
         return map[stage];
     }
