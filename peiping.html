@@ -1856,9 +1856,9 @@
             drawAtom(a,pos[i].x,pos[i].y,texts[i]);
         });
 
-        // 物质名与参照分子使用相同透明度。
+        // 停止时标签完全清晰；播放时按参照分子的渐隐进度淡出。
         ctx.save();
-        ctx.globalAlpha = referenceAlpha;
+        ctx.globalAlpha = playing ? referenceAlpha / REFERENCE_OPACITY : 1;
         ctx.font = '11px "Microsoft YaHei", sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
