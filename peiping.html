@@ -714,6 +714,78 @@
         .dtab.active .dcnt { color: rgba(255,255,255,0.8); }
         .dpanel { padding-top: 8px; }
 
+        /* ===== 多反应动画：左右箭头切换 ===== */
+        .anim-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .anim-title {
+            text-align: center;
+            font-size: 19px;
+            font-weight: bold;
+            color: #2c3e50;
+            letter-spacing: 1px;
+            flex: 1;
+            line-height: 1.35;
+        }
+        .anim-title .cond {
+            display: inline-block;
+            font-size: 12px;
+            color: #e67e22;
+            border: 1px solid #f5c99b;
+            background: #fff6ea;
+            border-radius: 999px;
+            padding: 0 8px;
+            margin-left: 6px;
+            vertical-align: 2px;
+            letter-spacing: 0;
+        }
+        .anim-type {
+            display: block;
+            font-size: 12px;
+            font-weight: normal;
+            color: #90a4ae;
+            letter-spacing: 0;
+            margin-top: 3px;
+        }
+        .anim-dots {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin: 8px 0 2px;
+        }
+        .anim-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            border: none;
+            padding: 0;
+            background: #dbe6ec;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .anim-dot.active { background: #3498db; transform: scale(1.25); }
+        .anim-note {
+            margin-top: 12px;
+            background: #fff;
+            border-left: 4px solid #2ecc71;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 14px;
+            color: #37474f;
+            line-height: 1.75;
+        }
+        .anim-note b { color: #c0392b; }
+        .anim-hintswipe {
+            text-align: center;
+            font-size: 12px;
+            color: #b0bec5;
+            margin-top: 6px;
+        }
+
         /* ===== 通关弹窗 & 撒花 ===== */
         .modal-mask {
             position: fixed;
@@ -833,45 +905,51 @@
         <p>两边相等，完美配平！</p>
     </div>
 
-    <!-- ===== 球棍动画演示 ===== -->
+    <!-- ===== 球棍动画演示（多反应，左右箭头切换） ===== -->
     <h3>🎬 动画演示：球棍模型，看原子怎么“搬家”</h3>
-    <p>下面这段动画把 <strong>2H₂ + O₂ → 2H₂O</strong> 慢放：球＝原子，棍＝化学键。<br>
-       盯住三件事：<strong>① 分子被拆散 ② 原子重新配对 ③ 原子总数一个都没变，但分子个数变了。</strong></p>
+    <p>一共 <strong>6 个反应</strong>，用下面的 <strong>← →</strong> 箭头切换（手机上直接在图上左右滑动也行）。<br>
+       球＝原子或原子团，棍＝化学键。每个动画都盯住三件事：<strong>① 微粒被拆散 ② 原子重新组合 ③ 原子总数一个不少，但微粒个数会变。</strong></p>
 
     <div class="anim-wrap">
-        <div class="anim-legend">
-            <span><i class="legend-dot" style="background:#8496a1"></i>H 原子（氢）</span>
-            <span><i class="legend-dot" style="background:#c0392b"></i>O 原子（氧）</span>
-            <span><i class="legend-stick"></i>棍 = 化学键</span>
+        <div class="anim-nav">
+            <button class="btn btn-mini" id="animPrev">← 上一个</button>
+            <div class="anim-title" id="animTitle"></div>
+            <button class="btn btn-mini" id="animNext">下一个 →</button>
         </div>
+
+        <div class="anim-dots" id="animDots"></div>
+
+        <div class="anim-legend" id="animLegend"></div>
 
         <canvas id="balAnim"></canvas>
 
-        <div class="anim-caption" id="animCaption">点下面的按钮，看看原子是怎么“搬家”的 ⬇️</div>
+        <div class="anim-caption" id="animCaption">点“播放动画”，看微粒怎么“搬家” ⬇️</div>
 
         <div class="anim-stage-row">
             <span class="stage-chip" id="animStage0">① 断开化学键</span>
             <span class="stage-chip" id="animStage1">② 原子重新配对</span>
-            <span class="stage-chip" id="animStage2">③ 重组成新分子</span>
+            <span class="stage-chip" id="animStage2">③ 重组成新微粒</span>
         </div>
 
-        <div class="tally">
-            <div class="tally-item keep">H 原子 <b>4</b> <small>不变</small></div>
-            <div class="tally-item keep">O 原子 <b>2</b> <small>不变</small></div>
-            <div class="tally-item change">分子个数 <b id="tallyMol">3</b> <small>会变</small></div>
-        </div>
+        <div class="tally" id="animTally"></div>
 
         <div class="anim-btns">
             <button class="btn" id="btnPlayAnim">▶ 播放动画</button>
             <button class="btn btn-hint" id="btnReplayAnim">⟲ 重播</button>
         </div>
+
+        <div class="anim-hintswipe">← 左右滑动图片可切换反应 →</div>
+
+        <div class="anim-note" id="animNote"></div>
     </div>
 
     <div class="explain-box" style="background:#fff; border-left-color:#2ecc71;">
         <p><strong>看完动画记住一句话：</strong></p>
-        <p>反应前后 <span style="color:#27ae60;font-weight:bold;">原子种类不变、原子总数不变</span>（这里都是 4 个 H + 2 个 O），
-           但<span style="color:#d35400;font-weight:bold;">分子会先被拆开再重新组合</span>，所以分子个数可以从 3 个变成 2 个。</p>
+        <p>不管是哪个反应，<span style="color:#27ae60;font-weight:bold;">原子的种类和总数一定不变</span>，变的只是它们怎么搭在一起 ——
+           微粒（分子或离子）会先被<span style="color:#d35400;font-weight:bold;">拆开，再重新组合</span>，所以微粒个数会变（比如 3 个变成 2 个，也可能变多）。</p>
         <p>这就是配平的全部秘密：<strong>只调前面的系数，让两边每种原子的个数对上。</strong></p>
+        <p style="font-size:14px;color:#607d8b;">顺带记住两个初中的“特殊反应”：<strong>氧化还原</strong>看的是“得氧失氧”（得氧被氧化、失氧被还原）；
+           <strong>离子反应</strong>看的是“谁真的结合了”（Ag⁺+Cl⁻→AgCl↓、H⁺+OH⁻→H₂O），其余的离子是旁观者。</p>
     </div>
 
     <!-- ===== 练习部分 ===== -->
@@ -1026,34 +1104,178 @@
 <canvas id="fx"></canvas>
 
 <script>
-/* ============ 1. 球棍动画 ============ */
+/* ============ 1. 球棍动画（6 个反应，左右箭头切换） ============ */
 (function () {
     var canvas = document.getElementById('balAnim');
     if (!canvas || !canvas.getContext) return;
     var ctx = canvas.getContext('2d');
     if (!ctx) return;   // 浏览器禁用 canvas 时，不要让整个脚本挂掉
 
+    var titleEl = document.getElementById('animTitle');
     var captionEl = document.getElementById('animCaption');
-    var tallyMolEl = document.getElementById('tallyMol');
+    var noteEl = document.getElementById('animNote');
+    var legendEl = document.getElementById('animLegend');
+    var tallyEl = document.getElementById('animTally');
+    var dotsEl = document.getElementById('animDots');
+    var btnPlay = document.getElementById('btnPlayAnim');
+    var btnReplay = document.getElementById('btnReplayAnim');
+    var btnPrev = document.getElementById('animPrev');
+    var btnNext = document.getElementById('animNext');
     var stageEls = [
         document.getElementById('animStage0'),
         document.getElementById('animStage1'),
         document.getElementById('animStage2')
     ];
-    var btnPlay = document.getElementById('btnPlayAnim');
-    var btnReplay = document.getElementById('btnReplayAnim');
 
-    // 时间轴（毫秒）
-    var T_IDLE = 800;    // 静止展示反应前
-    var T_BREAK = 2100;  // 键断开
-    var T_HOLD = 3000;   // 自由原子停留
-    var T_JOIN = 4700;   // 重新组合完成
-    var T_DONE = 5400;   // 结束
+    // 亮色 / 暗色 / 字色
+    var PAL = {
+        H: ['#d7dee2', '#7d8f9a', '#ffffff'],
+        O: ['#ff8a80', '#bf3620', '#ffffff'],
+        C: ['#78909c', '#263238', '#ffffff'],
+        N: ['#64b5f6', '#1565c0', '#ffffff'],
+        S: ['#ffe082', '#f9a825', '#5d4037'],
+        Cl: ['#a5d6a7', '#2e7d32', '#ffffff'],
+        Na: ['#ce93d8', '#7b1fa2', '#ffffff'],
+        K: ['#b39ddb', '#5e35b1', '#ffffff'],
+        Fe: ['#bcaaa4', '#4e342e', '#ffffff'],
+        Cu: ['#ffab91', '#bf5b2f', '#ffffff'],
+        Ca: ['#80cbc4', '#00695c', '#ffffff'],
+        Mg: ['#c5e1a5', '#558b2f', '#ffffff'],
+        Al: ['#cfd8dc', '#546e7a', '#ffffff'],
+        Ag: ['#eeeeee', '#8d8d8d', '#263238'],
+        Mn: ['#bcaaa4', '#3e2723', '#ffffff'],
+        SO4: ['#ffe082', '#ef6c00', '#3e2723'],
+        NO3: ['#90caf9', '#1565c0', '#ffffff']
+    };
+    var RAD = { H: 13, O: 19, C: 17, N: 17, S: 18, Cl: 18, Na: 19, K: 20, Fe: 19, Cu: 19, Ca: 20, Mg: 19, Al: 18, Ag: 20, Mn: 19, SO4: 23, NO3: 23 };
+    var SUB = { '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉' };
+    function sub(s) { return String(s).replace(/[0-9]/g, function (d) { return SUB[d]; }); }
+
+    // ===== 六个反应 =====
+    // 物质写法：{ label:'H₂', atoms:[['H',-15,0],['H',15,0]], bonds:[[0,1]] }
+    // 原子写法：['元素符号', dx, dy, {label:'Ag⁺', r:20}]
+    var ANIMS = [
+        {
+            type: '化合反应',
+            eq: '2H₂ + O₂ → 2H₂O',
+            cond: '点燃',
+            note: '3 个分子先被拆成 4 个 H + 2 个 O，再重新组合成 2 个水分子。<b>原子数不变，分子数 3 → 2。</b>',
+            left: [
+                { label: 'H₂', atoms: [['H', -15, 0], ['H', 15, 0]], bonds: [[0, 1]] },
+                { label: 'H₂', atoms: [['H', -15, 0], ['H', 15, 0]], bonds: [[0, 1]] },
+                { label: 'O₂', atoms: [['O', -23, 0], ['O', 23, 0]], bonds: [[0, 1]] }
+            ],
+            right: [
+                { label: 'H₂O', atoms: [['O', 0, 0], ['H', -25, -19], ['H', 25, -19]], bonds: [[0, 1], [0, 2]] },
+                { label: 'H₂O', atoms: [['O', 0, 0], ['H', -25, -19], ['H', 25, -19]], bonds: [[0, 1], [0, 2]] }
+            ]
+        },
+        {
+            type: '分解反应',
+            eq: '2H₂O → 2H₂↑ + O₂↑',
+            cond: '通电',
+            note: '电流把水分子“拆开”：2 个水分子 → 2 个氢分子 + 1 个氧分子。<b>生成物分子数变多了</b>，和化合反应正好相反；原子总数依然不变。',
+            left: [
+                { label: 'H₂O', atoms: [['O', 0, 0], ['H', -25, -19], ['H', 25, -19]], bonds: [[0, 1], [0, 2]] },
+                { label: 'H₂O', atoms: [['O', 0, 0], ['H', -25, -19], ['H', 25, -19]], bonds: [[0, 1], [0, 2]] }
+            ],
+            right: [
+                { label: 'H₂', atoms: [['H', -15, 0], ['H', 15, 0]], bonds: [[0, 1]] },
+                { label: 'H₂', atoms: [['H', -15, 0], ['H', 15, 0]], bonds: [[0, 1]] },
+                { label: 'O₂', atoms: [['O', -23, 0], ['O', 23, 0]], bonds: [[0, 1]] }
+            ]
+        },
+        {
+            type: '置换反应',
+            eq: 'Fe + CuSO₄ → FeSO₄ + Cu',
+            cond: '',
+            note: '铁把铜“挤”了出来：铜被单独置换出来（红色固体），<b>硫酸根 SO₄ 是一个整体，反应前后没有拆开</b>，所以把它画成一个球。',
+            left: [
+                { label: 'Fe', atoms: [['Fe', 0, 0]] },
+                { label: 'CuSO₄', atoms: [['Cu', -26, 0], ['SO4', 25, 0]], bonds: [[0, 1]] }
+            ],
+            right: [
+                { label: 'FeSO₄', atoms: [['Fe', -26, 0], ['SO4', 25, 0]], bonds: [[0, 1]] },
+                { label: 'Cu', atoms: [['Cu', 0, 0]] }
+            ],
+            tags: [
+                { text: 'Cu 被置换出来（红色固体）', at: 'rt', color: '#bf5b2f' },
+                { text: 'SO₄ 原子团前后没变', at: 'rb', color: '#ef6c00' }
+            ]
+        },
+        {
+            type: '氧化还原反应',
+            eq: 'H₂ + CuO → Cu + H₂O',
+            cond: '△',
+            note: 'H₂ <b>得氧</b> → 被氧化；CuO <b>失氧</b> → 被还原。本质上氢把电子给了铜，所以这类“得氧失氧”的反应就叫氧化还原反应。',
+            left: [
+                { label: 'H₂', atoms: [['H', -15, 0], ['H', 15, 0]], bonds: [[0, 1]] },
+                { label: 'CuO', atoms: [['Cu', -24, 0], ['O', 23, 0]], bonds: [[0, 1]] }
+            ],
+            right: [
+                { label: 'Cu', atoms: [['Cu', 0, 0]] },
+                { label: 'H₂O', atoms: [['O', 0, 0], ['H', -25, -19], ['H', 25, -19]], bonds: [[0, 1], [0, 2]] }
+            ],
+            tags: [
+                { text: 'H₂ 得氧 → 被氧化', at: 'lt', color: '#c0392b' },
+                { text: 'CuO 失氧 → 被还原', at: 'lb', color: '#1565c0' }
+            ],
+            captions: {
+                hold: '② 氧原子从 CuO 上“松手”了 —— 谁得到氧，谁就被氧化'
+            }
+        },
+        {
+            type: '离子反应（沉淀）',
+            eq: 'NaCl + AgNO₃ → AgCl↓ + NaNO₃',
+            cond: '',
+            note: '溶液里离子是到处跑的：Ag⁺ 和 Cl⁻ 一碰就结合成难溶的 AgCl 沉淀（↓）；<b>Na⁺ 和 NO₃⁻ 只是“旁观者”</b>，反应前后一点没变 —— 这就是离子反应。',
+            left: [
+                { label: 'Na⁺ 和 Cl⁻', atoms: [['Na', -25, 0, { label: 'Na⁺' }], ['Cl', 24, 0, { label: 'Cl⁻' }]] },
+                { label: 'Ag⁺ 和 NO₃⁻', atoms: [['Ag', -30, 0, { label: 'Ag⁺' }], ['NO3', 28, 0, { label: 'NO3⁻' }]] }
+            ],
+            right: [
+                { label: 'AgCl↓（沉淀）', atoms: [['Ag', -21, 0], ['Cl', 20, 0]], bonds: [[0, 1]] },
+                { label: 'NaNO₃（仍在溶液里）', atoms: [['Na', -28, 0, { label: 'Na⁺' }], ['NO3', 27, 0, { label: 'NO3⁻' }]] }
+            ],
+            tags: [
+                { text: 'Ag⁺ + Cl⁻ → AgCl↓', at: 'rt', color: '#c0392b' },
+                { text: 'Na⁺、NO₃⁻ 是旁观离子', at: 'rb', color: '#1565c0' }
+            ],
+            captions: {
+                break: '① 溶液中的离子本来就是分开的，自由移动……',
+                hold: '② Ag⁺ 和 Cl⁻ 相遇就“抱”在一起，生成难溶的 AgCl',
+                join: '③ AgCl 沉淀下来；Na⁺、NO₃⁻ 依旧在溶液里游动'
+            }
+        },
+        {
+            type: '离子反应（中和）',
+            eq: 'NaOH + HCl → NaCl + H₂O',
+            cond: '',
+            note: '中和反应的实质：<b>H⁺ + OH⁻ → H₂O</b>。Na⁺ 和 Cl⁻ 留在溶液里，所以“没有明显现象”，要靠指示剂或温度变化来判断。',
+            left: [
+                { label: 'Na⁺ 和 OH⁻', atoms: [['Na', -34, 0, { label: 'Na⁺' }], ['O', 0, 0], ['H', 24, -10, { label: 'H' }]], bonds: [[1, 2]] },
+                { label: 'H⁺ 和 Cl⁻', atoms: [['H', -18, 0, { label: 'H⁺' }], ['Cl', 17, 0, { label: 'Cl⁻' }]] }
+            ],
+            right: [
+                { label: 'NaCl（仍在溶液里）', atoms: [['Na', -25, 0, { label: 'Na⁺' }], ['Cl', 24, 0, { label: 'Cl⁻' }]] },
+                { label: 'H₂O（水）', atoms: [['O', 0, 0], ['H', -25, -19], ['H', 25, -19]], bonds: [[0, 1], [0, 2]] }
+            ],
+            tags: [
+                { text: '真正的反应：H⁺ + OH⁻ → H₂O', at: 'rt', color: '#c0392b' },
+                { text: 'Na⁺、Cl⁻ 前后不变', at: 'rb', color: '#1565c0' }
+            ]
+        }
+    ];
+
+    // ===== 时间轴 =====
+    var T_IDLE = 800, T_BREAK = 2100, T_HOLD = 3100, T_JOIN = 4900, T_DONE = 5600;
 
     var W = 600, H = 320;
     var atoms = [], bondsFrom = [], bondsTo = [];
-    var t = 0, playing = false, rafId = null, lastTs = 0;
-    var RH = 13, RO = 19;
+    var leftLabels = [], rightLabels = [], tags = [];
+    var anim = ANIMS[0];
+    var cur = 0, t = 0, playing = false, rafId = null, lastTs = 0;
+    var molEl = null;
 
     function clamp01(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
     function lerp(a, b, p) { return a + (b - a) * p; }
@@ -1070,52 +1292,179 @@
         c.closePath();
     }
 
-    function layout() {
+    // ===== 布局 =====
+    function speciesBox(sp) {
+        var minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+        sp.atoms.forEach(function (a) {
+            var r = (a[3] && a[3].r) || RAD[a[0]] || 16;
+            minX = Math.min(minX, a[1] - r); maxX = Math.max(maxX, a[1] + r);
+            minY = Math.min(minY, a[2] - r); maxY = Math.max(maxY, a[2] + r);
+        });
+        return { minX: minX, maxX: maxX, minY: minY, maxY: maxY };
+    }
+
+    function resize() {
         var rect = canvas.getBoundingClientRect();
         W = Math.max(280, Math.round(rect.width) || 320);
-        H = Math.round(Math.min(360, Math.max(250, W * 0.52)));
+        H = Math.round(Math.min(370, Math.max(250, W * 0.52)));
         var dpr = Math.min(window.devicePixelRatio || 1, 2);
         canvas.style.height = H + 'px';
         canvas.width = Math.round(W * dpr);
         canvas.height = Math.round(H * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-        // 反应前：左边 2 个 H₂ + 1 个 O₂
-        var h2a = { x: W * 0.17, y: H * 0.28 };
-        var h2b = { x: W * 0.17, y: H * 0.72 };
-        var o2c = { x: W * 0.35, y: H * 0.50 };
-
-        // 拆散后的自由位置（中部）
-        var free = {
-            h1: { x: W * 0.30, y: H * 0.19 },
-            h2: { x: W * 0.37, y: H * 0.35 },
-            h3: { x: W * 0.30, y: H * 0.81 },
-            h4: { x: W * 0.37, y: H * 0.65 },
-            o1: { x: W * 0.50, y: H * 0.32 },
-            o2: { x: W * 0.50, y: H * 0.68 }
-        };
-
-        // 反应后：右边 2 个 H₂O
-        var w1 = { x: W * 0.80, y: H * 0.30 };
-        var w2 = { x: W * 0.80, y: H * 0.73 };
-
-        var hx = Math.max(19, Math.min(27, W * 0.042));
-        var hy = hx * 0.82;
-
-        atoms = [
-            { el: 'H', r: RH, from: { x: h2a.x - 15, y: h2a.y }, free: free.h1, to: { x: w1.x - hx, y: w1.y - hy }, phase: 0.0 },
-            { el: 'H', r: RH, from: { x: h2a.x + 15, y: h2a.y }, free: free.h2, to: { x: w1.x + hx, y: w1.y - hy }, phase: 1.1 },
-            { el: 'H', r: RH, from: { x: h2b.x - 15, y: h2b.y }, free: free.h3, to: { x: w2.x - hx, y: w2.y - hy }, phase: 2.2 },
-            { el: 'H', r: RH, from: { x: h2b.x + 15, y: h2b.y }, free: free.h4, to: { x: w2.x + hx, y: w2.y - hy }, phase: 3.3 },
-            { el: 'O', r: RO, from: { x: o2c.x - 23, y: o2c.y }, free: free.o1, to: { x: w1.x, y: w1.y }, phase: 0.6 },
-            { el: 'O', r: RO, from: { x: o2c.x + 23, y: o2c.y }, free: free.o2, to: { x: w2.x, y: w2.y }, phase: 1.7 }
-        ];
-        // 索引 0,1 = 第1个H₂；2,3 = 第2个H₂；4,5 = O₂
-        bondsFrom = [[0, 1], [2, 3], [4, 5]];
-        bondsTo = [[4, 0], [4, 1], [5, 2], [5, 3]];
+        build();
     }
 
-    function atomPosAt(a, time) {
+    function build() {
+        atoms = []; bondsFrom = []; bondsTo = [];
+        leftLabels = []; rightLabels = [];
+        tags = anim.tags ? anim.tags.slice() : [];
+
+        var padTop = H * 0.15, padBot = H * 0.17;
+        var areaH = H - padTop - padBot;
+        var leftCx = W * 0.21, rightCx = W * 0.79;
+
+        // ---- 左边 ----
+        var startL = [];
+        anim.left.forEach(function (sp, i) {
+            var cy = padTop + areaH * ((i + 0.5) / anim.left.length);
+            startL.push(atoms.length);
+            sp.atoms.forEach(function (a) {
+                atoms.push({
+                    sym: a[0],
+                    r: (a[3] && a[3].r) || RAD[a[0]] || 16,
+                    text: sub((a[3] && a[3].label) || a[0]),
+                    from: { x: leftCx + a[1], y: cy + a[2] }
+                });
+            });
+            var bb = speciesBox(sp);
+            if (sp.label) leftLabels.push({ text: sp.label, x: leftCx, y: cy + bb.maxY + 14 });
+        });
+        anim.left.forEach(function (sp, i) {
+            (sp.bonds || []).forEach(function (b) {
+                bondsFrom.push([startL[i] + b[0], startL[i] + b[1]]);
+            });
+        });
+
+        // ---- 右边（先建临时表，再按元素配对到左边原子） ----
+        var ratoms = [], rStart = [], rightBonds = [];
+        anim.right.forEach(function (sp, i) {
+            var cy = padTop + areaH * ((i + 0.5) / anim.right.length);
+            rStart.push(ratoms.length);
+            sp.atoms.forEach(function (a) {
+                ratoms.push({
+                    sym: a[0],
+                    r: (a[3] && a[3].r) || RAD[a[0]] || 16,
+                    text: sub((a[3] && a[3].label) || a[0]),
+                    pos: { x: rightCx + a[1], y: cy + a[2] }
+                });
+            });
+            var bb = speciesBox(sp);
+            if (sp.label) rightLabels.push({ text: sp.label, x: rightCx, y: cy + bb.maxY + 14 });
+        });
+        anim.right.forEach(function (sp, i) {
+            (sp.bonds || []).forEach(function (b) {
+                rightBonds.push([rStart[i] + b[0], rStart[i] + b[1]]);
+            });
+        });
+
+        // 按元素符号顺序配对
+        var pool = {};
+        ratoms.forEach(function (a, i) { (pool[a.sym] = pool[a.sym] || []).push(i); });
+        var r2l = {};
+        atoms.forEach(function (a, i) {
+            var q = pool[a.sym];
+            if (!q || !q.length) return;
+            var ri = q.shift();
+            a.to = ratoms[ri].pos;
+            a.textTo = ratoms[ri].text;
+            a.rTo = ratoms[ri].r;
+            r2l[ri] = i;
+        });
+        bondsTo = rightBonds.map(function (b) {
+            return [r2l[b[0]], r2l[b[1]]];
+        }).filter(function (b) { return b[0] !== undefined && b[1] !== undefined; });
+
+        // ---- 拆散后的自由位置（网格 + 抖动，避免重叠） ----
+        var n = atoms.length;
+        var cols = n <= 4 ? 2 : 3;
+        var freeW = W * 0.44;               // 中间“乱跑”区域可用宽度
+        if (freeW / cols < 46 && cols > 2) cols = 2;   // 窄屏时少排一列，避免原子挤在一起
+        var rows = Math.ceil(n / cols);
+        var cellW = freeW / cols;
+        var cellH = areaH / Math.max(1, rows);
+        atoms.forEach(function (a, i) {
+            var c = i % cols, r = Math.floor(i / cols);
+            var jx = Math.sin(i * 12.9898) * cellW * 0.12;
+            var jy = Math.cos(i * 4.1414) * cellH * 0.12;
+            a.free = {
+                x: W * 0.28 + (c + 0.5) * cellW + jx,
+                y: padTop + (r + 0.5) * cellH + jy
+            };
+        });
+
+        renderMeta();
+        draw();
+        updateUI();
+    }
+
+    // ===== 元信息（标题 / 图例 / 计数 / 说明 / 圆点） =====
+    function atomToken() {
+        var counts = {};
+        atoms.forEach(function (a) {
+            var k = a.sym;
+            counts[k] = (counts[k] || 0) + 1;
+        });
+        return Object.keys(counts).map(function (k) {
+            return counts[k] + ' 个 ' + sub(k);
+        }).join('、');
+    }
+
+    function renderMeta() {
+        if (titleEl) {
+            titleEl.innerHTML = '<span>' + anim.eq + '</span>' +
+                (anim.cond ? '<span class="cond">' + anim.cond + '</span>' : '') +
+                '<span class="anim-type">' + anim.type + '　第 ' + (cur + 1) + ' / ' + ANIMS.length + ' 个</span>';
+        }
+        if (noteEl) noteEl.innerHTML = '📌 ' + anim.note;
+
+        // 图例
+        if (legendEl) {
+            var seen = {}, html = '';
+            atoms.forEach(function (a) {
+                if (seen[a.sym]) return;
+                seen[a.sym] = 1;
+                html += '<span><i class="legend-dot" style="background:' + (PAL[a.sym] || ['#cfd8dc', '#78909c'])[1] + '"></i>' + sub(a.sym) + '</span>';
+            });
+            html += '<span><i class="legend-stick"></i>棍 = 化学键</span>';
+            legendEl.innerHTML = html;
+        }
+
+        // 计数条
+        if (tallyEl) {
+            var counts = {};
+            atoms.forEach(function (a) { counts[a.sym] = (counts[a.sym] || 0) + 1; });
+            var h = '';
+            Object.keys(counts).forEach(function (k) {
+                h += '<div class="tally-item keep">' + sub(k) + ' <b>' + counts[k] + '</b> <small>不变</small></div>';
+            });
+            h += '<div class="tally-item change">微粒个数 <b id="tallyMol">' + anim.left.length + '</b> <small>会变</small></div>';
+            tallyEl.innerHTML = h;
+            molEl = document.getElementById('tallyMol');
+        }
+
+        // 圆点
+        if (dotsEl) {
+            var d = '';
+            for (var i = 0; i < ANIMS.length; i++) {
+                d += '<button class="anim-dot' + (i === cur ? ' active' : '') + '" data-i="' + i + '" aria-label="第' + (i + 1) + '个反应"></button>';
+            }
+            dotsEl.innerHTML = d;
+        }
+    }
+
+    // ===== 绘制 =====
+    function posOf(a, time) {
         var pBreak = clamp01((time - T_IDLE) / (T_BREAK - T_IDLE));
         var pJoin = clamp01((time - T_HOLD) / (T_JOIN - T_HOLD));
         var x, y;
@@ -1127,12 +1476,10 @@
             var e2 = easeInOut(pJoin);
             x = lerp(a.free.x, a.to.x, e2);
             y = lerp(a.free.y, a.to.y, e2);
-            // 走一点点弧线，看起来更自然
-            y += Math.sin(e2 * Math.PI) * (a.el === 'O' ? 10 : -10);
+            y += Math.sin(e2 * Math.PI) * (a.r > 18 ? 10 : -10);
         }
-        // 静止时的轻微呼吸感
-        var amp = time < T_IDLE ? 1.6 : (time > T_DONE - 200 ? 1.2 : 0);
-        if (amp) y += Math.sin(time / 300 + a.phase) * amp;
+        var amp = time < T_IDLE ? 1.6 : (time > T_DONE - 300 ? 1.1 : 0);
+        if (amp) y += Math.sin(time / 300 + a.from.x) * amp;
         return { x: x, y: y };
     }
 
@@ -1151,24 +1498,54 @@
     }
 
     function drawAtom(a, x, y) {
-        var light = a.el === 'H' ? '#dfe6ea' : '#ff9a8b';
-        var dark = a.el === 'H' ? '#7d8f9a' : '#bf3620';
+        var pal = PAL[a.sym] || ['#d7dee2', '#78909c', '#ffffff'];
+        var r = a.r;
+        var joined = t >= T_HOLD + (T_JOIN - T_HOLD) * 0.55;
+        var txt = (joined && a.textTo) ? a.textTo : a.text;
         ctx.save();
-        var g = ctx.createRadialGradient(x - a.r * 0.34, y - a.r * 0.40, a.r * 0.12, x, y, a.r * 1.05);
-        g.addColorStop(0, light);
-        g.addColorStop(1, dark);
+        var g = ctx.createRadialGradient(x - r * 0.34, y - r * 0.40, r * 0.12, x, y, r * 1.05);
+        g.addColorStop(0, pal[0]);
+        g.addColorStop(1, pal[1]);
         ctx.beginPath();
-        ctx.arc(x, y, a.r, 0, Math.PI * 2);
+        ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fillStyle = g;
         ctx.fill();
         ctx.lineWidth = 1.5;
         ctx.strokeStyle = 'rgba(255,255,255,0.85)';
         ctx.stroke();
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold ' + (a.el === 'H' ? 12 : 16) + 'px "Microsoft YaHei", sans-serif';
+        ctx.fillStyle = pal[2];
+        var fs = txt.length >= 4 ? r * 0.42 : (txt.length === 3 ? r * 0.5 : (txt.length === 2 ? r * 0.62 : r * 0.72));
+        ctx.font = 'bold ' + fs.toFixed(1) + 'px "Microsoft YaHei", sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(a.el, x, y + 0.5);
+        ctx.fillText(txt, x, y + 0.5);
+        ctx.restore();
+    }
+
+    function drawTag(tg, alpha, pad) {
+        if (alpha <= 0.02) return;
+        var map = {
+            lt: [pad + 10, pad + 26, 'left'],
+            lb: [pad + 10, H - pad - 10, 'left'],
+            rt: [W - pad - 10, pad + 26, 'right'],
+            rb: [W - pad - 10, H - pad - 10, 'right']
+        };
+        var m = map[tg.at] || map.rt;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.font = 'bold 12px "Microsoft YaHei", sans-serif';
+        ctx.textBaseline = 'middle';
+        var w = ctx.measureText(tg.text).width;
+        var bx = m[2] === 'right' ? m[0] - w - 12 : m[0] - 6;
+        roundRect(ctx, bx, m[1] - 11, w + 18, 22, 11);
+        ctx.fillStyle = 'rgba(255,255,255,0.92)';
+        ctx.fill();
+        ctx.strokeStyle = tg.color;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+        ctx.fillStyle = tg.color;
+        ctx.textAlign = 'left';
+        ctx.fillText(tg.text, bx + 9, m[1] + 0.5);
         ctx.restore();
     }
 
@@ -1177,7 +1554,6 @@
         var pad = Math.max(8, W * 0.016);
         var half = W / 2;
 
-        // 左（反应前）区域
         ctx.save();
         roundRect(ctx, pad, pad, half - pad * 1.7, H - pad * 2, 12);
         ctx.fillStyle = 'rgba(52,152,219,0.055)';
@@ -1188,7 +1564,6 @@
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // 右（反应后）区域
         roundRect(ctx, half + pad * 0.7, pad, half - pad * 1.7, H - pad * 2, 12);
         ctx.fillStyle = 'rgba(46,204,113,0.07)';
         ctx.fill();
@@ -1207,23 +1582,63 @@
         ctx.fillText('反应后', W - pad - 10, pad + 6);
         ctx.restore();
 
-        var pos = atoms.map(function (a) { return atomPosAt(a, t); });
+        var pos = atoms.map(function (a) { return posOf(a, t); });
 
-        // 原来的键：断开时快速淡出
         var alphaFrom = 1 - clamp01((t - T_IDLE) / ((T_BREAK - T_IDLE) * 0.5));
         bondsFrom.forEach(function (b) {
             drawStick(pos[b[0]].x, pos[b[0]].y, pos[b[1]].x, pos[b[1]].y, alphaFrom);
         });
 
-        // 新的键：接近目标时出现
         var pJoin = clamp01((t - T_HOLD) / (T_JOIN - T_HOLD));
         var alphaTo = clamp01((pJoin - 0.45) / 0.45);
         bondsTo.forEach(function (b) {
             drawStick(pos[b[0]].x, pos[b[0]].y, pos[b[1]].x, pos[b[1]].y, alphaTo);
         });
 
-        // 原子画在最上层
         atoms.forEach(function (a, i) { drawAtom(a, pos[i].x, pos[i].y); });
+
+        // 物质名
+        ctx.save();
+        ctx.font = '11px "Microsoft YaHei", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        var aL = 1 - clamp01((t - T_IDLE * 0.6) / (T_IDLE * 0.6));
+        if (aL > 0.02) {
+            ctx.globalAlpha = aL;
+            ctx.fillStyle = '#78909c';
+            leftLabels.forEach(function (l) { ctx.fillText(l.text, l.x, l.y); });
+        }
+        var aR = clamp01((t - (T_HOLD + (T_JOIN - T_HOLD) * 0.6)) / 500);
+        if (aR > 0.02) {
+            ctx.globalAlpha = aR;
+            ctx.fillStyle = '#2e7d32';
+            rightLabels.forEach(function (l) { ctx.fillText(l.text, l.x, l.y); });
+        }
+        ctx.restore();
+
+        // 标注（氧化还原 / 离子反应）
+        var aTag = clamp01((t - T_JOIN + 200) / 600);
+        tags.forEach(function (tg) { drawTag(tg, aTag, pad); });
+    }
+
+    // ===== 文案与阶段 =====
+    function defaultCaption(stage) {
+        var nl = anim.left.length, nr = anim.right.length;
+        var leftTxt = anim.left.map(function (s) { return s.label; }).join(' + ');
+        var rightTxt = anim.right.map(function (s) { return s.label; }).join(' + ');
+        var map = {
+            idle: '反应前：' + leftTxt + ' —— 共 ' + nl + ' 个微粒，' + atomToken(),
+            break: '① 化学键断开：微粒被拆成一个个原子（原子一个都没少！）',
+            hold: '② 原子自由运动，重新寻找搭档……',
+            join: '③ 重新组合：' + rightTxt + ' 慢慢成形',
+            done: '✅ 反应完成：原子种类和个数都没变（' + atomToken() + '），微粒个数 ' + nl + ' → ' + nr
+        };
+        return map[stage];
+    }
+
+    function captionFor(stage) {
+        var c = anim.captions || {};
+        return c[stage] || defaultCaption(stage);
     }
 
     function setStage(idx) {
@@ -1235,28 +1650,22 @@
     }
 
     function updateUI() {
-        var cap, stage;
-        if (t < T_IDLE) {
-            cap = '反应前：2 个 H₂ + 1 个 O₂ —— 一共 3 个分子，4 个 H 原子、2 个 O 原子';
-            stage = -1;
-        } else if (t < T_BREAK) {
-            cap = '① 化学键断开：分子被“拆”成一个个原子（注意：原子一个都没少！）';
-            stage = 0;
-        } else if (t < T_HOLD) {
-            cap = '② 原子们自由活动，重新寻找搭档……';
-            stage = 0;
-        } else if (t < T_JOIN) {
-            cap = '③ 原子重新组合，2 个 H₂O 分子慢慢成形';
-            stage = 1;
-        } else {
-            cap = '✅ 反应完成：原子数不变（4 个 H + 2 个 O），但分子个数从 3 个变成了 2 个';
-            stage = 2;
-        }
-        if (captionEl.textContent !== cap) captionEl.textContent = cap;
-        setStage(stage);
+        var stage, idx;
+        if (t < T_IDLE) { stage = 'idle'; idx = -1; }
+        else if (t < T_BREAK) { stage = 'break'; idx = 0; }
+        else if (t < T_HOLD) { stage = 'hold'; idx = 0; }
+        else if (t < T_JOIN) { stage = 'join'; idx = 1; }
+        else { stage = 'done'; idx = 2; }
 
-        var mol = t < T_BREAK ? '3' : (t < T_JOIN - 250 ? '3→2' : '2');
-        if (tallyMolEl.textContent !== mol) tallyMolEl.textContent = mol;
+        var cap = captionFor(stage);
+        if (captionEl && captionEl.textContent !== cap) captionEl.textContent = cap;
+        setStage(idx);
+
+        if (molEl) {
+            var v = t < T_BREAK ? String(anim.left.length)
+                : (t < T_JOIN - 250 ? anim.left.length + '→' + anim.right.length : String(anim.right.length));
+            if (molEl.textContent !== v) molEl.textContent = v;
+        }
     }
 
     function syncBtn() {
@@ -1284,53 +1693,106 @@
         if (rafId === null) { lastTs = 0; rafId = requestAnimationFrame(frame); }
     }
 
+    function play(fromStart) {
+        if (fromStart) t = 0;
+        playing = true;
+        lastTs = 0;
+        syncBtn();
+        kick();
+    }
+
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function goTo(i, autoplay) {
+        cur = ((i % ANIMS.length) + ANIMS.length) % ANIMS.length;
+        anim = ANIMS[cur];
+        playing = false;
+        t = reduced ? T_DONE : 0;
+        build();
+        syncBtn();
+        if (!reduced) play(true);
+        draw();
+        updateUI();
+    }
+
+    // ===== 交互 =====
     btnPlay.addEventListener('click', function () {
         if (playing) { playing = false; syncBtn(); return; }
         if (t >= T_DONE) t = 0;
-        playing = true;
-        lastTs = 0;
-        syncBtn();
-        kick();
+        play(false);
+    });
+    btnReplay.addEventListener('click', function () { play(true); });
+    if (btnPrev) btnPrev.addEventListener('click', function () { goTo(cur - 1, true); });
+    if (btnNext) btnNext.addEventListener('click', function () { goTo(cur + 1, true); });
+
+    if (dotsEl) {
+        dotsEl.addEventListener('click', function (e) {
+            var b = e.target;
+            if (!b || !b.classList || !b.classList.contains('anim-dot')) return;
+            var i = parseInt(b.getAttribute('data-i'), 10);
+            if (!isNaN(i) && i !== cur) goTo(i, true);
+        });
+    }
+
+    // 手机上左右滑动切换
+    var sx = 0, sy = 0, swiping = false;
+    canvas.addEventListener('touchstart', function (e) {
+        if (!e.touches || e.touches.length !== 1) return;
+        sx = e.touches[0].clientX; sy = e.touches[0].clientY; swiping = true;
+    }, { passive: true });
+    canvas.addEventListener('touchend', function (e) {
+        if (!swiping) return;
+        swiping = false;
+        var tt = e.changedTouches && e.changedTouches[0];
+        if (!tt) return;
+        var dx = tt.clientX - sx, dy = tt.clientY - sy;
+        if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+            goTo(cur + (dx < 0 ? 1 : -1), true);
+        }
+    }, { passive: true });
+
+    // 键盘左右键（不抢输入框）
+    document.addEventListener('keydown', function (e) {
+        var tag = (e.target && e.target.tagName) || '';
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+        if (e.key === 'ArrowLeft') goTo(cur - 1, true);
+        else if (e.key === 'ArrowRight') goTo(cur + 1, true);
     });
 
-    btnReplay.addEventListener('click', function () {
-        t = 0;
-        playing = true;
-        lastTs = 0;
-        syncBtn();
-        kick();
-    });
+    // 调试钩子（也方便以后加新反应时自检布局）
+    window.__ballAnimDebug = function () {
+        return { W: W, H: H, cur: cur, anim: anim, atoms: atoms, bondsFrom: bondsFrom, bondsTo: bondsTo,
+                 leftLabels: leftLabels, rightLabels: rightLabels, tags: tags };
+    };
 
     var rzT = null;
     function onResize() {
         clearTimeout(rzT);
-        rzT = setTimeout(function () { layout(); draw(); updateUI(); }, 120);
+        rzT = setTimeout(function () { resize(); }, 120);
     }
     window.addEventListener('resize', onResize);
     window.addEventListener('orientationchange', onResize);
 
-    layout();
-    draw();
-    updateUI();
+    // ===== 初始化 =====
+    anim = ANIMS[0];
+    resize();
     syncBtn();
 
-    // 滚动到可见时自动播放一次
-    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // 滚动到可见时自动播一次
     var started = false;
     if ('IntersectionObserver' in window) {
         var io = new IntersectionObserver(function (entries) {
             entries.forEach(function (en) {
                 if (!en.isIntersecting || started) return;
                 started = true;
-                if (reduced) {
-                    t = T_DONE; draw(); updateUI(); syncBtn();
-                } else {
-                    t = 0; playing = true; lastTs = 0; syncBtn(); kick();
-                }
+                if (reduced) { t = T_DONE; draw(); updateUI(); syncBtn(); }
+                else play(true);
                 io.disconnect();
             });
-        }, { threshold: 0.35 });
+        }, { threshold: 0.3 });
         io.observe(canvas);
+    } else if (!reduced) {
+        play(true);
     }
 })();
 
