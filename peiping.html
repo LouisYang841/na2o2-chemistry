@@ -1856,8 +1856,9 @@
             drawAtom(a,pos[i].x,pos[i].y,texts[i]);
         });
 
-        // 物质名
+        // 物质名与参照分子使用相同透明度。
         ctx.save();
+        ctx.globalAlpha = referenceAlpha;
         ctx.font = '11px "Microsoft YaHei", sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
