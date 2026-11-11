@@ -89,13 +89,160 @@
             margin: 0 2px;
             font-weight: bold;
         }
-        .h { background-color: #95a5a6; } /* 氢原子灰色 */
-        .o { background-color: #e74c3c; } /* 氧原子红色 */
-        .c { background-color: #34495e; } /* 碳原子黑色 */
-        .mg { background-color: #27ae60; } /* 镁原子绿色 */
-        .cl { background-color: #f1c40f; color: #333; } /* 氯原子黄色 */
-        .k { background-color: #9b59b6; } /* 钾原子紫色 */
+        .h { background-color: #95a5a6; }
+        .o { background-color: #e74c3c; }
+        .c { background-color: #34495e; }
+        .mg { background-color: #27ae60; }
+        .cl { background-color: #f1c40f; color: #333; }
+        .k { background-color: #9b59b6; }
         .na { background-color: #8e44ad; }
+
+        /* ===== 球棍动画演示 ===== */
+        .anim-wrap {
+            background: #f7fbfd;
+            border: 1px solid #d6e9f3;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 18px 0;
+        }
+        .anim-wrap canvas {
+            display: block;
+            width: 100%;
+            border-radius: 10px;
+            background: #fff;
+        }
+        .anim-legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .legend-dot {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            vertical-align: -2px;
+            margin-right: 5px;
+        }
+        .legend-stick {
+            display: inline-block;
+            width: 18px;
+            height: 6px;
+            border-radius: 3px;
+            background: #b0bec5;
+            vertical-align: 1px;
+            margin-right: 5px;
+        }
+        .anim-caption {
+            text-align: center;
+            font-weight: bold;
+            font-size: 15px;
+            color: #2c3e50;
+            min-height: 24px;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+        .anim-stage-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .stage-chip {
+            font-size: 13px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            background: #eef3f6;
+            color: #90a4ae;
+            border: 1.5px solid #dfe9ee;
+            transition: 0.25s;
+        }
+        .stage-chip.active {
+            background: #3498db;
+            border-color: #3498db;
+            color: #fff;
+            transform: scale(1.05);
+        }
+        .stage-chip.done {
+            background: #eafaf1;
+            border-color: #2ecc71;
+            color: #27ae60;
+        }
+        .tally {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .tally-item {
+            background: #fff;
+            border: 2px solid #dfeaea;
+            border-radius: 10px;
+            padding: 6px 14px;
+            font-size: 14px;
+            color: #455a64;
+        }
+        .tally-item b {
+            font-size: 19px;
+            color: #2c3e50;
+            margin: 0 2px;
+        }
+        .tally-item small { color: #90a4ae; font-size: 12px; }
+        .tally-item.keep { border-color: #a8e6c1; }
+        .tally-item.change { border-color: #ffd7a0; }
+        .anim-btns { text-align: center; margin-top: 12px; }
+
+        /* ===== 计分面板 ===== */
+        .stat-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .stat {
+            flex: 1;
+            min-width: 76px;
+            background: #fff;
+            border: 2px solid #e3edf3;
+            border-radius: 10px;
+            padding: 8px 6px;
+            text-align: center;
+            transition: 0.25s;
+        }
+        .stat span {
+            display: block;
+            font-size: 12px;
+            color: #90a4ae;
+            margin-bottom: 2px;
+        }
+        .stat b {
+            font-size: 20px;
+            color: #2c3e50;
+        }
+        .stat.pop {
+            border-color: #f39c12;
+            transform: translateY(-2px);
+        }
+        .progress {
+            height: 10px;
+            background: #e6eef3;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            border-radius: 999px;
+            transition: width 0.5s ease;
+        }
 
         /* 输入框样式 */
         .quiz-area {
@@ -104,6 +251,14 @@
             border-radius: 10px;
             text-align: center;
             margin-top: 20px;
+        }
+        .quiz-area.shake { animation: shake 0.4s; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(7px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(3px); }
         }
         .equation {
             font-size: 24px;
@@ -128,9 +283,7 @@
             border-color: #e74c3c;
             box-shadow: 0 0 5px rgba(231, 76, 60, 0.5);
         }
-        .equation span {
-            font-weight: bold;
-        }
+        .equation span { font-weight: bold; }
 
         .btn {
             background: #3498db;
@@ -148,17 +301,227 @@
         .btn-check:hover { background: #27ae60; }
         .btn-hint { background: #f39c12; }
         .btn-hint:hover { background: #d68910; }
+        .btn.ready {
+            box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+            animation: pulse 1.4s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.6); }
+            70% { box-shadow: 0 0 0 12px rgba(46, 204, 113, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+        }
 
         .feedback {
             margin-top: 20px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             min-height: 25px;
+            line-height: 1.7;
+            text-align: left;
         }
-        .success { color: #2ecc71; }
+        .feedback ul { margin: 6px 0 0; padding-left: 20px; font-weight: normal; }
+        .success { color: #27ae60; }
         .error { color: #e74c3c; }
+        .near { color: #d68910; }
 
         .hidden { display: none; }
+
+        /* ===== 题号导航 & 答题卡 ===== */
+        .qbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .qno {
+            font-weight: bold;
+            color: #34495e;
+            font-size: 15px;
+            white-space: nowrap;
+        }
+        .btn-mini {
+            padding: 8px 14px;
+            font-size: 14px;
+            margin: 0;
+        }
+        .qmap {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 7px;
+        }
+        .map-chip {
+            padding: 8px 0;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            border: 2px solid #dfe9ee;
+            background: #fff;
+            color: #78909c;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .map-chip:hover { border-color: #90caf9; }
+        .map-chip.done {
+            background: #eafaf1;
+            border-color: #2ecc71;
+            color: #27ae60;
+        }
+        .map-chip.current {
+            background: #3498db;
+            border-color: #3498db;
+            color: #fff;
+            transform: scale(1.06);
+        }
+
+        /* ===== 右下角浮动选题按钮 + 抽屉 ===== */
+        .fab {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 9000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #42a5f5, #1e88e5);
+            color: #fff;
+            box-shadow: 0 6px 18px rgba(30, 136, 229, 0.45);
+            cursor: pointer;
+            transition: transform 0.22s, box-shadow 0.22s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .fab:active { transform: scale(0.94); }
+        .fab.active {
+            background: linear-gradient(145deg, #26c6da, #00838f);
+            box-shadow: 0 6px 18px rgba(0, 131, 143, 0.45);
+        }
+        .fab-icon { font-size: 20px; line-height: 1; }
+        .fab-label { font-size: 11px; margin-top: 2px; letter-spacing: 1px; }
+
+        .drawer-mask {
+            position: fixed;
+            inset: 0;
+            background: rgba(20, 30, 40, 0.35);
+            z-index: 9200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s;
+        }
+        .drawer-mask.show { opacity: 1; pointer-events: auto; }
+
+        .drawer {
+            position: fixed;
+            right: 16px;
+            bottom: 92px;
+            width: min(340px, 86vw);
+            max-height: 68vh;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+            z-index: 9300;
+            transform: translateY(16px) scale(0.96);
+            opacity: 0;
+            pointer-events: none;
+            transform-origin: bottom right;
+            transition: transform 0.24s cubic-bezier(0.2, 0.9, 0.3, 1.1), opacity 0.2s;
+        }
+        .drawer.open {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .drawer-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 14px 10px;
+            border-bottom: 1px solid #eef3f6;
+        }
+        .drawer-head strong { color: #2c3e50; font-size: 15px; }
+        .drawer-sub {
+            font-size: 12px;
+            color: #90a4ae;
+            margin-left: auto;
+            white-space: nowrap;
+        }
+        .drawer-close {
+            border: none;
+            background: #eef3f6;
+            color: #607d8b;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            font-size: 13px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .drawer-body {
+            padding: 12px 14px 8px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .drawer-tip {
+            padding: 0 14px 12px;
+            margin: 0;
+            font-size: 12px;
+            color: #90a4ae;
+            line-height: 1.6;
+        }
+        .drawer-tip i {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            margin-right: 4px;
+            vertical-align: -1px;
+        }
+
+        /* ===== 通关弹窗 & 撒花 =====
+        .modal-mask {
+            position: fixed;
+            inset: 0;
+            background: rgba(20, 30, 40, 0.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9998;
+        }
+        .modal {
+            background: #fff;
+            border-radius: 18px;
+            padding: 26px 24px;
+            max-width: 360px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            animation: popIn 0.35s cubic-bezier(0.18, 1.4, 0.4, 1);
+        }
+        @keyframes popIn {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-emoji { font-size: 54px; line-height: 1; }
+        .modal h3 {
+            margin: 10px 0 6px;
+            color: #e67e22;
+            font-size: 22px;
+        }
+        .modal p { color: #607d8b; font-size: 15px; line-height: 1.8; margin: 6px 0; }
+        .modal p b { color: #2c3e50; font-size: 18px; }
+        #fx {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 10000;
+        }
 
         /* 导航 */
         .nav {
@@ -239,164 +602,942 @@
         <p>两边相等，完美配平！</p>
     </div>
 
-    <!-- 练习部分 -->
-    <h3>🎮 轮到你了：随机配平挑战</h3>
-    <div class="quiz-area">
-        <p style="color:#7f8c8d;">请在方框中填入正确的系数（数字为1也要填）。</p>
-        <div class="equation" id="equation-display">
-            <!-- 动态生成输入框 -->
+    <!-- ===== 球棍动画演示 ===== -->
+    <h3>🎬 动画演示：球棍模型，看原子怎么“搬家”</h3>
+    <p>下面这段动画把 <strong>2H₂ + O₂ → 2H₂O</strong> 慢放：球＝原子，棍＝化学键。<br>
+       盯住三件事：<strong>① 分子被拆散 ② 原子重新配对 ③ 原子总数一个都没变，但分子个数变了。</strong></p>
+
+    <div class="anim-wrap">
+        <div class="anim-legend">
+            <span><i class="legend-dot" style="background:#8496a1"></i>H 原子（氢）</span>
+            <span><i class="legend-dot" style="background:#c0392b"></i>O 原子（氧）</span>
+            <span><i class="legend-stick"></i>棍 = 化学键</span>
         </div>
 
+        <canvas id="balAnim"></canvas>
+
+        <div class="anim-caption" id="animCaption">点下面的按钮，看看原子是怎么“搬家”的 ⬇️</div>
+
+        <div class="anim-stage-row">
+            <span class="stage-chip" id="animStage0">① 断开化学键</span>
+            <span class="stage-chip" id="animStage1">② 原子重新配对</span>
+            <span class="stage-chip" id="animStage2">③ 重组成新分子</span>
+        </div>
+
+        <div class="tally">
+            <div class="tally-item keep">H 原子 <b>4</b> <small>不变</small></div>
+            <div class="tally-item keep">O 原子 <b>2</b> <small>不变</small></div>
+            <div class="tally-item change">分子个数 <b id="tallyMol">3</b> <small>会变</small></div>
+        </div>
+
+        <div class="anim-btns">
+            <button class="btn" id="btnPlayAnim">▶ 播放动画</button>
+            <button class="btn btn-hint" id="btnReplayAnim">⟲ 重播</button>
+        </div>
+    </div>
+
+    <div class="explain-box" style="background:#fff; border-left-color:#2ecc71;">
+        <p><strong>看完动画记住一句话：</strong></p>
+        <p>反应前后 <span style="color:#27ae60;font-weight:bold;">原子种类不变、原子总数不变</span>（这里都是 4 个 H + 2 个 O），
+           但<span style="color:#d35400;font-weight:bold;">分子会先被拆开再重新组合</span>，所以分子个数可以从 3 个变成 2 个。</p>
+        <p>这就是配平的全部秘密：<strong>只调前面的系数，让两边每种原子的个数对上。</strong></p>
+    </div>
+
+    <!-- ===== 练习部分 ===== -->
+    <h3>🎮 轮到你了：配平闯关</h3>
+
+    <div class="stat-row">
+        <div class="stat" id="statScoreBox"><span>得分</span><b id="statScore">0</b></div>
+        <div class="stat" id="statComboBox"><span>连击</span><b id="statCombo">0</b></div>
+        <div class="stat"><span>最高连击</span><b id="statBest">0</b></div>
+        <div class="stat"><span>已通关</span><b id="statSolved">0/34</b></div>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="quiz-area" id="quizArea">
+        <div class="qbar">
+            <button class="btn btn-mini" id="btnPrev">← 上一题</button>
+            <span class="qno" id="qno">第 1 / 34 题</span>
+            <button class="btn btn-mini" id="btnNext">下一题 →</button>
+        </div>
+
+        <p style="color:#7f8c8d; margin:0; font-size:14px;">按题号顺序练习，填好系数后点“检查答案”（数字为 1 也要填 1）。</p>
+        <div class="equation" id="equation-display"></div>
+
         <div>
-            <button class="btn btn-check" onclick="checkAnswer()">检查答案</button>
-            <button class="btn btn-hint" onclick="showHint()">提示一下</button>
-            <button class="btn" onclick="nextQuestion()">换一题</button>
+            <button class="btn btn-check" id="btnCheck">检查答案</button>
+            <button class="btn btn-hint" id="btnHint">提示一下</button>
         </div>
 
         <div class="feedback" id="feedback"></div>
-        <div id="hint-text" class="hidden" style="margin-top:10px; color:#d35400; font-weight:bold;"></div>
+        <div id="hint-text" class="hidden" style="margin-top:10px; color:#d35400; font-weight:bold; text-align:left;"></div>
+    </div>
+
+    <p style="text-align:center; color:#90a4ae; font-size:13px; margin-top:22px;">
+        小口诀：先配复杂的，再配单质，最后配氧。配完记得回头验算一遍！
+    </p>
+</div>
+
+<!-- 通关弹窗 -->
+<div class="modal-mask hidden" id="winMask">
+    <div class="modal">
+        <div class="modal-emoji">🏆</div>
+        <h3>全部通关！</h3>
+        <p id="winStats"></p>
+        <p style="font-size:13px;color:#90a4ae;">配平的核心只有一句话：两边原子个数必须相等。</p>
+        <button class="btn btn-check" id="btnRestartAll">再来一轮</button>
+        <button class="btn" id="btnCloseWin">关闭</button>
     </div>
 </div>
 
+<!-- 右下角浮动选题按钮 + 抽屉 -->
+<button class="fab" id="fabList" aria-label="打开选题列表">
+    <span class="fab-icon">☰</span>
+    <span class="fab-label">选题</span>
+</button>
+
+<div class="drawer-mask" id="drawerMask"></div>
+
+<aside class="drawer" id="drawer">
+    <div class="drawer-head">
+        <strong>📋 选题列表</strong>
+        <span class="drawer-sub" id="mapSummary">0 / 34 已完成</span>
+        <button class="drawer-close" id="btnCloseDrawer" aria-label="关闭">✕</button>
+    </div>
+    <div class="drawer-body">
+        <div class="qmap" id="qmap"></div>
+    </div>
+    <p class="drawer-tip">
+        <i style="background:#2ecc71"></i>已答对　<i style="background:#3498db"></i>当前题　<i style="background:#fff;border:2px solid #dfe9ee"></i>未完成
+    </p>
+</aside>
+
+<canvas id="fx"></canvas>
+
 <script>
-    // 题库：预设了初中常见的化学反应，确保反应真实存在
-    const cases = [
-        {
-            left: ["H2", "O2"],
-            right: ["H2O"],
-            answer: [2, 1, 2],
-            hint: "左边O原子有2个，右边只有1个，水分子前面要加2试试。"
-        },
-        {
-            left: ["C", "O2"],
-            right: ["CO2"],
-            answer: [1, 1, 1],
-            hint: "C是单质，自带1个碳。数一数两边的O，刚刚好哦。"
-        },
-        {
-            left: ["Mg", "O2"],
-            right: ["MgO"],
-            answer: [2, 1, 2],
-            hint: "右边有1个O，左边有2个，所以右边MgO要乘2，左边Mg也要乘2。"
-        },
-        {
-            left: ["CH4", "O2"],
-            right: ["CO2", "H2O"],
-            answer: [1, 2, 1, 2],
-            hint: "先配碳，再配氢，最后配氧。左边有4个H，右边水前面要加2。"
-        },
-        {
-            left: ["KClO3"],
-            right: ["KCl", "O2"],
-            answer: [2, 2, 3],
-            hint: "氧气分子里有2个O，左边KClO3有3个O。找2和3的最小公倍数，也就是6。"
-        },
-        {
-            left: ["Fe", "O2"],
-            right: ["Fe3O4"],
-            answer: [3, 2, 1],
-            hint: "先看最复杂的Fe3O4，有3个Fe，4个O。左边Fe前面加3，O2前面加2。"
+/* ============ 1. 球棍动画 ============ */
+(function () {
+    var canvas = document.getElementById('balAnim');
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext('2d');
+
+    var captionEl = document.getElementById('animCaption');
+    var tallyMolEl = document.getElementById('tallyMol');
+    var stageEls = [
+        document.getElementById('animStage0'),
+        document.getElementById('animStage1'),
+        document.getElementById('animStage2')
+    ];
+    var btnPlay = document.getElementById('btnPlayAnim');
+    var btnReplay = document.getElementById('btnReplayAnim');
+
+    // 时间轴（毫秒）
+    var T_IDLE = 800;    // 静止展示反应前
+    var T_BREAK = 2100;  // 键断开
+    var T_HOLD = 3000;   // 自由原子停留
+    var T_JOIN = 4700;   // 重新组合完成
+    var T_DONE = 5400;   // 结束
+
+    var W = 600, H = 320;
+    var atoms = [], bondsFrom = [], bondsTo = [];
+    var t = 0, playing = false, rafId = null, lastTs = 0;
+    var RH = 13, RO = 19;
+
+    function clamp01(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
+    function lerp(a, b, p) { return a + (b - a) * p; }
+    function easeInOut(p) { return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; }
+
+    function roundRect(c, x, y, w, h, r) {
+        c.beginPath();
+        if (c.roundRect) { c.roundRect(x, y, w, h, r); return; }
+        c.moveTo(x + r, y);
+        c.lineTo(x + w - r, y); c.quadraticCurveTo(x + w, y, x + w, y + r);
+        c.lineTo(x + w, y + h - r); c.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        c.lineTo(x + r, y + h); c.quadraticCurveTo(x, y + h, x, y + h - r);
+        c.lineTo(x, y + r); c.quadraticCurveTo(x, y, x + r, y);
+        c.closePath();
+    }
+
+    function layout() {
+        var rect = canvas.getBoundingClientRect();
+        W = Math.max(280, Math.round(rect.width) || 320);
+        H = Math.round(Math.min(360, Math.max(250, W * 0.52)));
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.style.height = H + 'px';
+        canvas.width = Math.round(W * dpr);
+        canvas.height = Math.round(H * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        // 反应前：左边 2 个 H₂ + 1 个 O₂
+        var h2a = { x: W * 0.17, y: H * 0.28 };
+        var h2b = { x: W * 0.17, y: H * 0.72 };
+        var o2c = { x: W * 0.35, y: H * 0.50 };
+
+        // 拆散后的自由位置（中部）
+        var free = {
+            h1: { x: W * 0.30, y: H * 0.19 },
+            h2: { x: W * 0.37, y: H * 0.35 },
+            h3: { x: W * 0.30, y: H * 0.81 },
+            h4: { x: W * 0.37, y: H * 0.65 },
+            o1: { x: W * 0.50, y: H * 0.32 },
+            o2: { x: W * 0.50, y: H * 0.68 }
+        };
+
+        // 反应后：右边 2 个 H₂O
+        var w1 = { x: W * 0.80, y: H * 0.30 };
+        var w2 = { x: W * 0.80, y: H * 0.73 };
+
+        var hx = Math.max(19, Math.min(27, W * 0.042));
+        var hy = hx * 0.82;
+
+        atoms = [
+            { el: 'H', r: RH, from: { x: h2a.x - 15, y: h2a.y }, free: free.h1, to: { x: w1.x - hx, y: w1.y - hy }, phase: 0.0 },
+            { el: 'H', r: RH, from: { x: h2a.x + 15, y: h2a.y }, free: free.h2, to: { x: w1.x + hx, y: w1.y - hy }, phase: 1.1 },
+            { el: 'H', r: RH, from: { x: h2b.x - 15, y: h2b.y }, free: free.h3, to: { x: w2.x - hx, y: w2.y - hy }, phase: 2.2 },
+            { el: 'H', r: RH, from: { x: h2b.x + 15, y: h2b.y }, free: free.h4, to: { x: w2.x + hx, y: w2.y - hy }, phase: 3.3 },
+            { el: 'O', r: RO, from: { x: o2c.x - 23, y: o2c.y }, free: free.o1, to: { x: w1.x, y: w1.y }, phase: 0.6 },
+            { el: 'O', r: RO, from: { x: o2c.x + 23, y: o2c.y }, free: free.o2, to: { x: w2.x, y: w2.y }, phase: 1.7 }
+        ];
+        // 索引 0,1 = 第1个H₂；2,3 = 第2个H₂；4,5 = O₂
+        bondsFrom = [[0, 1], [2, 3], [4, 5]];
+        bondsTo = [[4, 0], [4, 1], [5, 2], [5, 3]];
+    }
+
+    function atomPosAt(a, time) {
+        var pBreak = clamp01((time - T_IDLE) / (T_BREAK - T_IDLE));
+        var pJoin = clamp01((time - T_HOLD) / (T_JOIN - T_HOLD));
+        var x, y;
+        if (time < T_BREAK) {
+            var e1 = easeInOut(pBreak);
+            x = lerp(a.from.x, a.free.x, e1);
+            y = lerp(a.from.y, a.free.y, e1);
+        } else {
+            var e2 = easeInOut(pJoin);
+            x = lerp(a.free.x, a.to.x, e2);
+            y = lerp(a.free.y, a.to.y, e2);
+            // 走一点点弧线，看起来更自然
+            y += Math.sin(e2 * Math.PI) * (a.el === 'O' ? 10 : -10);
         }
+        // 静止时的轻微呼吸感
+        var amp = time < T_IDLE ? 1.6 : (time > T_DONE - 200 ? 1.2 : 0);
+        if (amp) y += Math.sin(time / 300 + a.phase) * amp;
+        return { x: x, y: y };
+    }
+
+    function drawStick(x1, y1, x2, y2, alpha) {
+        if (alpha <= 0.02) return;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.lineCap = 'round';
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = '#a9b7bf';
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+        ctx.lineWidth = 3.5;
+        ctx.strokeStyle = '#e6edf1';
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+        ctx.restore();
+    }
+
+    function drawAtom(a, x, y) {
+        var light = a.el === 'H' ? '#dfe6ea' : '#ff9a8b';
+        var dark = a.el === 'H' ? '#7d8f9a' : '#bf3620';
+        ctx.save();
+        var g = ctx.createRadialGradient(x - a.r * 0.34, y - a.r * 0.40, a.r * 0.12, x, y, a.r * 1.05);
+        g.addColorStop(0, light);
+        g.addColorStop(1, dark);
+        ctx.beginPath();
+        ctx.arc(x, y, a.r, 0, Math.PI * 2);
+        ctx.fillStyle = g;
+        ctx.fill();
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+        ctx.stroke();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold ' + (a.el === 'H' ? 12 : 16) + 'px "Microsoft YaHei", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(a.el, x, y + 0.5);
+        ctx.restore();
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        var pad = Math.max(8, W * 0.016);
+        var half = W / 2;
+
+        // 左（反应前）区域
+        ctx.save();
+        roundRect(ctx, pad, pad, half - pad * 1.7, H - pad * 2, 12);
+        ctx.fillStyle = 'rgba(52,152,219,0.055)';
+        ctx.fill();
+        ctx.setLineDash([6, 5]);
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = 'rgba(52,152,219,0.32)';
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 右（反应后）区域
+        roundRect(ctx, half + pad * 0.7, pad, half - pad * 1.7, H - pad * 2, 12);
+        ctx.fillStyle = 'rgba(46,204,113,0.07)';
+        ctx.fill();
+        ctx.setLineDash([6, 5]);
+        ctx.strokeStyle = 'rgba(39,174,96,0.35)';
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.font = 'bold 13px "Microsoft YaHei", sans-serif';
+        ctx.textBaseline = 'top';
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'rgba(41,128,185,0.9)';
+        ctx.fillText('反应前', pad + 10, pad + 6);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = 'rgba(39,174,96,0.9)';
+        ctx.fillText('反应后', W - pad - 10, pad + 6);
+        ctx.restore();
+
+        var pos = atoms.map(function (a) { return atomPosAt(a, t); });
+
+        // 原来的键：断开时快速淡出
+        var alphaFrom = 1 - clamp01((t - T_IDLE) / ((T_BREAK - T_IDLE) * 0.5));
+        bondsFrom.forEach(function (b) {
+            drawStick(pos[b[0]].x, pos[b[0]].y, pos[b[1]].x, pos[b[1]].y, alphaFrom);
+        });
+
+        // 新的键：接近目标时出现
+        var pJoin = clamp01((t - T_HOLD) / (T_JOIN - T_HOLD));
+        var alphaTo = clamp01((pJoin - 0.45) / 0.45);
+        bondsTo.forEach(function (b) {
+            drawStick(pos[b[0]].x, pos[b[0]].y, pos[b[1]].x, pos[b[1]].y, alphaTo);
+        });
+
+        // 原子画在最上层
+        atoms.forEach(function (a, i) { drawAtom(a, pos[i].x, pos[i].y); });
+    }
+
+    function setStage(idx) {
+        stageEls.forEach(function (el, i) {
+            if (!el) return;
+            el.classList.toggle('active', i === idx);
+            el.classList.toggle('done', idx > i);
+        });
+    }
+
+    function updateUI() {
+        var cap, stage;
+        if (t < T_IDLE) {
+            cap = '反应前：2 个 H₂ + 1 个 O₂ —— 一共 3 个分子，4 个 H 原子、2 个 O 原子';
+            stage = -1;
+        } else if (t < T_BREAK) {
+            cap = '① 化学键断开：分子被“拆”成一个个原子（注意：原子一个都没少！）';
+            stage = 0;
+        } else if (t < T_HOLD) {
+            cap = '② 原子们自由活动，重新寻找搭档……';
+            stage = 0;
+        } else if (t < T_JOIN) {
+            cap = '③ 原子重新组合，2 个 H₂O 分子慢慢成形';
+            stage = 1;
+        } else {
+            cap = '✅ 反应完成：原子数不变（4 个 H + 2 个 O），但分子个数从 3 个变成了 2 个';
+            stage = 2;
+        }
+        if (captionEl.textContent !== cap) captionEl.textContent = cap;
+        setStage(stage);
+
+        var mol = t < T_BREAK ? '3' : (t < T_JOIN - 250 ? '3→2' : '2');
+        if (tallyMolEl.textContent !== mol) tallyMolEl.textContent = mol;
+    }
+
+    function syncBtn() {
+        if (playing) btnPlay.textContent = '⏸ 暂停';
+        else if (t >= T_DONE) btnPlay.textContent = '▶ 重新播放';
+        else if (t > 0) btnPlay.textContent = '▶ 继续';
+        else btnPlay.textContent = '▶ 播放动画';
+    }
+
+    function frame(ts) {
+        if (!lastTs) lastTs = ts;
+        var dt = Math.min(64, ts - lastTs);
+        lastTs = ts;
+        if (playing) {
+            t += dt;
+            if (t >= T_DONE) { t = T_DONE; playing = false; syncBtn(); }
+        }
+        draw();
+        updateUI();
+        if (playing) rafId = requestAnimationFrame(frame);
+        else rafId = null;
+    }
+
+    function kick() {
+        if (rafId === null) { lastTs = 0; rafId = requestAnimationFrame(frame); }
+    }
+
+    btnPlay.addEventListener('click', function () {
+        if (playing) { playing = false; syncBtn(); return; }
+        if (t >= T_DONE) t = 0;
+        playing = true;
+        lastTs = 0;
+        syncBtn();
+        kick();
+    });
+
+    btnReplay.addEventListener('click', function () {
+        t = 0;
+        playing = true;
+        lastTs = 0;
+        syncBtn();
+        kick();
+    });
+
+    var rzT = null;
+    function onResize() {
+        clearTimeout(rzT);
+        rzT = setTimeout(function () { layout(); draw(); updateUI(); }, 120);
+    }
+    window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize);
+
+    layout();
+    draw();
+    updateUI();
+    syncBtn();
+
+    // 滚动到可见时自动播放一次
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var started = false;
+    if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                if (!en.isIntersecting || started) return;
+                started = true;
+                if (reduced) {
+                    t = T_DONE; draw(); updateUI(); syncBtn();
+                } else {
+                    t = 0; playing = true; lastTs = 0; syncBtn(); kick();
+                }
+                io.disconnect();
+            });
+        }, { threshold: 0.35 });
+        io.observe(canvas);
+    }
+})();
+
+/* ============ 2. 撒花特效 ============ */
+(function () {
+    var fx = document.getElementById('fx');
+    if (!fx) return;
+    var c = fx.getContext('2d');
+    var parts = [], raf = null;
+    var COLORS = ['#e74c3c', '#f39c12', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f', '#1abc9c'];
+
+    function size() {
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        fx.width = Math.floor(window.innerWidth * dpr);
+        fx.height = Math.floor(window.innerHeight * dpr);
+        fx.style.width = window.innerWidth + 'px';
+        fx.style.height = window.innerHeight + 'px';
+        c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    size();
+    window.addEventListener('resize', size);
+
+    window.burst = function (n) {
+        n = n || 50;
+        var cx = window.innerWidth / 2;
+        var cy = window.innerHeight * 0.4;
+        for (var i = 0; i < n; i++) {
+            parts.push({
+                x: cx + (Math.random() - 0.5) * window.innerWidth * 0.55,
+                y: cy + (Math.random() - 0.5) * 100,
+                vx: (Math.random() - 0.5) * 9,
+                vy: -Math.random() * 9 - 3,
+                g: 0.26 + Math.random() * 0.16,
+                w: 4 + Math.random() * 6,
+                h: 6 + Math.random() * 8,
+                rot: Math.random() * Math.PI,
+                vr: (Math.random() - 0.5) * 0.35,
+                color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                life: 1
+            });
+        }
+        if (!raf) loop();
+    };
+
+    function loop() {
+        c.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        for (var i = parts.length - 1; i >= 0; i--) {
+            var p = parts[i];
+            p.vy += p.g;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vx *= 0.995;
+            p.rot += p.vr;
+            p.life -= 0.008;
+            if (p.life <= 0 || p.y > window.innerHeight + 60) { parts.splice(i, 1); continue; }
+            c.save();
+            c.globalAlpha = Math.max(0, Math.min(1, p.life));
+            c.translate(p.x, p.y);
+            c.rotate(p.rot);
+            c.fillStyle = p.color;
+            c.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            c.restore();
+        }
+        if (parts.length) raf = requestAnimationFrame(loop);
+        else { raf = null; c.clearRect(0, 0, window.innerWidth, window.innerHeight); }
+    }
+})();
+
+/* ============ 3. 配平闯关（按列表顺序出题） ============ */
+(function () {
+    var ELEM_CN = {
+        H: '氢', O: '氧', C: '碳', N: '氮', S: '硫', P: '磷',
+        Cl: '氯', K: '钾', Na: '钠', Mg: '镁', Ca: '钙', Al: '铝',
+        Fe: '铁', Cu: '铜', Zn: '锌', Mn: '锰'
+    };
+
+    // ===== 题库（按难度从易到难排列，answer 为最简整数系数） =====
+    var cases = [
+        { left: ['H2', 'O2'], right: ['H2O'], answer: [2, 1, 2],
+          hint: '右边每个水只有 1 个 O，左边 O₂ 有 2 个 → 水前面先加 2，H 自然就平衡了。' },
+        { left: ['C', 'O2'], right: ['CO2'], answer: [1, 1, 1],
+          hint: '两边各 1 个 C、2 个 O，直接都填 1。' },
+        { left: ['S', 'O2'], right: ['SO2'], answer: [1, 1, 1],
+          hint: 'S 是单质 1 个，O 两边都是 2 个，都填 1。' },
+        { left: ['Mg', 'O2'], right: ['MgO'], answer: [2, 1, 2],
+          hint: '右边每 1 个 MgO 只有 1 个 O，左边 O₂ 有 2 个 → MgO 前加 2，Mg 也跟着加 2。' },
+        { left: ['Cu', 'O2'], right: ['CuO'], answer: [2, 1, 2],
+          hint: '和镁一样：O₂ 提供 2 个 O → CuO 前加 2，Cu 前也加 2。' },
+        { left: ['CO', 'O2'], right: ['CO2'], answer: [2, 1, 2],
+          hint: 'CO 只有 1 个 O，O₂ 有 2 个 → CO 前加 2，CO₂ 前也加 2。' },
+        { left: ['C', 'O2'], right: ['CO'], answer: [2, 1, 2],
+          hint: 'CO 里只有 1 个 O，而 O₂ 提供 2 个 → CO 前加 2，C 前也加 2。' },
+        { left: ['H2O2'], right: ['H2O', 'O2'], answer: [2, 2, 1],
+          hint: '取 2 个 H₂O₂ → 4 个 H、4 个 O；2 个 H₂O 用掉 2 个 O，剩下 2 个 O 正好 1 个 O₂。' },
+        { left: ['H2O'], right: ['H2', 'O2'], answer: [2, 2, 1],
+          hint: '电解水：O₂ 里有 2 个 O → 水前面加 2，H₂ 前加 2。' },
+        { left: ['CaCO3'], right: ['CaO', 'CO2'], answer: [1, 1, 1],
+          hint: 'Ca、C 各 1 个，O 左边 3 个 = 右边 1 + 2 个，都填 1。' },
+        { left: ['KClO3'], right: ['KCl', 'O2'], answer: [2, 2, 3],
+          hint: 'O 左边 3 个、右边 2 个 → 找最小公倍数 6：KClO₃ 前加 2，O₂ 前加 3，KCl 前加 2。' },
+        { left: ['CH4', 'O2'], right: ['CO2', 'H2O'], answer: [1, 2, 1, 2],
+          hint: '先配 C（1:1），再配 H：左边 4 个 H → 水前加 2；最后数 O：左边要 4 个 → O₂ 前加 2。' },
+        { left: ['Al', 'O2'], right: ['Al2O3'], answer: [4, 3, 2],
+          hint: 'Al₂O₃ = 2 个 Al + 3 个 O。取 2 个 Al₂O₃ → 4 个 Al、6 个 O → O₂ 前加 3。' },
+        { left: ['P', 'O2'], right: ['P2O5'], answer: [4, 5, 2],
+          hint: '取 2 个 P₂O₅ → 4 个 P、10 个 O → P 前加 4，O₂ 前加 5。' },
+        { left: ['Fe', 'O2'], right: ['Fe3O4'], answer: [3, 2, 1],
+          hint: '先看最复杂的 Fe₃O₄：3 个 Fe、4 个 O → Fe 前加 3，O₂ 前加 2。' },
+        { left: ['Zn', 'HCl'], right: ['ZnCl2', 'H2'], answer: [1, 2, 1, 1],
+          hint: 'ZnCl₂ 里 Cl 有 2 个 → HCl 前加 2；H 正好 2 个 → H₂ 填 1。' },
+        { left: ['Mg', 'HCl'], right: ['MgCl2', 'H2'], answer: [1, 2, 1, 1],
+          hint: '同锌粒的反应：Cl 要 2 个 → HCl 前加 2，H₂ 填 1。' },
+        { left: ['Fe', 'HCl'], right: ['FeCl2', 'H2'], answer: [1, 2, 1, 1],
+          hint: 'FeCl₂ 里 Cl 是 2 个 → HCl 前加 2，H₂ 填 1。' },
+        { left: ['Al', 'HCl'], right: ['AlCl3', 'H2'], answer: [2, 6, 2, 3],
+          hint: 'AlCl₃ 有 3 个 Cl，而 HCl 只给 1 个 → 取 2 个 AlCl₃（6 个 Cl）→ HCl 前加 6，H 得 6 个 → H₂ 前加 3。' },
+        { left: ['Fe', 'H2SO4'], right: ['FeSO4', 'H2'], answer: [1, 1, 1, 1],
+          hint: 'H₂SO₄ 里 H 有 2 个、SO₄ 一份 → 两边刚好各 1，都填 1。' },
+        { left: ['H2', 'CuO'], right: ['Cu', 'H2O'], answer: [1, 1, 1, 1],
+          hint: 'H₂ 有 2 个 H，H₂O 也有 2 个 H → 都填 1。' },
+        { left: ['Fe2O3', 'CO'], right: ['Fe', 'CO2'], answer: [1, 3, 2, 3],
+          hint: '先配 Fe：左边 2 个 → Fe 前加 2；再配 O：左边 3 + 3 = 6 个 → CO₂ 前加 3，CO 也跟着定下来。' },
+        { left: ['Na2O2', 'H2O'], right: ['NaOH', 'O2'], answer: [2, 2, 4, 1],
+          hint: '就是前面那页讲过的题！先配 Na：取 2 个 Na₂O₂ → 4 个 Na → NaOH 前加 4，再数 H 和 O 补齐。' },
+        { left: ['Ca(OH)2', 'CO2'], right: ['CaCO3', 'H2O'], answer: [1, 1, 1, 1],
+          hint: '石灰水变浑浊的那个反应：Ca、C、O、H 刚好都能对上，都填 1。' },
+        { left: ['CO2', 'H2O'], right: ['H2CO3'], answer: [1, 1, 1],
+          hint: '碳酸的形成：两边各 1 个 C、2 个 H、3 个 O，都填 1。' },
+        { left: ['NaOH', 'H2SO4'], right: ['Na2SO4', 'H2O'], answer: [2, 1, 1, 2],
+          hint: 'Na₂SO₄ 里 Na 有 2 个 → NaOH 前加 2；H 变成 4 个 → H₂O 前加 2。' },
+        { left: ['Ca(OH)2', 'HCl'], right: ['CaCl2', 'H2O'], answer: [1, 2, 1, 2],
+          hint: 'CaCl₂ 里 Cl 有 2 个 → HCl 前加 2；H 变成 2 + 2 = 4 个 → H₂O 前加 2。' },
+        { left: ['Fe(OH)3', 'HCl'], right: ['FeCl3', 'H2O'], answer: [1, 3, 1, 3],
+          hint: 'FeCl₃ 里 Cl 有 3 个 → HCl 前加 3；H 变成 3 + 3 = 6 个 → H₂O 前加 3。' },
+        { left: ['Na2CO3', 'HCl'], right: ['NaCl', 'H2O', 'CO2'], answer: [1, 2, 2, 1, 1],
+          hint: 'Na₂CO₃ 里 Na 有 2 个 → NaCl 前加 2 → 那 HCl 前也加 2；最后数 H、O（H₂O 和 CO₂ 前填 1）。' },
+        { left: ['Fe2O3', 'HCl'], right: ['FeCl3', 'H2O'], answer: [1, 6, 2, 3],
+          hint: '先定 Fe：左边 2 个 → FeCl₃ 前加 2（要 6 个 Cl）→ HCl 前加 6；H 有 6 个 → H₂O 前加 3。' },
+        { left: ['CaCO3', 'HCl'], right: ['CaCl2', 'H2O', 'CO2'], answer: [1, 2, 1, 1, 1],
+          hint: 'CaCl₂ 里 Cl 有 2 个 → HCl 前加 2；再看 H 有 2 个 → H₂O 前填 1；O 刚好 3 = 1 + 2。' },
+        { left: ['Al2(SO4)3', 'NaOH'], right: ['Al(OH)3', 'Na2SO4'], answer: [1, 6, 2, 3],
+          hint: '带括号的题先把括号当一个整体数：Al₂(SO₄)₃ = 2 Al、3 S、12 O。3 个硫要 3 个 Na₂SO₄ → Na 要 6 个 → NaOH 前加 6。' },
+        { left: ['KMnO4'], right: ['K2MnO4', 'MnO2', 'O2'], answer: [2, 1, 1, 1],
+          hint: '取 2 个 KMnO₄ → 2 K、2 Mn、8 O；K₂MnO₄ 拿走 2K+1Mn+4O，MnO₂ 拿走 1Mn+2O，剩 2 个 O → O₂ 前填 1。' },
+        { left: ['NaHCO3'], right: ['Na2CO3', 'H2O', 'CO2'], answer: [2, 1, 1, 1],
+          hint: 'Na 要凑成 2 个 → NaHCO₃ 前加 2；C 变 2 个，正好 Na₂CO₃ 1 个 + CO₂ 1 个。' }
     ];
 
-    let currentQuestion = null;
-    let lastIndex = -1;
+    // ---------- DOM ----------
+    var eqEl = document.getElementById('equation-display');
+    var fbEl = document.getElementById('feedback');
+    var hintEl = document.getElementById('hint-text');
+    var quizArea = document.getElementById('quizArea');
+    var btnCheck = document.getElementById('btnCheck');
+    var btnHint = document.getElementById('btnHint');
+    var btnPrev = document.getElementById('btnPrev');
+    var btnNext = document.getElementById('btnNext');
+    var qnoEl = document.getElementById('qno');
+    var qmapEl = document.getElementById('qmap');
+    var mapSummary = document.getElementById('mapSummary');
+    var statScore = document.getElementById('statScore');
+    var statCombo = document.getElementById('statCombo');
+    var statBest = document.getElementById('statBest');
+    var statSolved = document.getElementById('statSolved');
+    var progressFill = document.getElementById('progressFill');
+    var statScoreBox = document.getElementById('statScoreBox');
+    var statComboBox = document.getElementById('statComboBox');
+    var winMask = document.getElementById('winMask');
+    var winStats = document.getElementById('winStats');
 
-    // 格式化化学式，让数字变成下标
-    function formatFormula(formula) {
-        return formula.replace(/(\d+)/g, "<sub>$1</sub>");
-    }
+    // ---------- 状态 ----------
+    var cur = 0;
+    var score = 0, combo = 0, best = 0;
+    var solved = {};
+    var winShown = false;
 
-    // 生成随机题目（避免连续重复）
-    function nextQuestion() {
-        // 清空反馈和提示
-        document.getElementById("feedback").innerHTML = "";
-        document.getElementById("hint-text").classList.add("hidden");
-
-        // 随机抽取题目
-        let randomIndex = Math.floor(Math.random() * cases.length);
-        if (cases.length > 1 && randomIndex === lastIndex) {
-            randomIndex = (randomIndex + 1) % cases.length;
+    // ---------- 工具 ----------
+    // 支持括号和嵌套，比如 Ca(OH)2、Al2(SO4)3
+    function parseFormula(f) {
+        var i = 0;
+        function readNum() {
+            var m = /^\d+/.exec(f.slice(i));
+            if (!m) return 1;
+            i += m[0].length;
+            return parseInt(m[0], 10);
         }
-        lastIndex = randomIndex;
-        currentQuestion = cases[randomIndex];
-
-        let html = "";
-
-        // 生成反应物
-        currentQuestion.left.forEach((formula, index) => {
-            html += `<input type="number" id="ans-left-${index}" min="1" inputmode="numeric">` + formatFormula(formula);
-            if (index < currentQuestion.left.length - 1) html += ` + `;
-        });
-
-        html += ` <span>➡</span> `;
-
-        // 生成生成物
-        currentQuestion.right.forEach((formula, index) => {
-            html += `<input type="number" id="ans-right-${index}" min="1" inputmode="numeric">` + formatFormula(formula);
-            if (index < currentQuestion.right.length - 1) html += ` + `;
-        });
-
-        document.getElementById("equation-display").innerHTML = html;
+        function parseGroup() {
+            var out = {};
+            while (i < f.length && f[i] !== ')') {
+                if (f[i] === '(') {
+                    i++;
+                    var sub = parseGroup();
+                    if (f[i] === ')') i++;
+                    var n = readNum();
+                    for (var k in sub) out[k] = (out[k] || 0) + sub[k] * n;
+                } else {
+                    var m = /^[A-Z][a-z]?/.exec(f.slice(i));
+                    if (!m) { i++; continue; }
+                    var sym = m[0];
+                    i += sym.length;
+                    var c = readNum();
+                    out[sym] = (out[sym] || 0) + c;
+                }
+            }
+            return out;
+        }
+        return parseGroup();
     }
 
-    // 检查答案
+    function addCounts(target, formula, coef) {
+        var c = parseFormula(formula);
+        for (var k in c) target[k] = (target[k] || 0) + c[k] * coef;
+    }
+
+    function elemName(sym) {
+        var cn = ELEM_CN[sym];
+        return cn ? (cn + '(' + sym + ')') : sym;
+    }
+
+    function formatFormula(formula) {
+        return formula.replace(/(\d+)/g, '<sub>$1</sub>');
+    }
+
+    function solvedCount() { return Object.keys(solved).length; }
+
+    function popStat(box) {
+        if (!box) return;
+        box.classList.add('pop');
+        setTimeout(function () { box.classList.remove('pop'); }, 350);
+    }
+
+    function updateStats() {
+        statScore.textContent = score;
+        statCombo.textContent = combo;
+        statBest.textContent = best;
+        statSolved.textContent = solvedCount() + '/' + cases.length;
+        progressFill.style.width = (solvedCount() / cases.length * 100) + '%';
+        if (mapSummary) mapSummary.textContent = solvedCount() + ' / ' + cases.length + ' 已完成';
+    }
+
+    // ---------- 出题 ----------
+    function showQuestion(i) {
+        cur = ((i % cases.length) + cases.length) % cases.length;
+
+        fbEl.innerHTML = '';
+        fbEl.className = 'feedback';
+        hintEl.classList.add('hidden');
+        hintEl.innerHTML = '';
+        btnNext.classList.remove('ready');
+
+        renderEquation();
+        updateStats();
+        renderMap();
+        updateNav();
+    }
+
+    function renderEquation() {
+        var q = cases[cur];
+        var html = '';
+
+        q.left.forEach(function (formula, i) {
+            html += '<input type="number" min="1" inputmode="numeric" id="ans-left-' + i + '">' + formatFormula(formula);
+            if (i < q.left.length - 1) html += ' + ';
+        });
+
+        html += ' <span>➡</span> ';
+
+        q.right.forEach(function (formula, i) {
+            html += '<input type="number" min="1" inputmode="numeric" id="ans-right-' + i + '">' + formatFormula(formula);
+            if (i < q.right.length - 1) html += ' + ';
+        });
+
+        eqEl.innerHTML = html;
+
+        var inputs = eqEl.querySelectorAll('input');
+        Array.prototype.forEach.call(inputs, function (inp) {
+            inp.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') checkAnswer();
+            });
+        });
+        if (inputs.length && window.innerWidth > 480) inputs[0].focus();
+    }
+
+    function updateNav() {
+        qnoEl.textContent = '第 ' + (cur + 1) + ' / ' + cases.length + ' 题';
+        btnPrev.disabled = false;
+        btnNext.disabled = false;
+    }
+
+    function renderMap() {
+        if (!qmapEl) return;
+        var html = '';
+        for (var i = 0; i < cases.length; i++) {
+            var cls = 'map-chip';
+            if (i === cur) cls += ' current';
+            else if (solved[i]) cls += ' done';
+            html += '<button class="' + cls + '" data-i="' + i + '">' + (i + 1) + '</button>';
+        }
+        qmapEl.innerHTML = html;
+    }
+
+    function readInputs() {
+        var vals = [];
+        var filled = true;
+        cases[cur].left.forEach(function (_, i) {
+            var v = document.getElementById('ans-left-' + i).value.trim();
+            if (!v) filled = false;
+            vals.push(v ? parseInt(v, 10) : NaN);
+        });
+        cases[cur].right.forEach(function (_, i) {
+            var v = document.getElementById('ans-right-' + i).value.trim();
+            if (!v) filled = false;
+            vals.push(v ? parseInt(v, 10) : NaN);
+        });
+        return { vals: vals, filled: filled };
+    }
+
+    function isPositiveInt(v) {
+        return typeof v === 'number' && isFinite(v) && v >= 1 && Math.floor(v) === v;
+    }
+
+    function commonFactor(vals, ans) {
+        var k = null;
+        for (var i = 0; i < ans.length; i++) {
+            if (!vals[i] || vals[i] % ans[i] !== 0) return 0;
+            var ki = vals[i] / ans[i];
+            if (ki < 2) return 0;
+            if (k === null) k = ki;
+            else if (k !== ki) return 0;
+        }
+        return k || 0;
+    }
+
+    function shakeQuiz() {
+        quizArea.classList.remove('shake');
+        void quizArea.offsetWidth;
+        quizArea.classList.add('shake');
+    }
+
+    // ---------- 检查答案 ----------
     function checkAnswer() {
-        if (!currentQuestion) return;
+        var q = cases[cur];
+        var read = readInputs();
+        var vals = read.vals;
 
-        let inputs = [];
-        let isAllFilled = true;
-
-        // 获取左侧输入
-        currentQuestion.left.forEach((_, index) => {
-            let val = document.getElementById(`ans-left-${index}`).value;
-            if (!val) isAllFilled = false;
-            inputs.push(parseInt(val));
-        });
-
-        // 获取右侧输入
-        currentQuestion.right.forEach((_, index) => {
-            let val = document.getElementById(`ans-right-${index}`).value;
-            if (!val) isAllFilled = false;
-            inputs.push(parseInt(val));
-        });
-
-        const feedback = document.getElementById("feedback");
-
-        if (!isAllFilled) {
-            feedback.className = "feedback error";
-            feedback.innerHTML = "⚠️ 请把所有的方框都填上数字（如果没有数字就填 1）！";
+        if (!read.filled || !vals.every(isPositiveInt)) {
+            fbEl.className = 'feedback error';
+            fbEl.innerHTML = '⚠️ 每个方框都要填一个正整数（是 1 也要写 1 哦）。';
             return;
         }
 
-        // 比对答案
-        let isCorrect = true;
-        for (let i = 0; i < currentQuestion.answer.length; i++) {
-            if (inputs[i] !== currentQuestion.answer[i]) {
-                isCorrect = false;
-                break;
+        var leftC = {}, rightC = {};
+        q.left.forEach(function (f, i) { addCounts(leftC, f, vals[i]); });
+        q.right.forEach(function (f, i) { addCounts(rightC, f, vals[q.left.length + i]); });
+
+        var elems = Object.keys(leftC);
+        Object.keys(rightC).forEach(function (k) {
+            if (elems.indexOf(k) === -1) elems.push(k);
+        });
+
+        var bad = elems.filter(function (e) { return (leftC[e] || 0) !== (rightC[e] || 0); });
+        var exact = vals.every(function (v, i) { return v === q.answer[i]; });
+
+        if (exact) {
+            var isNew = !solved[cur];
+            solved[cur] = true;
+            combo += 1;
+            if (combo > best) best = combo;
+            var gain = isNew ? 10 + Math.min(combo - 1, 5) * 2 : 2;
+            score += gain;
+
+            fbEl.className = 'feedback success';
+            fbEl.innerHTML = '🎉 完全正确！两边原子对上了 —— ' +
+                elems.map(function (e) { return elemName(e) + ' ' + leftC[e] + ' 个'; }).join('，') +
+                '。<br>+' + gain + ' 分' +
+                (combo > 1 ? '（连击 ×' + combo + '，额外奖励 ' + (gain - 10) + ' 分）' : '') +
+                (isNew ? '<br><span style="font-weight:normal;color:#607d8b;">这题已计入通关进度 ✅ 点“下一题”继续</span>'
+                       : '<br><span style="font-weight:normal;color:#607d8b;">这题之前答对过，复习一遍也很好 👍</span>');
+
+            btnNext.classList.add('ready');
+            popStat(statScoreBox);
+            if (combo > 1) popStat(statComboBox);
+            if (window.burst) window.burst(26 + Math.min(combo, 6) * 10);
+
+            updateStats();
+            renderMap();
+
+            if (solvedCount() === cases.length && !winShown) {
+                winShown = true;
+                setTimeout(showWin, 700);
             }
+            return;
         }
 
-        if (isCorrect) {
-            feedback.className = "feedback success";
-            feedback.innerHTML = "🎉 太棒了！完全正确！你已经掌握配平的秘诀啦！";
-        } else {
-            feedback.className = "feedback error";
-            feedback.innerHTML = "❌ 哎呀，天平还是歪的，再数一数两边的原子个数，或者点一下提示吧！";
+        // 原子守恒但系数不是最简
+        if (bad.length === 0) {
+            var k = commonFactor(vals, q.answer);
+            fbEl.className = 'feedback near';
+            fbEl.innerHTML = '✨ 原子确实守恒了！但化学方程式要求<strong>最简整数比</strong>。' +
+                (k > 1 ? '你的答案正好是正确答案的 ' + k + ' 倍 —— 每个数字都除以 ' + k + ' 试试。'
+                       : '再检查一下是不是每个系数都还能再约分。');
+            return;
         }
+
+        combo = 0;
+        updateStats();
+        shakeQuiz();
+
+        var lines = bad.map(function (e) {
+            var l = leftC[e] || 0, r = rightC[e] || 0;
+            var diff = r - l;
+            return '<li>' + elemName(e) + '：左边 <strong>' + l + '</strong> 个，右边 <strong>' + r + '</strong> 个' +
+                (diff > 0 ? '（右边多了 ' + diff + ' 个）' : '（右边少了 ' + (-diff) + ' 个）') + '</li>';
+        });
+
+        fbEl.className = 'feedback error';
+        fbEl.innerHTML = '❌ 天平还歪着，问题出在这些原子上：<ul>' + lines.join('') +
+            '</ul>提示：只调<strong>化学式前面的系数</strong>，里面的下标不能动。' +
+            '<button class="btn btn-hint" id="btnHintInline" style="padding:4px 12px;font-size:13px;">看提示</button>';
+
+        var inline = document.getElementById('btnHintInline');
+        if (inline) inline.addEventListener('click', showHint);
     }
 
-    // 显示提示
     function showHint() {
-        if (!currentQuestion) return;
-        const hint = document.getElementById("hint-text");
-        hint.innerHTML = "💡 提示：" + currentQuestion.hint;
-        hint.classList.remove("hidden");
+        hintEl.innerHTML = '💡 提示：' + cases[cur].hint;
+        hintEl.classList.remove('hidden');
     }
 
-    // 初始化第一题
-    window.onload = nextQuestion;
+    // ---------- 通关 ----------
+    function showWin() {
+        winStats.innerHTML = '得分 <b>' + score + '</b><br>最高连击 <b>' + best + '</b><br>共完成 <b>' + cases.length + '</b> 道题';
+        winMask.classList.remove('hidden');
+        if (window.burst) { window.burst(120); setTimeout(function () { window.burst(90); }, 500); }
+    }
+
+    function restartAll() {
+        score = 0; combo = 0; best = 0; solved = {}; winShown = false;
+        winMask.classList.add('hidden');
+        updateStats();
+        showQuestion(0);
+    }
+
+    // ---------- 绑定 ----------
+    btnCheck.addEventListener('click', checkAnswer);
+    btnHint.addEventListener('click', showHint);
+    btnPrev.addEventListener('click', function () { showQuestion(cur - 1); });
+    btnNext.addEventListener('click', function () { showQuestion(cur + 1); });
+
+    if (qmapEl) {
+        qmapEl.addEventListener('click', function (e) {
+            var t = e.target;
+            if (!t || !t.classList || !t.classList.contains('map-chip')) return;
+            var i = parseInt(t.getAttribute('data-i'), 10);
+            if (isNaN(i)) return;
+            showQuestion(i);
+            if (quizArea.scrollIntoView) {
+                quizArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    }
+
+    document.getElementById('btnRestartAll').addEventListener('click', restartAll);
+    document.getElementById('btnCloseWin').addEventListener('click', function () {
+        winMask.classList.add('hidden');
+    });
+
+    updateStats();
+    showQuestion(0);
+})();
+
+/* ============ 4. 右下角选题抽屉 ============ */
+(function () {
+    var fab = document.getElementById('fabList');
+    var drawer = document.getElementById('drawer');
+    var mask = document.getElementById('drawerMask');
+    var btnClose = document.getElementById('btnCloseDrawer');
+    var qmap = document.getElementById('qmap');
+    if (!fab || !drawer) return;
+
+    function isOpen() { return drawer.classList.contains('open'); }
+
+    function openDrawer() {
+        drawer.classList.add('open');
+        mask.classList.add('show');
+        fab.classList.add('active');
+        fab.querySelector('.fab-icon').textContent = '✕';
+        fab.querySelector('.fab-label').textContent = '收起';
+    }
+
+    function closeDrawer() {
+        drawer.classList.remove('open');
+        mask.classList.remove('show');
+        fab.classList.remove('active');
+        fab.querySelector('.fab-icon').textContent = '☰';
+        fab.querySelector('.fab-label').textContent = '选题';
+    }
+
+    fab.addEventListener('click', function () {
+        if (isOpen()) closeDrawer(); else openDrawer();
+    });
+    if (mask) mask.addEventListener('click', closeDrawer);
+    if (btnClose) btnClose.addEventListener('click', closeDrawer);
+
+    // 点题号跳题后自动收起抽屉
+    if (qmap) {
+        qmap.addEventListener('click', function (e) {
+            var t = e.target;
+            if (t && t.classList && t.classList.contains('map-chip')) {
+                setTimeout(closeDrawer, 120);
+            }
+        });
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && isOpen()) closeDrawer();
+    });
+})();
+
 </script>
 
 </body>
