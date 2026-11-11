@@ -1021,6 +1021,11 @@
 
         <div class="feedback" id="feedback"></div>
         <div id="hint-text" class="hidden" style="margin-top:10px; color:#d35400; font-weight:bold; text-align:left;"></div>
+
+        <div class="write-progress" style="margin-top:15px;">
+            <span>💾 进度已自动保存至本地</span>
+            <button class="btn btn-mini" id="quizReset">再练一次</button>
+        </div>
     </div>
 
     <p style="text-align:center; color:#90a4ae; font-size:13px; margin-top:22px;">
@@ -1057,7 +1062,7 @@
         <div class="feedback" id="wFeedback"></div>
 
         <div class="write-progress">
-            <span>答对 <b id="wSolved">0</b> / <span id="wTotal">46</span> 题</span>
+            <span>答对 <b id="wSolved">0</b> / <span id="wTotal">46</span> 题 <span style="font-size:12px;color:#90a4ae;">(💾 已自动保存)</span></span>
             <button class="btn btn-mini" id="wReset">再练一次</button>
         </div>
     </div>
@@ -1094,7 +1099,7 @@
         <div id="eHint" class="hidden" style="margin-top:10px; color:#d35400; font-weight:bold; text-align:left; font-size:14px; line-height:1.8;"></div>
 
         <div class="write-progress">
-            <span>答对 <b id="eSolved">0</b> / <span id="eTotal">51</span> 题</span>
+            <span>答对 <b id="eSolved">0</b> / <span id="eTotal">51</span> 题 <span style="font-size:12px;color:#90a4ae;">(💾 已自动保存)</span></span>
             <button class="btn btn-mini" id="eReset">再练一次</button>
         </div>
     </div>
@@ -1140,6 +1145,10 @@
     <p class="drawer-tip">
         <i style="background:#2ecc71"></i>已答对　<i style="background:#3498db"></i>当前题　<i style="background:#fff;border:2px solid #dfe9ee"></i>未完成
     </p>
+    <div style="padding:10px 16px; border-top:1px solid #edf2f7; display:flex; justify-content:space-between; align-items:center; font-size:12px; color:#78909c;">
+        <span>💾 练习进度实时保存在本地</span>
+        <button class="btn btn-mini" id="btnClearAllProgress" style="padding:4px 8px; font-size:12px; background:#fff; border:1px solid #cfd8dc; color:#e74c3c;">清空全部</button>
+    </div>
 </aside>
 
 <canvas id="fx"></canvas>
@@ -2309,6 +2318,28 @@
     }
 })();
 
+/* ============ 本地进度存储助手 ============ */
+var PeipingStorage = {
+    get: function (key, fallback) {
+        try {
+            var raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : fallback;
+        } catch (e) {
+            return fallback;
+        }
+    },
+    set: function (key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+        } catch (e) {}
+    },
+    remove: function (key) {
+        try {
+            localStorage.removeItem(key);
+        } catch (e) {}
+    }
+};
+
 /* ============ 3. 配平闯关（按列表顺序出题） ============ */
 (function () {
     var ELEM_CN = {
@@ -2416,6 +2447,30 @@
     var solved = {};
     var winShown = false;
 
+    // 读取本地存储进度
+    var savedState = PeipingStorage.get('peiping_quiz', null);
+    if (savedState) {
+        if (typeof savedState.cur === 'number' && savedState.cur >= 0 && savedState.cur < cases.length) {
+            cur = savedState.cur;
+        }
+        if (typeof savedState.score === 'number' && isFinite(savedState.score)) score = savedState.score;
+        if (typeof savedState.combo === 'number' && isFinite(savedState.combo)) combo = savedState.combo;
+        if (typeof savedState.best === 'number' && isFinite(savedState.best)) best = savedState.best;
+        if (savedState.solved && typeof savedState.solved === 'object') solved = savedState.solved;
+        if (typeof savedState.winShown === 'boolean') winShown = savedState.winShown;
+    }
+
+    function saveState() {
+        PeipingStorage.set('peiping_quiz', {
+            cur: cur,
+            score: score,
+            combo: combo,
+            best: best,
+            solved: solved,
+            winShown: winShown
+        });
+    }
+
     // ---------- 工具 ----------
     // 支持括号和嵌套，比如 Ca(OH)2、Al2(SO4)3
     function parseFormula(f) {
@@ -2484,6 +2539,7 @@
     // ---------- 出题 ----------
     function showQuestion(i) {
         cur = ((i % cases.length) + cases.length) % cases.length;
+        saveState();
 
         fbEl.innerHTML = '';
         fbEl.className = 'feedback';
@@ -2628,10 +2684,12 @@
             if (window.burst) window.burst(26 + Math.min(combo, 6) * 10);
 
             updateStats();
+            saveState();
             renderMap();
 
             if (solvedCount() === cases.length && !winShown) {
                 winShown = true;
+                saveState();
                 setTimeout(showWin, 700);
             }
             return;
@@ -2649,6 +2707,7 @@
 
         combo = 0;
         updateStats();
+        saveState();
         shakeQuiz();
 
         var lines = bad.map(function (e) {
@@ -2680,7 +2739,8 @@
     }
 
     function restartAll() {
-        score = 0; combo = 0; best = 0; solved = {}; winShown = false;
+        score = 0; combo = 0; best = 0; solved = {}; winShown = false; cur = 0;
+        PeipingStorage.remove('peiping_quiz');
         winMask.classList.add('hidden');
         updateStats();
         showQuestion(0);
@@ -2691,6 +2751,15 @@
     btnHint.addEventListener('click', showHint);
     btnPrev.addEventListener('click', function () { showQuestion(cur - 1); });
     btnNext.addEventListener('click', function () { showQuestion(cur + 1); });
+
+    var quizResetBtn = document.getElementById('quizReset');
+    if (quizResetBtn) {
+        quizResetBtn.addEventListener('click', function () {
+            if (confirm('确定要清除这部分配平题目的练习进度并重新开始吗？')) {
+                restartAll();
+            }
+        });
+    }
 
     if (qmapEl) {
         qmapEl.addEventListener('click', function (e) {
@@ -2711,7 +2780,7 @@
     });
 
     updateStats();
-    showQuestion(0);
+    showQuestion(cur);
 })();
 
 /* ============ 4. 右下角选题抽屉 ============ */
@@ -2762,6 +2831,18 @@
 
         if (t.classList.contains('map-chip')) setTimeout(closeDrawer, 120);
     });
+
+    var btnClearAll = document.getElementById('btnClearAllProgress');
+    if (btnClearAll) {
+        btnClearAll.addEventListener('click', function () {
+            if (confirm('确定要清空全部题型的本地保存进度吗？清空后将从头开始练习。')) {
+                PeipingStorage.remove('peiping_quiz');
+                PeipingStorage.remove('peiping_write');
+                PeipingStorage.remove('peiping_eq');
+                location.reload();
+            }
+        });
+    }
 
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && isOpen()) closeDrawer();
@@ -2856,6 +2937,22 @@
     var solved = {};
     var tries = 0;
 
+    // 读取本地存储进度
+    var savedState = PeipingStorage.get('peiping_write', null);
+    if (savedState) {
+        if (typeof savedState.cur === 'number' && savedState.cur >= 0 && savedState.cur < items.length) {
+            cur = savedState.cur;
+        }
+        if (savedState.solved && typeof savedState.solved === 'object') solved = savedState.solved;
+    }
+
+    function saveState() {
+        PeipingStorage.set('peiping_write', {
+            cur: cur,
+            solved: solved
+        });
+    }
+
     // ---------- 工具 ----------
     function fmt(f) { return f.replace(/(\d+)/g, '<sub>$1</sub>'); }
 
@@ -2913,6 +3010,7 @@
     // ---------- 出题 ----------
     function show(i) {
         cur = ((i % items.length) + items.length) % items.length;
+        saveState();
         tries = 0;
         var it = items[cur];
 
@@ -2949,6 +3047,7 @@
         if (isRight(v, it.f)) {
             var isNew = !solved[cur];
             solved[cur] = true;
+            saveState();
             updateStats();
             fbEl.className = 'feedback success';
             fbEl.innerHTML = '🎉 写对了！<strong>' + it.n + '</strong> 的化学式就是 <strong>' + fmt(it.f) + '</strong>。' +
@@ -3000,9 +3099,13 @@
     btnPrev.addEventListener('click', function () { show(cur - 1); });
     btnNext.addEventListener('click', function () { show(cur + 1); });
     btnReset.addEventListener('click', function () {
-        solved = {};
-        updateStats();
-        show(0);
+        if (confirm('确定要清除这部分写化学式的练习进度并重新开始吗？')) {
+            solved = {};
+            cur = 0;
+            PeipingStorage.remove('peiping_write');
+            updateStats();
+            show(0);
+        }
     });
     inputEl.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') check();
@@ -3024,7 +3127,7 @@
     totalEl.textContent = items.length;
     renderCheat();
     updateStats();
-    show(0);
+    show(cur);
 })();
 
 
@@ -3310,6 +3413,27 @@
     var tries = 0;
     var showName = true;
 
+    // 读取本地存储进度
+    var savedState = PeipingStorage.get('peiping_eq', null);
+    if (savedState) {
+        if (typeof savedState.cur === 'number' && savedState.cur >= 0 && savedState.cur < items.length) {
+            cur = savedState.cur;
+        }
+        if (savedState.solved && typeof savedState.solved === 'object') solved = savedState.solved;
+        if (typeof savedState.showName === 'boolean') {
+            showName = savedState.showName;
+            if (chkName) chkName.checked = showName;
+        }
+    }
+
+    function saveState() {
+        PeipingStorage.set('peiping_eq', {
+            cur: cur,
+            solved: solved,
+            showName: showName
+        });
+    }
+
     // ---------- 工具 ----------
     function fmt(f) { return f.replace(/(\d+)/g, '<sub>$1</sub>'); }
 
@@ -3440,6 +3564,7 @@
 
     function show(i) {
         cur = ((i % items.length) + items.length) % items.length;
+        saveState();
         tries = 0;
         fbEl.innerHTML = '';
         fbEl.className = 'feedback';
@@ -3509,6 +3634,7 @@
         if (!fmlWrong.length && !coefWrong.length) {
             var isNew = !solved[cur];
             solved[cur] = true;
+            saveState();
             updateStats();
             fbEl.className = 'feedback success';
             fbEl.innerHTML = '🎉 完整写对了！化学式和系数都已配好：<br><span style="font-size:17px;">' + fullEquation() + '</span>' +
@@ -3576,10 +3702,19 @@
     btnHint.addEventListener('click', showHint);
     btnPrev.addEventListener('click', function () { show(cur - 1); });
     btnNext.addEventListener('click', function () { show(cur + 1); });
-    btnReset.addEventListener('click', function () { solved = {}; updateStats(); show(0); });
+    btnReset.addEventListener('click', function () {
+        if (confirm('确定要清除这部分方程式填空的练习进度并重新开始吗？')) {
+            solved = {};
+            cur = 0;
+            PeipingStorage.remove('peiping_eq');
+            updateStats();
+            show(0);
+        }
+    });
     if (chkName) {
         chkName.addEventListener('change', function () {
             showName = chkName.checked;
+            saveState();
             var saved = {};
             Array.prototype.forEach.call(lineEl.querySelectorAll('input'), function (inp) {
                 saved[inp.id] = inp.value;
@@ -3606,7 +3741,7 @@
 
     totalEl.textContent = items.length;
     updateStats();
-    show(0);
+    show(cur);
 })();
 
 </script>
