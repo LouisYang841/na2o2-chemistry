@@ -856,9 +856,6 @@
             border-radius: 20px;
         }
         .nav a:hover { background: #eaf4fc; }
-        .balance-guide { background: #fff8e7; padding: 16px; border-radius: 10px; margin-bottom: 16px; line-height: 1.8; }
-        .balance-guide p { margin: 8px 0; }
-        .balance-step-equation { font-weight: bold; color: #2c3e50; font-size: clamp(16px, 3.8vw, 21px); overflow-wrap: anywhere; }
         .btn:disabled { opacity: 0.45; cursor: default; }
         @media (max-width: 480px) {
             body { padding: 10px; }
@@ -954,7 +951,7 @@
 
     <!-- ===== 球棍动画演示（多反应，左右箭头切换） ===== -->
     <h3>🎬 看步骤，学配平</h3>
-    <p>接下来用 6 个反应练习这个思路。点<strong>“下一步”</strong>，一起看系数怎样确定；再点<strong>“播放”</strong>，看看这些原子怎样重新组合。用 <strong>← →</strong> 切换反应。</p>
+    <p>用 <strong>← →</strong> 或左右滑动切换反应，动画会自动播放。观察原子怎样重新组合，再对照下方的数量。</p>
 
     <div class="anim-wrap">
         <div class="anim-nav">
@@ -967,16 +964,6 @@
 
         <div class="anim-legend" id="animLegend"></div>
 
-        <div class="balance-guide" aria-label="逐步配平讲解">
-            <strong id="balanceStepTitle"></strong>
-            <p id="balanceStepEquation" class="balance-step-equation"></p>
-            <p id="balanceStepText" aria-live="polite"></p>
-            <div class="anim-btns">
-                <button class="btn btn-mini" id="balanceStepPrev">← 上一步</button>
-                <span id="balanceStepCount"></span>
-                <button class="btn btn-mini" id="balanceStepNext">下一步 →</button>
-            </div>
-        </div>
         <canvas id="balAnim" role="img" aria-label="原子重组动画，文字讲解和原子数核对见上下方"></canvas>
 
         <div class="anim-caption" id="animCaption">点播放，看原子重组。</div>
@@ -1218,158 +1205,39 @@
         {
             type: '例 1 · 氢气燃烧', eq: '2H₂ + O₂ → 2H₂O', cond: '点燃',
             note: '系数乘整个化学式：2H₂O 中，H 和 O 的数量都加倍。',
-            left: copies(2, hydrogen).concat([oxygen]), right: copies(2, water),
-            steps: [
-                [
-                    "先配氧",
-                    "H₂ + O₂ → H₂O",
-                    "先看氧：左边有 2 个 O，右边只有 1 个。每个水分子带 1 个 O，所以在 H₂O 前写 2，让右边也有 2 个 O。"
-                ],
-                [
-                    "再配氢",
-                    "H₂ + O₂ → 2H₂O",
-                    "水变成 2 个分子后，右边的 H 也变成了 4 个。左边每个 H₂ 有 2 个 H，因此 H₂ 前也要写 2。"
-                ],
-                [
-                    "验算",
-                    "2H₂ + O₂ → 2H₂O",
-                    "现在分别检查：H 两边都是 4 个，O 两边都是 2 个。系数 2∶1∶2 已经最简，配平完成。"
-                ]
-            ]
+            left: copies(2, hydrogen).concat([oxygen]), right: copies(2, water)
         },
         {
             type: '例 2 · 氯酸钾制氧气', eq: '2KClO₃ → 2KCl + 3O₂↑', cond: '加热，MnO₂ 作催化剂',
             note: '3 和 2 的最小公倍数是 6。↑ 表示气体逸出。',
             left: copies(2, model('KClO₃', [['K',-40,0],['Cl',0,0],['O',30,-30],['O',36,4],['O',12,35]])),
-            right: copies(2, model('KCl', [['K',-22,0],['Cl',22,0]])).concat(copies(3, oxygen)),
-            steps: [
-                [
-                    "氧先凑 6",
-                    "KClO₃ → KCl + O₂",
-                    "这次氧的数量是 3 和 2。要让两边相等，可以先找它们的最小公倍数 6，再想两边各取几份。"
-                ],
-                [
-                    "填 2 和 3",
-                    "2KClO₃ → KCl + 3O₂",
-                    "每份 KClO₃ 有 3 个 O，取 2 份就有 6 个；每份 O₂ 有 2 个 O，取 3 份也有 6 个。所以分别写上 2 和 3。"
-                ],
-                [
-                    "补齐钾和氯",
-                    "2KClO₃ → 2KCl + 3O₂↑",
-                    "回头看钾和氯：左边各有 2 个，因此 KCl 前也写 2。再数一次，K 各 2 个、Cl 各 2 个、O 各 6 个，全部相等。"
-                ]
-            ]
+            right: copies(2, model('KCl', [['K',-22,0],['Cl',22,0]])).concat(copies(3, oxygen))
         },
         {
             type: '例 3 · 铝和盐酸', eq: '2Al + 6HCl → 2AlCl₃ + 3H₂↑', cond: '',
             note: '氯按 3 个一组，氢按 2 个一组：先凑成 6。',
             left: copies(2, model('Al', [['Al',0,0]])).concat(copies(6, hcl)),
-            right: copies(2, model('AlCl₃', [['Al',0,0],['Cl',-32,-24],['Cl',32,-24],['Cl',0,34]])).concat(copies(3, hydrogen)),
-            steps: [
-                [
-                    "先配铝和氯",
-                    "Al + 3HCl → AlCl₃ + ?H₂",
-                    "先按 1 份 AlCl₃ 来配，它需要 1 份 Al 和 3 份 HCl。铝和氯配好了，但左边有 3 个 H，而 H₂ 要两个 H 一组。接下来要处理这个奇数。"
-                ],
-                [
-                    "整体加倍",
-                    "2Al + 6HCl → 2AlCl₃ + ?H₂",
-                    "把 Al、HCl、AlCl₃ 的系数同时加倍，铝和氯仍然配得上。氢变成 6 个，正好组成 3 份 H₂，因此 H₂ 前写 3。"
-                ],
-                [
-                    "验算",
-                    "2Al + 6HCl → 2AlCl₃ + 3H₂↑",
-                    "最后数一遍：Al 两边各 2 个，Cl 各 6 个，H 各 6 个。得到系数 2∶6∶2∶3，这四个数已经不能一起约分。"
-                ]
-            ]
+            right: copies(2, model('AlCl₃', [['Al',0,0],['Cl',-32,-24],['Cl',32,-24],['Cl',0,34]])).concat(copies(3, hydrogen))
         },
         {
             type: '例 4 · 从氧化铁中炼出铁', eq: 'Fe₂O₃ + 3CO → 2Fe + 3CO₂', cond: '高温',
             note: '氧要加总：Fe₂O₃ 中的氧 ＋ CO 中的氧。',
             left: [model('Fe₂O₃', [['Fe',-28,-12],['Fe',28,-12],['O',-36,26],['O',0,24],['O',36,26]])].concat(copies(3, model('CO', [['C',-21,0],['O',21,0]], [[0,1]]))),
-            right: copies(2, model('Fe', [['Fe',0,0]])).concat(copies(3, model('CO₂', [['C',0,0],['O',-35,0],['O',35,0]], [[0,1],[0,2]]))),
-            steps: [
-                [
-                    "先配铁",
-                    "Fe₂O₃ + CO → 2Fe + CO₂",
-                    "先从铁入手。每份 Fe₂O₃ 有 2 个 Fe，右边直接写的是 Fe，所以在它前面写 2，铁就配好了。"
-                ],
-                [
-                    "再配碳和氧",
-                    "Fe₂O₃ + 3CO → 2Fe + 3CO₂",
-                    "接着比较 CO 和 CO₂：每份 CO 变成 CO₂，需要再得到 1 个 O。Fe₂O₃ 中有 3 个 O，因此对应 3 份 CO，生成 3 份 CO₂。"
-                ],
-                [
-                    "氧要加总",
-                    "Fe₂O₃ + 3CO → 2Fe + 3CO₂",
-                    "验算氧时，左边两处都要算：Fe₂O₃ 有 3 个 O，3CO 也有 3 个，共 6 个；右边 3CO₂ 同样有 6 个。铁各 2 个，碳各 3 个，也都相等。"
-                ]
-            ]
+            right: copies(2, model('Fe', [['Fe',0,0]])).concat(copies(3, model('CO₂', [['C',0,0],['O',-35,0],['O',35,0]], [[0,1],[0,2]])))
         },
         {
             type: '例 5 · 生成红褐色沉淀', eq: '3NaOH + FeCl₃ → Fe(OH)₃↓ + 3NaCl', cond: '溶液中反应',
             note: 'Fe(OH)₃ 有 3 组 OH。↓ 表示沉淀。',
             left: copies(3, naoh).concat([fecl3]),
-            right: [model('Fe(OH)₃↓', [['Fe',0,0],['O',-32,-24],['H',-52,-42],['O',32,-24],['H',52,-42],['O',0,32],['H',20,48]], [[1,2],[3,4],[5,6]])].concat(copies(3, nacl)),
-            steps: [
-                [
-                    "把 OH 整组配",
-                    "NaOH + FeCl₃ → Fe(OH)₃↓ + NaCl",
-                    "先看括号：Fe(OH)₃ 有 3 组 OH，而每份 NaOH 只有 1 组。把 NaOH 的系数写成 3，OH 就整组配齐了。"
-                ],
-                [
-                    "再配钠和氯",
-                    "3NaOH + FeCl₃ → Fe(OH)₃↓ + 3NaCl",
-                    "这时左边有 3 个 Na，所以右边要有 3 份 NaCl。再看氯，FeCl₃ 正好提供 3 个 Cl，也能和这 3 份 NaCl 对上。"
-                ],
-                [
-                    "验算",
-                    "3NaOH + FeCl₃ → Fe(OH)₃↓ + 3NaCl",
-                    "最后把 OH 展开检查：O 和 H 两边各有 3 个。其余的 Na 各 3 个、Fe 各 1 个、Cl 各 3 个，配平完成。"
-                ]
-            ]
+            right: [model('Fe(OH)₃↓', [['Fe',0,0],['O',-32,-24],['H',-52,-42],['O',32,-24],['H',52,-42],['O',0,32],['H',20,48]], [[1,2],[3,4],[5,6]])].concat(copies(3, nacl))
         },
         {
             type: '例 6 · 酸和碱生成水', eq: '2NaOH + H₂SO₄ → Na₂SO₄ + 2H₂O', cond: '溶液中反应',
             note: '氢、氧都来自两种反应物，分别加总。',
             left: copies(2, naoh).concat([model('H₂SO₄', [['S',0,0],['O',-30,-25],['O',30,-25],['O',-30,25],['O',30,25],['H',-50,40],['H',50,40]], [[0,1],[0,2],[0,3],[0,4]])]),
-            right: [model('Na₂SO₄', [['S',0,0],['O',-30,-25],['O',30,-25],['O',-30,25],['O',30,25],['Na',-53,0],['Na',53,0]], [[0,1],[0,2],[0,3],[0,4]])].concat(copies(2, water)),
-            steps: [
-                [
-                    "先配钠",
-                    "NaOH + H₂SO₄ → Na₂SO₄ + H₂O",
-                    "先看钠。右边 Na₂SO₄ 有 2 个 Na，左边每份 NaOH 只有 1 个，所以在 NaOH 前写 2。"
-                ],
-                [
-                    "再配氢",
-                    "2NaOH + H₂SO₄ → Na₂SO₄ + 2H₂O",
-                    "再数氢，记得把两处加起来：2NaOH 带来 2 个 H，H₂SO₄ 也带来 2 个，共 4 个。每份水有 2 个 H，因此 H₂O 前写 2。"
-                ],
-                [
-                    "检查氧",
-                    "2NaOH + H₂SO₄ → Na₂SO₄ + 2H₂O",
-                    "最后检查氧：左边是 2＋4＝6 个，右边是 4＋2＝6 个。Na 两边各 2 个，S 各 1 个，H 各 4 个，所以系数 2∶1∶1∶2 正确。"
-                ]
-            ]
+            right: [model('Na₂SO₄', [['S',0,0],['O',-30,-25],['O',30,-25],['O',-30,25],['O',30,25],['Na',-53,0],['Na',53,0]], [[0,1],[0,2],[0,3],[0,4]])].concat(copies(2, water))
         }
     ];
-    var balanceStep = 0;
-    function renderBalanceStep() {
-        var step = anim.steps[balanceStep];
-        document.getElementById('balanceStepTitle').textContent = step[0];
-        document.getElementById('balanceStepEquation').textContent = step[1];
-        document.getElementById('balanceStepText').textContent = step[2];
-        document.getElementById('balanceStepCount').textContent = (balanceStep + 1) + ' / ' + anim.steps.length;
-        document.getElementById('balanceStepPrev').disabled = balanceStep === 0;
-        document.getElementById('balanceStepNext').disabled = balanceStep === anim.steps.length - 1;
-    }
-    document.getElementById('balanceStepPrev').addEventListener('click', function () {
-        balanceStep = Math.max(0, balanceStep - 1); renderBalanceStep();
-    });
-    document.getElementById('balanceStepNext').addEventListener('click', function () {
-        balanceStep = Math.min(anim.steps.length - 1, balanceStep + 1); renderBalanceStep();
-    });
-
     // ===== 时间轴 =====
     var T_IDLE = 800, T_BREAK = 2100, T_HOLD = 3100, T_JOIN = 4900, T_DONE = 5600;
 
@@ -1406,12 +1274,43 @@
         return { minX: minX, maxX: maxX, minY: minY, maxY: maxY };
     }
 
+    function animationLayout() {
+        var columns = W >= 620 ? 2 : 1;
+        var maxExtent = 0, maxRadius = 0;
+        anim.left.concat(anim.right).forEach(function (sp) {
+            var box = speciesBox(sp);
+            maxExtent = Math.max(maxExtent, -box.minX, box.maxX);
+            sp.atoms.forEach(function (a) {
+                maxRadius = Math.max(maxRadius, (a[3] && a[3].r) || RAD[a[0]] || 16);
+            });
+        });
+        var scale = Math.min(1, (W / (columns * 2) - 20) / (2 * maxExtent));
+        function side(species) {
+            var rows = [], total = 0;
+            for (var i = 0; i < species.length; i += columns) {
+                var above = 0, below = 0;
+                species.slice(i, i + columns).forEach(function (sp) {
+                    var box = speciesBox(sp);
+                    above = Math.max(above, -box.minY * scale);
+                    below = Math.max(below, box.maxY * scale);
+                });
+                rows.push({ cy: total + above + 6 });
+                total += above + below + 34;
+            }
+            return { rows: rows, height: total };
+        }
+        var left = side(anim.left), right = side(anim.right);
+        var freeColumns = Math.max(2, Math.min(6, Math.floor(W * 0.84 / 60)));
+        var atomCount = anim.left.reduce(function (n, sp) { return n + sp.atoms.length; }, 0);
+        var freeHeight = Math.ceil(atomCount / freeColumns) * (2 * maxRadius * scale + 12);
+        return { columns: columns, scale: scale, left: left, right: right,
+                 height: Math.ceil(Math.max(260, left.height + 64, right.height + 64, freeHeight + 64)) };
+    }
+
     function resize() {
         var rect = canvas.getBoundingClientRect();
         W = Math.max(280, Math.round(rect.width) || 320);
-        var columns = W >= 620 ? 2 : 1;
-        var rows = Math.ceil(Math.max(anim.left.length, anim.right.length) / columns);
-        H = Math.max(330, rows * 126 + 96);
+        H = animationLayout().height;
         var dpr = Math.min(window.devicePixelRatio || 1, 2);
         canvas.style.height = H + 'px';
         canvas.width = Math.round(W * dpr);
@@ -1425,19 +1324,14 @@
         leftLabels = []; rightLabels = [];
         tags = anim.tags ? anim.tags.slice() : [];
 
-        var padTop = 48, padBot = 48;
+        var padTop = 32, padBot = 32;
         var areaH = H - padTop - padBot;
-        var maxExtent = 0;
-        anim.left.concat(anim.right).forEach(function (sp) {
-            var box = speciesBox(sp);
-            maxExtent = Math.max(maxExtent, -box.minX, box.maxX);
-        });
-        var layoutScale = Math.min(1, (W / (W >= 620 ? 4 : 2) - 20) / (2 * maxExtent));
-        var columns = W >= 620 ? 2 : 1;
+        var layout = animationLayout();
+        var layoutScale = layout.scale, columns = layout.columns;
         function center(i, length, right) {
-            var rows = Math.ceil(length / columns);
+            var side = right ? layout.right : layout.left;
             return { x: W * (right ? 0.5 : 0) + W * 0.5 * ((i % columns + 0.5) / columns),
-                     y: padTop + areaH * ((Math.floor(i / columns) + 0.5) / rows) };
+                     y: (H - side.height) / 2 + side.rows[Math.floor(i / columns)].cy };
         }
 
         // ---- 左边 ----
@@ -1546,7 +1440,6 @@
                 '<span class="anim-type">' + anim.type + '　第 ' + (cur + 1) + ' / ' + ANIMS.length + ' 个</span>';
         }
         if (noteEl) noteEl.innerHTML = '📌 ' + anim.note;
-        renderBalanceStep();
 
         // 图例
         if (legendEl) {
@@ -1825,10 +1718,10 @@
     function goTo(i, autoplay) {
         cur = ((i % ANIMS.length) + ANIMS.length) % ANIMS.length;
         anim = ANIMS[cur];
-        balanceStep = 0;
         playing = false;
         t = reduced ? T_DONE : 0;
         resize();
+        if (autoplay && !reduced) play(true);
         syncBtn();
         draw();
         updateUI();
@@ -1897,7 +1790,7 @@
     resize();
     syncBtn();
 
-    // 先读配平草稿，由学生决定何时播放。
+    // 首次打开等待播放；切换反应时自动播放。
     if (reduced) { t = T_DONE; draw(); updateUI(); syncBtn(); }
 
 })();
