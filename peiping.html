@@ -979,6 +979,7 @@
         <div class="anim-btns">
             <button class="btn" id="btnPlayAnim">▶ 播放动画</button>
             <button class="btn btn-hint" id="btnReplayAnim">⟲ 重播</button>
+            <button class="btn" id="btnResetAnim" aria-label="回到当前反应起点并暂停">↺ 复位</button>
         </div>
 
         <div class="anim-hintswipe">← 滑动切换反应 →</div>
@@ -1159,6 +1160,7 @@
     var dotsEl = document.getElementById('animDots');
     var btnPlay = document.getElementById('btnPlayAnim');
     var btnReplay = document.getElementById('btnReplayAnim');
+    var btnReset = document.getElementById('btnResetAnim');
     var btnPrev = document.getElementById('animPrev');
     var btnNext = document.getElementById('animNext');
     var stageEls = [
@@ -1977,6 +1979,15 @@
         play(false);
     });
     btnReplay.addEventListener('click', function () { play(true); });
+    btnReset.addEventListener('click', function () {
+        playing = false;
+        t = 0;
+        lastTs = 0;
+        referenceAlpha = REFERENCE_OPACITY;
+        syncBtn();
+        draw();
+        updateUI();
+    });
     if (btnPrev) btnPrev.addEventListener('click', function () { goTo(cur - 1, true); });
     if (btnNext) btnNext.addEventListener('click', function () { goTo(cur + 1, true); });
 
