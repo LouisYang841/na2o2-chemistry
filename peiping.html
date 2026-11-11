@@ -862,14 +862,14 @@
 
     <div class="explain-box">
         <h3 style="margin-top:0;">💡 配平：让两边每种原子一样多</h3>
-        <p><strong>只改前面的系数，下标不变。</strong></p>
-        <p>例如 <strong>2H₂O</strong>：2 个水分子，共 <strong>4 个 H、2 个 O</strong>。</p>
-        <p>数原子：<strong>系数 × 下标</strong>。没写数字就按 1 算。</p>
+        <p>化学反应中，原子会重新组合，每种原子的数量保持不变。写方程式时，我们也要把这个数量关系写出来，这就是<strong>配平</strong>。</p>
+        <p>先看 <strong>2H₂O</strong>。前面的 2 叫<strong>系数</strong>，表示有 2 个水分子。每个水分子有 2 个 H、1 个 O，所以一共有 <strong>4 个 H、2 个 O</strong>。</p>
+        <p>数原子时，用<strong>系数 × 下标</strong>，没写数字就按 1 算。配平就是调整前面的系数，化学式里的下标保持原样。</p>
     </div>
 
     <!-- 演示部分 -->
     <h3>🔍 先看水：先配氧，再配氢</h3>
-    <p><strong>H₂ + O₂ → H₂O</strong>：氧原子左边 2 个，右边 1 个。</p>
+    <p>氢气和氧气反应生成水，先写成 <strong>H₂ + O₂ → H₂O</strong>。我们从氧开始数：左边 O₂ 有 2 个 O，右边 H₂O 只有 1 个。要让它们一样多，水的数量就要增加。</p>
 
     <div class="balance-area">
         <div class="side">
@@ -896,8 +896,8 @@
         </div>
     </div>
 
-    <p><strong>① H₂O 前写 2：</strong>氧配齐了，右边的氢变成 4 个。</p>
-    <p><strong>② H₂ 前写 2：</strong>左边也有 4 个氢。完成。</p>
+    <p><strong>① 先在 H₂O 前写 2。</strong>现在右边有 2 个水分子，氧原子就配齐了。不过，每个水分子还带着 2 个 H，所以右边的氢也变成了 4 个。</p>
+    <p><strong>② 再在 H₂ 前写 2。</strong>左边的氢也有了 2×2＝4 个。这样，氢和氧都对上了，得到下面的结果。</p>
 
     <div class="balance-area" style="border: 2px solid #2ecc71; background: #eafaf1;">
         <div class="side">
@@ -913,11 +913,12 @@
         <p><strong>验算：左边 ＝ 右边</strong></p>
         <p>H：2×2 ＝ 2×2 ＝ <strong>4</strong></p>
         <p>O：1×2 ＝ 2×1 ＝ <strong>2</strong></p>
+        <p>两种原子分别相等，配平完成。前面的系数告诉我们：2 份氢气和 1 份氧气，生成 2 份水。</p>
     </div>
 
     <!-- ===== 球棍动画演示（多反应，左右箭头切换） ===== -->
     <h3>🎬 看步骤，学配平</h3>
-    <p><strong>下一步</strong>看推导，<strong>播放</strong>看原子重组。用 <strong>← →</strong> 切换 6 个反应。</p>
+    <p>接下来用 6 个反应练习这个思路。点<strong>“下一步”</strong>，一起看系数怎样确定；再点<strong>“播放”</strong>，看看这些原子怎样重新组合。用 <strong>← →</strong> 切换反应。</p>
 
     <div class="anim-wrap">
         <div class="anim-nav">
@@ -963,9 +964,9 @@
     </div>
 
     <div class="explain-box" style="background:#fff; border-left-color:#2ecc71;">
-        <p><strong>考场检查：式子对 · 原子齐 · 系数最简</strong></p>
-        <p>每种原子分别数。系数能一起约分，就约到最小。</p>
-        <p>例如 4∶2∶4 → <strong>2∶1∶2</strong>。</p>
+        <p><strong>配完以后，再做一次检查</strong></p>
+        <p>把每种原子的左右数量分别算一遍。都相等后，再看系数能不能一起约分。</p>
+        <p>比如 4∶2∶4 也能让原子数相等，但还可以同时除以 2。最后写成<strong>最小整数比 2∶1∶2</strong>，这才是答题时要填的系数。</p>
     </div>
 
     <!-- ===== 练习部分 ===== -->
@@ -986,7 +987,7 @@
             <button class="btn btn-mini" id="btnNext">下一题 →</button>
         </div>
 
-        <p style="color:#7f8c8d; margin:0; font-size:14px;">填系数，再检查。<strong>1 也要填。</strong></p>
+        <p style="color:#7f8c8d; margin:0; font-size:14px;">试着自己确定系数，再点“检查答案”。这里<strong>系数 1 也要填</strong>。</p>
         <div class="equation" id="equation-display"></div>
 
         <div>
@@ -999,17 +1000,15 @@
     </div>
 
     <p style="text-align:center; color:#90a4ae; font-size:13px; margin-top:22px;">
-        先配一种 → 检查其他原子 → 逐种验算。
+        每配好一种原子，就看看其他原子的数量有没有跟着变化。最后再逐种验算。
     </p>
 
     <!-- ===== 题型二：看名称写化学式 ===== -->
     <h3 id="writeSection">✍️ 题型二：看名称写化学式</h3>
     <div class="explain-box" style="background:#fff; border-left-color:#2ecc71;">
-        <p><strong>看名称，写化学式。</strong>如氯化钠 → <code>NaCl</code>。</p>
-        <p><strong>大小写：</strong>首字母大写，第二个字母小写。</p>
-        <p><strong>化合价：</strong>Mg 为 +2，Cl 为 −1 → <code>MgCl2</code>。</p>
-        <p><strong>括号：</strong><code>Ca(OH)2</code> 有 2 组 OH，即 2 个 O、2 个 H。</p>
-        <p>直接输入普通数字：<code>H2O</code>、<code>Ca(OH)2</code>。</p>
+        <p>先练习把物质的名称写成化学式。例如看到“氯化钠”，就写 <code>NaCl</code>。元素符号的首字母大写，第二个字母小写。</p>
+        <p>遇到氯化镁，可以用化合价来确定下标：Mg 是 +2，Cl 是 −1，需要 2 个 Cl 才能使总和为 0，所以写成 <code>MgCl2</code>。</p>
+        <p>再看 <code>Ca(OH)2</code>：括号把 OH 放在一组，外面的 2 表示有 2 组，因此 O、H 各有 2 个。输入时直接用普通数字，如 <code>H2O</code>。</p>
     </div>
 
     <div class="write-area" id="writeArea">
@@ -1047,8 +1046,8 @@
     <!-- ===== 题型三：化学方程式完整填空 ===== -->
     <h3 id="eqSection">🧩 题型三：化学方程式完整填空</h3>
     <div class="explain-box" style="background:#fff; border-left-color:#5c6bc0;">
-        <p><strong>找物质 → 写化学式 → 配系数 → 验算。</strong></p>
-        <p>取消“显示中文名”可练默写。系数 1 也要填。</p>
+        <p>这次从一句反应描述开始。先找出反应物和生成物，写好化学式，再用刚才的方法配系数、做验算。</p>
+        <p>每个空下方都有中文名，取消“显示中文名”就可以练默写。和前面一样，系数 1 也要填。</p>
     </div>
 
     <div class="eq-area" id="eqArea">
@@ -1188,17 +1187,17 @@
                 [
                     "先配氧",
                     "H₂ + O₂ → H₂O",
-                    "O：左 2，右 1。H₂O 前写 2。"
+                    "先看氧：左边有 2 个 O，右边只有 1 个。每个水分子带 1 个 O，所以在 H₂O 前写 2，让右边也有 2 个 O。"
                 ],
                 [
                     "再配氢",
                     "H₂ + O₂ → 2H₂O",
-                    "H：左 2，右 4。H₂ 前也写 2。"
+                    "水变成 2 个分子后，右边的 H 也变成了 4 个。左边每个 H₂ 有 2 个 H，因此 H₂ 前也要写 2。"
                 ],
                 [
                     "验算",
                     "2H₂ + O₂ → 2H₂O",
-                    "H：4＝4；O：2＝2。系数 2∶1∶2。"
+                    "现在分别检查：H 两边都是 4 个，O 两边都是 2 个。系数 2∶1∶2 已经最简，配平完成。"
                 ]
             ]
         },
@@ -1211,17 +1210,17 @@
                 [
                     "氧先凑 6",
                     "KClO₃ → KCl + O₂",
-                    "每份含氧 3 个和 2 个，最小公倍数是 6。"
+                    "这次氧的数量是 3 和 2。要让两边相等，可以先找它们的最小公倍数 6，再想两边各取几份。"
                 ],
                 [
                     "填 2 和 3",
                     "2KClO₃ → KCl + 3O₂",
-                    "KClO₃ 前写 2，O₂ 前写 3。两边都有 6 个 O。"
+                    "每份 KClO₃ 有 3 个 O，取 2 份就有 6 个；每份 O₂ 有 2 个 O，取 3 份也有 6 个。所以分别写上 2 和 3。"
                 ],
                 [
                     "补齐钾和氯",
                     "2KClO₃ → 2KCl + 3O₂↑",
-                    "KCl 前写 2。K：2＝2；Cl：2＝2；O：6＝6。"
+                    "回头看钾和氯：左边各有 2 个，因此 KCl 前也写 2。再数一次，K 各 2 个、Cl 各 2 个、O 各 6 个，全部相等。"
                 ]
             ]
         },
@@ -1234,17 +1233,17 @@
                 [
                     "先配铝和氯",
                     "Al + 3HCl → AlCl₃ + ?H₂",
-                    "1 份 AlCl₃ 需要 3 份 HCl，带来 3 个 H。"
+                    "先按 1 份 AlCl₃ 来配，它需要 1 份 Al 和 3 份 HCl。铝和氯配好了，但左边有 3 个 H，而 H₂ 要两个 H 一组。接下来要处理这个奇数。"
                 ],
                 [
                     "整体加倍",
                     "2Al + 6HCl → 2AlCl₃ + ?H₂",
-                    "H₂ 要两个 H 一组。把前面三个系数加倍，6 个 H 刚好组成 3 份 H₂。"
+                    "把 Al、HCl、AlCl₃ 的系数同时加倍，铝和氯仍然配得上。氢变成 6 个，正好组成 3 份 H₂，因此 H₂ 前写 3。"
                 ],
                 [
                     "验算",
                     "2Al + 6HCl → 2AlCl₃ + 3H₂↑",
-                    "Al：2＝2；Cl：6＝6；H：6＝6。系数 2∶6∶2∶3。"
+                    "最后数一遍：Al 两边各 2 个，Cl 各 6 个，H 各 6 个。得到系数 2∶6∶2∶3，这四个数已经不能一起约分。"
                 ]
             ]
         },
@@ -1257,17 +1256,17 @@
                 [
                     "先配铁",
                     "Fe₂O₃ + CO → 2Fe + CO₂",
-                    "Fe₂O₃ 含 2 个 Fe，右边 Fe 前写 2。"
+                    "先从铁入手。每份 Fe₂O₃ 有 2 个 Fe，右边直接写的是 Fe，所以在它前面写 2，铁就配好了。"
                 ],
                 [
                     "再配碳和氧",
                     "Fe₂O₃ + 3CO → 2Fe + 3CO₂",
-                    "每份 CO 变成 CO₂，多带 1 个 O。3 个 O 对应 3 份 CO、3 份 CO₂。"
+                    "接着比较 CO 和 CO₂：每份 CO 变成 CO₂，需要再得到 1 个 O。Fe₂O₃ 中有 3 个 O，因此对应 3 份 CO，生成 3 份 CO₂。"
                 ],
                 [
                     "氧要加总",
                     "Fe₂O₃ + 3CO → 2Fe + 3CO₂",
-                    "O：左 3＋3＝6，右 3×2＝6。Fe 各 2 个，C 各 3 个。"
+                    "验算氧时，左边两处都要算：Fe₂O₃ 有 3 个 O，3CO 也有 3 个，共 6 个；右边 3CO₂ 同样有 6 个。铁各 2 个，碳各 3 个，也都相等。"
                 ]
             ]
         },
@@ -1280,17 +1279,17 @@
                 [
                     "把 OH 整组配",
                     "NaOH + FeCl₃ → Fe(OH)₃↓ + NaCl",
-                    "右边有 3 组 OH，NaOH 前写 3。"
+                    "先看括号：Fe(OH)₃ 有 3 组 OH，而每份 NaOH 只有 1 组。把 NaOH 的系数写成 3，OH 就整组配齐了。"
                 ],
                 [
                     "再配钠和氯",
                     "3NaOH + FeCl₃ → Fe(OH)₃↓ + 3NaCl",
-                    "左边有 3 个 Na、3 个 Cl，NaCl 前写 3。"
+                    "这时左边有 3 个 Na，所以右边要有 3 份 NaCl。再看氯，FeCl₃ 正好提供 3 个 Cl，也能和这 3 份 NaCl 对上。"
                 ],
                 [
                     "验算",
                     "3NaOH + FeCl₃ → Fe(OH)₃↓ + 3NaCl",
-                    "Na 各 3；Fe 各 1；Cl 各 3；O、H 各 3。"
+                    "最后把 OH 展开检查：O 和 H 两边各有 3 个。其余的 Na 各 3 个、Fe 各 1 个、Cl 各 3 个，配平完成。"
                 ]
             ]
         },
@@ -1303,17 +1302,17 @@
                 [
                     "先配钠",
                     "NaOH + H₂SO₄ → Na₂SO₄ + H₂O",
-                    "右边有 2 个 Na，NaOH 前写 2。"
+                    "先看钠。右边 Na₂SO₄ 有 2 个 Na，左边每份 NaOH 只有 1 个，所以在 NaOH 前写 2。"
                 ],
                 [
                     "再配氢",
                     "2NaOH + H₂SO₄ → Na₂SO₄ + 2H₂O",
-                    "左边 H 共 2＋2＝4 个，H₂O 前写 2。"
+                    "再数氢，记得把两处加起来：2NaOH 带来 2 个 H，H₂SO₄ 也带来 2 个，共 4 个。每份水有 2 个 H，因此 H₂O 前写 2。"
                 ],
                 [
                     "检查氧",
                     "2NaOH + H₂SO₄ → Na₂SO₄ + 2H₂O",
-                    "O：左 2＋4＝6，右 4＋2＝6。Na 各 2，S 各 1，H 各 4。"
+                    "最后检查氧：左边是 2＋4＝6 个，右边是 4＋2＝6 个。Na 两边各 2 个，S 各 1 个，H 各 4 个，所以系数 2∶1∶1∶2 正确。"
                 ]
             ]
         }
