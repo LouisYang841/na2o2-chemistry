@@ -202,11 +202,11 @@ assert(b.state().badges.equation);
 console.log(
   "PASS: all three quizzes, drafts/reload, legacy migration, 1/2/3 stars, retry upgrade, no point farming, review, badge thresholds, corrupted/blocked storage, success visuals and diagnostic counts.",
 );
-// Reward pacing is local and milestone-based; nothing calls the old full-screen burst.
+// Confetti accompanies local feedback, with a modest increase on each fifth new completion.
 let paced = app();
 paced.window.matchMedia = () => ({ matches: false });
-let bursts = 0;
-paced.window.burst = () => bursts++;
+const bursts = [];
+paced.window.burst = (count) => bursts.push(count);
 for (const [index, answer] of [
   [0, [2, 1, 2]],
   [1, [1, 1, 1]],
@@ -228,7 +228,16 @@ assert(
     .getElementById("quizArea")
     .classList.contains("milestone-flash"),
 );
-assert.equal(bursts, 0);
+assert.deepEqual(bursts, [20, 20, 20, 20, 40]);
+paced.click("btnCheck");
+assert.equal(bursts.length, 5, "repeat submit does not stack confetti");
+paced.window.matchMedia = () => ({ matches: true });
+paced.click("btnNext");
+paced.input("ans-left-0", "2");
+paced.input("ans-left-1", "1");
+paced.input("ans-right-0", "2");
+paced.click("btnCheck");
+assert.equal(bursts.length, 5, "reduced motion suppresses confetti");
 assert(paced.state().badges.conserve);
 // Stars inside navigation chips must be clickable.
 paced.document.querySelector('#qmap .map-chip[data-i="7"] .map-stars').click();

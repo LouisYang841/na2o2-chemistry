@@ -398,6 +398,12 @@ var PeipingGrowth = (function () {
       return n + solved(g);
     }, 0);
     if (result.isNew && total % 5 === 0) flash(area, "milestone-flash");
+    var reducedMotion =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reducedMotion && typeof window.burst === "function") {
+      window.burst(result.isNew && total % 5 === 0 ? 40 : 20);
+    }
     if (combo >= 3) {
       flash(
         document.getElementById("statComboBox"),
