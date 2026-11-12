@@ -866,7 +866,7 @@
         }
 
     </style>
-    <link rel="stylesheet" href="./learning.css">
+    <link rel="stylesheet" href="./learning.css?v=3">
 </head>
 <body>
 
@@ -1160,7 +1160,7 @@
 
 <canvas id="fx"></canvas>
 
-<script src="./learning.js?v=2"></script>
+<script src="./learning.js?v=3"></script>
 <script>
 /* ============ 1. 球棍动画（6 个反应，左右箭头切换） ============ */
 (function () {
@@ -2458,7 +2458,7 @@
     }
 
     var growthKeys=cases.map(function(q){return q.left.join('+')+'>'+q.right.join('+');});
-    PeipingGrowth.register('balance',growthKeys,solved);
+    PeipingGrowth.register('balance',growthKeys,solved,{score:score,combo:combo,best:best});
     PeipingGrowth.records('balance').forEach(function(r,i){if(r.stars)solved[i]=true;});
     cur=PeipingGrowth.current('balance',cur);
     // ---------- 工具 ----------
@@ -2517,6 +2517,8 @@
     }
 
     function updateStats() {
+        var values=PeipingGrowth.stats('balance');
+        score=values.score;combo=values.combo;best=values.best;
         statScore.textContent = score;
         statCombo.textContent = combo;
         statBest.textContent = best;
@@ -2657,10 +2659,8 @@
             var isNew = !solved[cur];
             solved[cur] = true;
             var reward=PeipingGrowth.attempt('balance',growthKeys[cur],true);
-            if(reward.isNew)combo += 1;
-            if (combo > best) best = combo;
-            var gain = reward.isNew ? 10 + Math.min(combo - 1, 5) * 2 : 0;
-            score += gain;
+            updateStats();
+            var gain = reward.gain || 0;
 
             fbEl.className = 'feedback success';
             fbEl.innerHTML = '🎉 配平成功！原子守恒，系数已最简。<br>+' + gain + ' 分' +
@@ -2671,7 +2671,7 @@
             btnNext.classList.add('ready');
             popStat(statScoreBox);
             if (combo > 1) popStat(statComboBox);
-            PeipingGrowth.success('balance',growthKeys[cur],quizArea,fbEl,reward,leftC,rightC,combo);
+            PeipingGrowth.success('balance',growthKeys[cur],quizArea,fbEl,reward,leftC,rightC);
 
             updateStats();
             saveState();
@@ -3052,9 +3052,8 @@
             saveState();
             updateStats();
             fbEl.className = 'feedback success';
-            fbEl.innerHTML = '🎉 写对了！<strong>' + it.n + '</strong> 的化学式就是 <strong>' + fmt(it.f) + '</strong>。' +
-                (isNew ? '<br><span style="font-weight:normal;color:#607d8b;">这一题已完成，继续练习吧！</span>' : '');
-            PeipingGrowth.success('formula',growthKeys[cur],document.getElementById('writeArea'),fbEl,reward,null,null,0);
+            fbEl.innerHTML = '🎉 写对了！<strong>' + it.n + '</strong>';
+            PeipingGrowth.success('formula',growthKeys[cur],document.getElementById('writeArea'),fbEl,reward,null,null);
             return;
         }
 
@@ -3644,10 +3643,9 @@
             saveState();
             updateStats();
             fbEl.className = 'feedback success';
-            fbEl.innerHTML = '🎉 完整写对了！化学式和系数都已配好：<br><span style="font-size:17px;">' + fullEquation() + '</span>' +
-                (isNew ? '<br><span style="font-weight:normal;color:#607d8b;">这一题已完成，继续挑战下一题！</span>' : '');
+            fbEl.innerHTML = '🎉 完整写对了！化学式和系数都已配好：<br><span style="font-size:17px;">' + fullEquation() + '</span>';
             var lc={},rc={};it.left.forEach(function(t,i){var c=parseFormula(t[0]);for(var e in c)lc[e]=(lc[e]||0)+c[e]*coefs[i];});it.right.forEach(function(t,i){var c=parseFormula(t[0]);for(var e in c)rc[e]=(rc[e]||0)+c[e]*coefs[it.left.length+i];});
-            PeipingGrowth.success('equation',growthKeys[cur],document.getElementById('eqArea'),fbEl,reward,lc,rc,0);
+            PeipingGrowth.success('equation',growthKeys[cur],document.getElementById('eqArea'),fbEl,reward,lc,rc);
             return;
         }
 

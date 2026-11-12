@@ -267,3 +267,115 @@ for (const key of [
 console.log(
   "PASS: milestone/local effect pacing, nested map click, coefficient diagnostics, explicit hint, full clear.",
 );
+// Each quiz owns its score, streak and feedback, including after reload and review.
+let allTypes = app();
+allTypes.window.matchMedia = () => ({ matches: false });
+const allBursts = [];
+allTypes.window.burst = (n) => allBursts.push(n);
+for (const answer of ["O2", "H2", "N2"]) {
+  allTypes.input("wInput", answer);
+  allTypes.click("wCheck");
+  assert(allTypes.document.querySelector("#wFeedback .formula-piece sub"));
+  if (answer !== "N2") allTypes.click("wNext");
+}
+assert.equal(allTypes.state().groups.formula.stats.score, 36);
+assert.equal(allTypes.state().groups.formula.stats.combo, 3);
+assert.equal(allTypes.state().groups.balance.stats.score, 0);
+assert(
+  allTypes.document.querySelector(
+    '#stats-formula [data-stat="combo"].combo-mid',
+  ),
+);
+assert(allTypes.document.querySelector("#writeArea .local-particles"));
+assert.equal(allBursts.length, 3);
+allTypes.click("wCheck");
+assert.equal(allBursts.length, 3);
+assert.equal(allTypes.state().groups.formula.stats.score, 36);
+allTypes = app(allTypes.store);
+assert.equal(
+  allTypes.document.querySelector('#stats-formula [data-stat="combo"] b')
+    .textContent,
+  "3",
+);
+allTypes.click("wNext");
+allTypes.input("wInput", "bad");
+allTypes.click("wCheck");
+assert.equal(allTypes.state().groups.formula.stats.combo, 0);
+assert.equal(allTypes.state().groups.formula.stats.best, 3);
+allTypes.click("wReset");
+assert.equal(allTypes.state().groups.formula.stats.score, 36);
+// Parentheses multiply every element in the group.
+allTypes.document.querySelector('#qmap2 .map-chip[data-i="45"]').click();
+allTypes.input("wInput", "Al2(SO4)3");
+allTypes.click("wCheck");
+assert.deepEqual(
+  [
+    ...allTypes.document.querySelectorAll(
+      "#wFeedback .composition-check .atom-check",
+    ),
+  ].map((e) => e.textContent),
+  ["Al × 2", "S × 3", "O × 12"],
+);
+assert(!allTypes.document.querySelector("#writeArea .mini-scale"));
+terms.forEach((t, i) => {
+  allTypes.input("e-coef-" + i, t[0]);
+  allTypes.input("e-fml-" + i, t[1]);
+});
+allTypes.click("eCheck");
+assert.equal(
+  allTypes.document.querySelectorAll("#eFeedback .verification-stages span")
+    .length,
+  3,
+);
+assert(
+  allTypes.document.querySelector("#eFeedback .equation-counts .atom-check"),
+);
+assert.equal(
+  allTypes.document
+    .getElementById("e-coef-0")
+    .style.getPropertyValue("--success-delay"),
+  "160ms",
+);
+assert.equal(
+  allTypes.document
+    .getElementById("e-fml-0")
+    .style.getPropertyValue("--success-delay"),
+  "0ms",
+);
+assert.equal(allTypes.state().groups.equation.stats.score, 10);
+allTypes.click("eCheck");
+assert.equal(allTypes.state().groups.equation.stats.score, 10);
+allTypes = app(allTypes.store);
+assert.equal(
+  allTypes.document.querySelector('#stats-equation [data-stat="score"] b')
+    .textContent,
+  "10",
+);
+allTypes.click("eReset");
+assert.equal(allTypes.state().groups.equation.stats.score, 10);
+assert.equal(allTypes.state().groups.equation.stats.combo, 0);
+// Matching streak achievements exist for formula and full-equation exercises.
+for (const name of ["formula", "equation"]) {
+  let streakApp = app();
+  const growth = streakApp.ctx.PeipingGrowth;
+  const ids = Array.from({ length: 6 }, (_, i) => name + i);
+  growth.register(name, ids, {});
+  growth.hint(name, ids[0]);
+  growth.attempt(name, ids[0], true);
+  for (let i = 1; i < 5; i++) growth.attempt(name, ids[i], true);
+  assert(
+    !streakApp.state().badges[name + "Streak"],
+    "hinted answer does not count toward first-try streak",
+  );
+  growth.attempt(name, ids[5], true);
+  assert(streakApp.state().badges[name + "Streak"]);
+}
+assert.equal(
+  migrated.state().groups.balance.stats.score,
+  20,
+  "old balance score migrates intact",
+);
+assert.equal(migrated.state().groups.balance.stats.best, 2);
+console.log(
+  "PASS: formula composition and brackets, staged equation feedback, per-quiz scores/streaks, reload/review, all-quiz streak achievements and legacy score migration.",
+);

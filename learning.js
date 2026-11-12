@@ -68,6 +68,24 @@ var PeipingGrowth = (function () {
       g.sessions = {};
     return g;
   }
+  function stats(name, legacy) {
+    var g = group(name);
+    if (!g.stats || typeof g.stats !== "object" || Array.isArray(g.stats))
+      g.stats = legacy || {};
+    ["score", "combo", "best"].forEach(function (k) {
+      if (!Number.isSafeInteger(g.stats[k]) || g.stats[k] < 0) g.stats[k] = 0;
+    });
+    g.stats.best = Math.max(g.stats.best, g.stats.combo);
+    return g.stats;
+  }
+  function renderStats(name) {
+    var node = document.getElementById("stats-" + name),
+      values = stats(name);
+    if (!node) return;
+    ["score", "combo", "best"].forEach(function (k) {
+      node.querySelector('[data-stat="' + k + '"] b').textContent = values[k];
+    });
+  }
   function session(name, key) {
     var g = group(name),
       s = g.sessions[key];
@@ -89,6 +107,16 @@ var PeipingGrowth = (function () {
     ["conserve", "守恒达人", "连续 5 道不同配平题首次提交正确"],
     ["simple", "最简系数", "10 道配平题的系数均已最简"],
     ["formula", "化学式熟练工", "完成 20 道化学式题"],
+    [
+      "formulaStreak",
+      "书写小能手",
+      "连续 5 道不同化学式题无提示、首次提交正确",
+    ],
+    [
+      "equationStreak",
+      "综合小能手",
+      "连续 5 道不同完整方程式题无提示、首次提交正确",
+    ],
     ["equation", "方程式通关者", "完成全部方程式题"],
     ["nohint", "零提示通关", "任一组每题均有无提示完成记录"],
   ];
@@ -165,6 +193,8 @@ var PeipingGrowth = (function () {
     award("simple", solved("balance") >= 10);
     award("conserve", data.cleanStreak >= 5);
     award("formula", solved("formula") >= 20);
+    award("formulaStreak", group("formula").cleanStreak >= 5);
+    award("equationStreak", group("equation").cleanStreak >= 5);
     award(
       "equation",
       !!registry.equation &&
@@ -197,7 +227,7 @@ var PeipingGrowth = (function () {
     n = Math.max(0, Math.min(3, n));
     return "★".repeat(n) + "☆".repeat(3 - n);
   }
-  function register(name, keys, legacy) {
+  function register(name, keys, legacy, legacyStats) {
     registry[name] = { keys: keys };
     var g = group(name);
     keys.forEach(function (k, i) {
@@ -210,6 +240,7 @@ var PeipingGrowth = (function () {
       }
     });
     g.migrated = true;
+    stats(name, legacyStats);
     if (name === "balance") {
       data.cleanKeys = Array.isArray(data.cleanKeys)
         ? data.cleanKeys
@@ -220,6 +251,18 @@ var PeipingGrowth = (function () {
         : [];
       data.cleanStreak = data.cleanKeys.length;
     }
+    g.cleanKeys = (
+      Array.isArray(g.cleanKeys)
+        ? g.cleanKeys
+        : name === "balance"
+          ? data.cleanKeys
+          : []
+    )
+      .filter(function (k, i, a) {
+        return keys.includes(k) && a.indexOf(k) === i;
+      })
+      .slice(-5);
+    g.cleanStreak = g.cleanKeys.length;
     unlock();
     save();
   }
@@ -230,8 +273,14 @@ var PeipingGrowth = (function () {
         repeat: true,
         stars: (group(name).records[key] || {}).stars || 1,
       };
+    var values = stats(name),
+      g = group(name);
     s.attempts++;
     if (!correct) {
+      values.combo = 0;
+      g.cleanKeys = [];
+      g.cleanStreak = 0;
+      renderStats(name);
       if (name === "balance") {
         data.cleanStreak = 0;
         data.cleanKeys = [];
@@ -239,8 +288,7 @@ var PeipingGrowth = (function () {
       save();
       return { correct: false };
     }
-    var g = group(name),
-      old = g.records[key] || {},
+    var old = g.records[key] || {},
       stars = s.hinted ? 1 : s.attempts === 1 ? 3 : 2;
     var result = {
       stars: stars,
@@ -250,13 +298,23 @@ var PeipingGrowth = (function () {
     };
     g.records[key] = { stars: result.best, noHint: !!old.noHint || !s.hinted };
     s.complete = true;
+    result.gain = 0;
+    if (result.isNew) {
+      values.combo++;
+      values.best = Math.max(values.best, values.combo);
+      result.gain = 10 + Math.min(values.combo - 1, 5) * 2;
+      values.score += result.gain;
+    }
+    if (!Array.isArray(g.cleanKeys)) g.cleanKeys = [];
+    if (s.attempts === 1 && !s.hinted) {
+      if (!g.cleanKeys.includes(key)) g.cleanKeys.push(key);
+      g.cleanKeys = g.cleanKeys.slice(-5);
+    } else g.cleanKeys = [];
+    g.cleanStreak = g.cleanKeys.length;
+    renderStats(name);
     if (name === "balance") {
-      if (!Array.isArray(data.cleanKeys)) data.cleanKeys = [];
-      if (s.attempts === 1) {
-        if (!data.cleanKeys.includes(key)) data.cleanKeys.push(key);
-        data.cleanKeys = data.cleanKeys.slice(-5);
-      } else data.cleanKeys = [];
-      data.cleanStreak = data.cleanKeys.length;
+      data.cleanKeys = g.cleanKeys.slice();
+      data.cleanStreak = g.cleanStreak;
     }
     unlock();
     save();
@@ -270,6 +328,15 @@ var PeipingGrowth = (function () {
     var g = group(name),
       s = session(name, key);
     g.current = key;
+    if (name !== "balance" && !document.getElementById("stats-" + name)) {
+      var panel = document.createElement("div");
+      panel.id = "stats-" + name;
+      panel.className = "learning-stats";
+      panel.innerHTML =
+        '<span data-stat="score">得分 <b>0</b></span><span data-stat="combo">连击 <b>0</b></span><span data-stat="best">最高连击 <b>0</b></span>';
+      area.insertBefore(panel, area.firstChild);
+    }
+    renderStats(name);
     var node = document.getElementById("stars-" + name);
     if (!node) {
       node = document.createElement("div");
@@ -362,9 +429,73 @@ var PeipingGrowth = (function () {
       "</div>"
     );
   }
-  function success(name, key, area, feedback, result, left, right, combo) {
+  // 化学式是组成的表示；括号外的下标乘到整组元素，避免把盐画成分子。
+  function formulaCounts(formula) {
+    var stack = [{}],
+      tokens = formula.match(/[A-Z][a-z]?|[0-9]+|[()]/g) || [];
+    tokens.forEach(function (token, i) {
+      if (token === "(") stack.push({});
+      else if (token === ")") {
+        var part = stack.pop(),
+          mult = /^\d+$/.test(tokens[i + 1]) ? Number(tokens[i + 1]) : 1;
+        Object.keys(part).forEach(function (e) {
+          stack[stack.length - 1][e] =
+            (stack[stack.length - 1][e] || 0) + part[e] * mult;
+        });
+      } else if (/^[A-Z]/.test(token)) {
+        var n = /^\d+$/.test(tokens[i + 1]) ? Number(tokens[i + 1]) : 1;
+        stack[stack.length - 1][token] =
+          (stack[stack.length - 1][token] || 0) + n;
+      }
+    });
+    return stack[0];
+  }
+  function compositionHTML(formula) {
+    var parts = formula.match(/[A-Z][a-z]?\d*|\)\d*|\(/g) || [],
+      counts = formulaCounts(formula);
+    return (
+      '<div class="composition-check"><div class="formula-reveal" aria-label="' +
+      esc(formula) +
+      '">' +
+      parts
+        .map(function (part, i) {
+          return (
+            '<span class="formula-piece" style="--delay:' +
+            i * 90 +
+            'ms">' +
+            esc(part).replace(/(\d+)/g, "<sub>$1</sub>") +
+            "</span>"
+          );
+        })
+        .join("") +
+      '<span class="written-check" aria-label="书写正确">✓</span></div><div class="atom-checks" aria-label="化学式中的原子个数">' +
+      Object.keys(counts)
+        .map(function (e, i) {
+          return (
+            '<span class="atom-check" style="--delay:' +
+            (250 + i * 100) +
+            'ms">' +
+            e +
+            " × <b>" +
+            counts[e] +
+            "</b></span>"
+          );
+        })
+        .join("") +
+      "</div></div>"
+    );
+  }
+  function success(name, key, area, feedback, result, left, right) {
     Array.prototype.forEach.call(area.querySelectorAll("input"), function (el) {
-      if (el.type !== "checkbox") flash(el, "success-pop");
+      if (el.type !== "checkbox") {
+        el.style.setProperty(
+          "--success-delay",
+          name === "equation" && el.classList.contains("coef")
+            ? "160ms"
+            : "0ms",
+        );
+        flash(el, "success-pop");
+      }
     });
     var node = document.getElementById("stars-" + name);
     if (node) node.firstChild.textContent = "最佳 " + starText(name, key);
@@ -376,9 +507,29 @@ var PeipingGrowth = (function () {
         ? "本题获得 " + result.stars + " 星！"
         : "本次完成，最佳星级已保留。";
     feedback.appendChild(line);
+    if (name !== "balance" && result.gain) {
+      line.textContent +=
+        " · +" +
+        result.gain +
+        " 分" +
+        (stats(name).combo > 1 ? " · 连击 ×" + stats(name).combo : "");
+    }
+    if (name === "formula") {
+      var composition = document.createElement("div");
+      composition.innerHTML = compositionHTML(key);
+      feedback.appendChild(composition);
+    }
+    if (name === "equation") {
+      var stages = document.createElement("div");
+      stages.className = "verification-stages";
+      stages.innerHTML =
+        '<span style="--delay:0ms">✓ 化学式正确</span><span style="--delay:160ms">✓ 系数最简</span><span style="--delay:320ms">✓ 原子守恒</span>';
+      feedback.appendChild(stages);
+    }
     if (left && right) {
       var check = document.createElement("div");
       check.innerHTML = countsHTML(left, right, true);
+      if (name === "equation") check.className = "equation-counts";
       feedback.appendChild(check);
       var equation = area.querySelector(".equation,.eq-line");
       if (equation) {
@@ -404,9 +555,12 @@ var PeipingGrowth = (function () {
     if (!reducedMotion && typeof window.burst === "function") {
       window.burst(result.isNew && total % 5 === 0 ? 40 : 20);
     }
+    var combo = stats(name).combo;
     if (combo >= 3) {
       flash(
-        document.getElementById("statComboBox"),
+        name === "balance"
+          ? document.getElementById("statComboBox")
+          : document.querySelector("#stats-" + name + ' [data-stat="combo"]'),
         combo >= 6 ? "combo-high" : "combo-mid",
       );
       if (!(
@@ -442,10 +596,19 @@ var PeipingGrowth = (function () {
   }
   function review(name) {
     group(name).sessions = {};
+    stats(name).combo = 0;
+    group(name).cleanKeys = [];
+    group(name).cleanStreak = 0;
+    if (name === "balance") {
+      data.cleanKeys = [];
+      data.cleanStreak = 0;
+    }
+    renderStats(name);
     save();
   }
   return {
     register: register,
+    stats: stats,
     session: session,
     attempt: attempt,
     hint: hint,

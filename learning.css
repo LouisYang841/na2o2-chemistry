@@ -246,3 +246,95 @@
   font-size: 11px;
   opacity: 0.85;
 }
+
+.learning-stats {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-bottom: 14px;
+  color: #607d71;
+  font-size: 13px;
+}
+.learning-stats span {
+  display: inline-block;
+}
+.learning-stats b {
+  color: #246247;
+  font-size: 20px;
+  margin-left: 4px;
+}
+.success-pop {
+  animation-delay: var(--success-delay, 0ms);
+}
+.formula-reveal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 12px;
+  font-size: 25px;
+  color: #246247;
+}
+.formula-piece {
+  display: inline-block;
+  padding: 2px 4px;
+  border-radius: 6px;
+  animation: formula-light 0.55s both;
+  animation-delay: var(--delay);
+}
+.formula-piece sub {
+  font-size: 0.65em;
+}
+.written-check {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 23px;
+  animation: coef-pop 0.55s 0.35s both;
+}
+.composition-check .atom-checks {
+  justify-content: center;
+}
+.verification-stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 10px;
+  color: #246247;
+  font-size: 13px;
+}
+.verification-stages span {
+  animation: atom-light 0.55s both;
+  animation-delay: var(--delay);
+  border-radius: 5px;
+  padding: 3px 6px;
+}
+.equation-counts .atom-check {
+  animation-delay: calc(var(--delay) + 320ms);
+}
+@keyframes formula-light {
+  0% {
+    background: #fff1ba;
+    transform: translateY(3px);
+  }
+  50% {
+    background: #c1e9d0;
+    transform: translateY(-2px);
+  }
+  100% {
+    background: #e7f4ed;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .formula-piece,
+  .written-check,
+  .verification-stages span {
+    animation: none !important;
+  }
+  .formula-piece,
+  .verification-stages span {
+    background: #e7f4ed;
+  }
+}
