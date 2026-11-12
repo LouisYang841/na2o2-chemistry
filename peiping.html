@@ -1626,9 +1626,17 @@
             (surfaceIds||[]).forEach(function(id){
                 if((previous.surfaceIds||[]).indexOf(id)!==-1)return;
                 var site=sites.indexOf(id);
-                var left=Math.max(44,W*0.18),width=Math.min(W-88,W*0.64);
-                var center=left+(Math.floor(site/2)+0.5)*width/3;
-                positions[id]={x:center+(site%2?1:-1)*(cur===1?23:15)*scale,y:H*0.68-atoms[id].r};
+                var left=W*0.18,width=W*0.64;
+                // Occupy six equally spaced surface sites before any product is formed.
+                positions[id]={x:left+(site+0.5)*width/sites.length,y:H*0.72-atoms[id].r};
+            });
+            if(cur===1||cur===2)groups.forEach(function(g){
+                if(g.ids.length!==2||!g.bonds.length||!g.ids.every(function(id){return (previous.surfaceIds||[]).indexOf(id)!==-1&&(surfaceIds||[]).indexOf(id)===-1;}))return;
+                var root=g.ids[0],partner=g.ids[1];
+                var mid=(previous.positions[root].x+previous.positions[partner].x)/2;
+                var half=(atoms[partner].to.x-atoms[root].to.x)/2;
+                var dx=mid-half-positions[root].x,dy=-(28*scale+12);
+                g.ids.forEach(function(id){positions[id]={x:positions[id].x+dx,y:positions[id].y+dy};});
             });
             if(cur===1&&phase>=2)[0,1,5,6].forEach(function(id){positions[id]={x:atoms[id].to.x,y:atoms[id].to.y};});
             // A released proton moves clear of the donor oxygen before the following transfer.
