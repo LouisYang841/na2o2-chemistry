@@ -1628,7 +1628,7 @@
                 var site=sites.indexOf(id);
                 var left=W*0.18,width=W*0.64;
                 // Occupy six equally spaced surface sites before any product is formed.
-                positions[id]={x:left+(site+0.5)*width/sites.length,y:H*0.72-atoms[id].r};
+                positions[id]={x:left+(site+0.5)*width/sites.length,y:H*0.68-atoms[id].r};
             });
             if(cur===1||cur===2)groups.forEach(function(g){
                 if(g.ids.length!==2||!g.bonds.length||!g.ids.every(function(id){return (previous.surfaceIds||[]).indexOf(id)!==-1&&(surfaceIds||[]).indexOf(id)===-1;}))return;
