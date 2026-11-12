@@ -864,7 +864,9 @@
             .anim-nav { gap: 5px; flex-wrap: wrap; }
             .anim-title { flex-basis: 100%; order: -1; }
         }
+
     </style>
+    <link rel="stylesheet" href="./learning.css">
 </head>
 <body>
 
@@ -873,6 +875,11 @@
 
     <h2>⚖️ 化学方程式：一起学会配平</h2>
 
+    <section class="growth-panel" aria-label="我的学习成长">
+      <div class="growth-summary"><strong>我的成长</strong><span id="growthStars">已获 0 星</span><span id="growthBadges">已解锁 0 枚徽章</span></div>
+      <div class="storage-status" id="storageStatus" role="status">正在读取本地进度…</div>
+      <details><summary>星级与成长徽章</summary><p>★ 完成；★★ 未用提示完成；★★★ 未用提示且首次提交正确。保留最佳星级，再练可提升。</p><div class="badges" id="growthBadgeList"></div></details>
+    </section>
     <div class="explain-box">
         <h3 style="margin-top:0;">💡 想一想：反应前后，什么保持不变？</h3>
         <p>让我们从原子出发，认识化学反应。反应中，原子会重新组合，每种原子的数量保持不变。把这个数量关系写进方程式，就需要<strong>配平</strong>。</p>
@@ -1019,12 +1026,12 @@
             <button class="btn btn-hint" id="btnHint">提示一下</button>
         </div>
 
-        <div class="feedback" id="feedback"></div>
+        <div class="feedback" aria-live="polite" aria-atomic="true" id="feedback"></div>
         <div id="hint-text" class="hidden" style="margin-top:10px; color:#d35400; font-weight:bold; text-align:left;"></div>
 
         <div class="write-progress" style="margin-top:15px;">
-            <span>💾 进度已自动保存至本地</span>
-            <button class="btn btn-mini" id="quizReset">再练一次</button>
+            <span>进度自动保存在当前浏览器</span>
+            <button class="btn btn-mini" id="quizReset" title="保留最佳成绩与徽章，从头开始复习">从头复习</button>
         </div>
     </div>
 
@@ -1059,11 +1066,11 @@
             <button class="btn btn-hint" id="wShowHint">提示</button>
         </div>
 
-        <div class="feedback" id="wFeedback"></div>
+        <div class="feedback" aria-live="polite" aria-atomic="true" id="wFeedback"></div>
 
         <div class="write-progress">
-            <span>答对 <b id="wSolved">0</b> / <span id="wTotal">46</span> 题 <span style="font-size:12px;color:#90a4ae;">(💾 已自动保存)</span></span>
-            <button class="btn btn-mini" id="wReset">再练一次</button>
+            <span>答对 <b id="wSolved">0</b> / <span id="wTotal">46</span> 题 <span style="font-size:12px;color:#90a4ae;"></span></span>
+            <button class="btn btn-mini" id="wReset" title="保留最佳成绩与徽章，从头开始复习">从头复习</button>
         </div>
     </div>
 
@@ -1095,12 +1102,12 @@
             <label class="eq-toggle"><input type="checkbox" id="eShowName" checked> 显示中文名</label>
         </div>
 
-        <div class="feedback" id="eFeedback"></div>
+        <div class="feedback" aria-live="polite" aria-atomic="true" id="eFeedback"></div>
         <div id="eHint" class="hidden" style="margin-top:10px; color:#d35400; font-weight:bold; text-align:left; font-size:14px; line-height:1.8;"></div>
 
         <div class="write-progress">
-            <span>答对 <b id="eSolved">0</b> / <span id="eTotal">51</span> 题 <span style="font-size:12px;color:#90a4ae;">(💾 已自动保存)</span></span>
-            <button class="btn btn-mini" id="eReset">再练一次</button>
+            <span>答对 <b id="eSolved">0</b> / <span id="eTotal">51</span> 题 <span style="font-size:12px;color:#90a4ae;"></span></span>
+            <button class="btn btn-mini" id="eReset" title="保留最佳成绩与徽章，从头开始复习">从头复习</button>
         </div>
     </div>
 
@@ -1146,13 +1153,14 @@
         <i style="background:#2ecc71"></i>已答对　<i style="background:#3498db"></i>当前题　<i style="background:#fff;border:2px solid #dfe9ee"></i>未完成
     </p>
     <div style="padding:10px 16px; border-top:1px solid #edf2f7; display:flex; justify-content:space-between; align-items:center; font-size:12px; color:#78909c;">
-        <span>💾 练习进度实时保存在本地</span>
+        <span>本地存档与成长记录</span>
         <button class="btn btn-mini" id="btnClearAllProgress" style="padding:4px 8px; font-size:12px; background:#fff; border:1px solid #cfd8dc; color:#e74c3c;">清空全部</button>
     </div>
 </aside>
 
 <canvas id="fx"></canvas>
 
+<script src="./learning.js"></script>
 <script>
 /* ============ 1. 球棍动画（6 个反应，左右箭头切换） ============ */
 (function () {
@@ -2318,28 +2326,6 @@
     }
 })();
 
-/* ============ 本地进度存储助手 ============ */
-var PeipingStorage = {
-    get: function (key, fallback) {
-        try {
-            var raw = localStorage.getItem(key);
-            return raw ? JSON.parse(raw) : fallback;
-        } catch (e) {
-            return fallback;
-        }
-    },
-    set: function (key, value) {
-        try {
-            localStorage.setItem(key, JSON.stringify(value));
-        } catch (e) {}
-    },
-    remove: function (key) {
-        try {
-            localStorage.removeItem(key);
-        } catch (e) {}
-    }
-};
-
 /* ============ 3. 配平闯关（按列表顺序出题） ============ */
 (function () {
     var ELEM_CN = {
@@ -2450,13 +2436,13 @@ var PeipingStorage = {
     // 读取本地存储进度
     var savedState = PeipingStorage.get('peiping_quiz', null);
     if (savedState) {
-        if (typeof savedState.cur === 'number' && savedState.cur >= 0 && savedState.cur < cases.length) {
+        if (Number.isSafeInteger(savedState.cur) && savedState.cur >= 0 && savedState.cur < cases.length) {
             cur = savedState.cur;
         }
-        if (typeof savedState.score === 'number' && isFinite(savedState.score)) score = savedState.score;
-        if (typeof savedState.combo === 'number' && isFinite(savedState.combo)) combo = savedState.combo;
-        if (typeof savedState.best === 'number' && isFinite(savedState.best)) best = savedState.best;
-        if (savedState.solved && typeof savedState.solved === 'object') solved = savedState.solved;
+        if (Number.isSafeInteger(savedState.score) && savedState.score>=0) score = savedState.score;
+        if (Number.isSafeInteger(savedState.combo) && savedState.combo>=0) combo = savedState.combo;
+        if (Number.isSafeInteger(savedState.best) && savedState.best>=0) best = savedState.best;
+        if (savedState.solved && typeof savedState.solved === 'object') Object.keys(savedState.solved).forEach(function(k){if(/^\d+$/.test(k)&&Number(k)<cases.length&&savedState.solved[k]===true)solved[k]=true;});
         if (typeof savedState.winShown === 'boolean') winShown = savedState.winShown;
     }
 
@@ -2471,6 +2457,10 @@ var PeipingStorage = {
         });
     }
 
+    var growthKeys=cases.map(function(q){return q.left.join('+')+'>'+q.right.join('+');});
+    PeipingGrowth.register('balance',growthKeys,solved);
+    PeipingGrowth.records('balance').forEach(function(r,i){if(r.stars)solved[i]=true;});
+    cur=PeipingGrowth.current('balance',cur);
     // ---------- 工具 ----------
     // 支持括号和嵌套，比如 Ca(OH)2、Al2(SO4)3
     function parseFormula(f) {
@@ -2551,6 +2541,7 @@ var PeipingStorage = {
         updateStats();
         renderMap();
         updateNav();
+        PeipingGrowth.enter('balance',growthKeys[cur],quizArea,fbEl,function(){showQuestion(cur);});
     }
 
     function renderEquation() {
@@ -2595,7 +2586,7 @@ var PeipingStorage = {
             var cls = 'map-chip';
             if (i === cur) cls += ' current';
             else if (solved[i]) cls += ' done';
-            html += '<button class="' + cls + '" data-i="' + i + '">' + (i + 1) + '</button>';
+            html += '<button class="' + cls + '" data-i="' + i + '">' + (i + 1) + '<span class="map-stars">'+PeipingGrowth.stars('balance',growthKeys[i])+'</span></button>';
         }
         qmapEl.innerHTML = html;
     }
@@ -2606,12 +2597,12 @@ var PeipingStorage = {
         cases[cur].left.forEach(function (_, i) {
             var v = document.getElementById('ans-left-' + i).value.trim();
             if (!v) filled = false;
-            vals.push(v ? parseInt(v, 10) : NaN);
+            vals.push(v ? Number(v) : NaN);
         });
         cases[cur].right.forEach(function (_, i) {
             var v = document.getElementById('ans-right-' + i).value.trim();
             if (!v) filled = false;
-            vals.push(v ? parseInt(v, 10) : NaN);
+            vals.push(v ? Number(v) : NaN);
         });
         return { vals: vals, filled: filled };
     }
@@ -2665,23 +2656,22 @@ var PeipingStorage = {
         if (exact) {
             var isNew = !solved[cur];
             solved[cur] = true;
-            combo += 1;
+            var reward=PeipingGrowth.attempt('balance',growthKeys[cur],true);
+            if(reward.isNew)combo += 1;
             if (combo > best) best = combo;
-            var gain = isNew ? 10 + Math.min(combo - 1, 5) * 2 : 2;
+            var gain = reward.isNew ? 10 + Math.min(combo - 1, 5) * 2 : 0;
             score += gain;
 
             fbEl.className = 'feedback success';
-            fbEl.innerHTML = '🎉 配平正确！你让两边每种原子一样多了：' +
-                elems.map(function (e) { return elemName(e) + ' ' + leftC[e] + ' 个'; }).join('，') +
-                '。<br>+' + gain + ' 分' +
-                (combo > 1 ? '（连击 ×' + combo + '，额外奖励 ' + (gain - 10) + ' 分）' : '') +
+            fbEl.innerHTML = '🎉 配平成功！原子守恒，系数已最简。<br>+' + gain + ' 分' +
+                (combo > 1 && gain > 0 ? '（连击 ×' + combo + '，额外奖励 ' + (gain - 10) + ' 分）' : '') +
                 (isNew ? '<br><span style="font-weight:normal;color:#607d8b;">已完成这一题！点“下一题”，继续运用这个方法。</span>'
                        : '<br><span style="font-weight:normal;color:#607d8b;">再次答对！复习也能让方法更熟练。</span>');
 
             btnNext.classList.add('ready');
             popStat(statScoreBox);
             if (combo > 1) popStat(statComboBox);
-            if (window.burst) window.burst(26 + Math.min(combo, 6) * 10);
+            PeipingGrowth.success('balance',growthKeys[cur],quizArea,fbEl,reward,leftC,rightC,combo);
 
             updateStats();
             saveState();
@@ -2695,6 +2685,8 @@ var PeipingStorage = {
             return;
         }
 
+        PeipingGrowth.attempt('balance',growthKeys[cur],false);
+        combo=0;saveState();updateStats();
         // 原子守恒但系数不是最简
         if (bad.length === 0) {
             var k = commonFactor(vals, q.answer);
@@ -2708,7 +2700,7 @@ var PeipingStorage = {
         combo = 0;
         updateStats();
         saveState();
-        shakeQuiz();
+
 
         var lines = bad.map(function (e) {
             var l = leftC[e] || 0, r = rightC[e] || 0;
@@ -2722,11 +2714,14 @@ var PeipingStorage = {
             '</ul>试着调整<strong>化学式前面的系数</strong>，让上面的数量逐一相等，下标保持原样。' +
             '<button class="btn btn-hint" id="btnHintInline" style="padding:4px 12px;font-size:13px;">看提示</button>';
 
+        PeipingGrowth.error(quizArea,leftC,rightC,fbEl);
+        cases[cur].left.concat(cases[cur].right).forEach(function(f,i){if(bad.some(function(e){return !!parseFormula(f)[e];})){var side=i<q.left.length?'left':'right',index=i<q.left.length?i:i-q.left.length;var el=document.getElementById('ans-'+side+'-'+index);el.classList.add('gentle-error');}});
         var inline = document.getElementById('btnHintInline');
         if (inline) inline.addEventListener('click', showHint);
     }
 
     function showHint() {
+        PeipingGrowth.hint('balance',growthKeys[cur]);
         hintEl.innerHTML = '💡 思路点拨：' + cases[cur].hint;
         hintEl.classList.remove('hidden');
     }
@@ -2735,12 +2730,13 @@ var PeipingStorage = {
     function showWin() {
         winStats.innerHTML = '得分 <b>' + score + '</b><br>最高连击 <b>' + best + '</b><br>共完成 <b>' + cases.length + '</b> 道题';
         winMask.classList.remove('hidden');
-        if (window.burst) { window.burst(120); setTimeout(function () { window.burst(90); }, 500); }
+
     }
 
     function restartAll() {
-        score = 0; combo = 0; best = 0; solved = {}; winShown = false; cur = 0;
-        PeipingStorage.remove('peiping_quiz');
+        combo = 0; winShown = solvedCount()===cases.length; cur = 0;
+        PeipingGrowth.review('balance');
+        saveState();
         winMask.classList.add('hidden');
         updateStats();
         showQuestion(0);
@@ -2755,15 +2751,13 @@ var PeipingStorage = {
     var quizResetBtn = document.getElementById('quizReset');
     if (quizResetBtn) {
         quizResetBtn.addEventListener('click', function () {
-            if (confirm('确定要清除这部分配平题目的练习进度并重新开始吗？')) {
                 restartAll();
-            }
         });
     }
 
     if (qmapEl) {
         qmapEl.addEventListener('click', function (e) {
-            var t = e.target;
+            var t = e.target.closest ? e.target.closest('.map-chip') : e.target;
             if (!t || !t.classList || !t.classList.contains('map-chip')) return;
             var i = parseInt(t.getAttribute('data-i'), 10);
             if (isNaN(i)) return;
@@ -2815,7 +2809,7 @@ var PeipingStorage = {
 
     // 三个题型的 tab 切换 + 点题号后收起
     drawer.addEventListener('click', function (e) {
-        var t = e.target;
+        var t = e.target.closest ? e.target.closest('.dtab,.map-chip') || e.target : e.target;
         if (!t || !t.classList) return;
 
         if (t.classList.contains('dtab')) {
@@ -2839,6 +2833,7 @@ var PeipingStorage = {
                 PeipingStorage.remove('peiping_quiz');
                 PeipingStorage.remove('peiping_write');
                 PeipingStorage.remove('peiping_eq');
+                PeipingStorage.remove(PeipingGrowth.key);
                 location.reload();
             }
         });
@@ -2940,10 +2935,10 @@ var PeipingStorage = {
     // 读取本地存储进度
     var savedState = PeipingStorage.get('peiping_write', null);
     if (savedState) {
-        if (typeof savedState.cur === 'number' && savedState.cur >= 0 && savedState.cur < items.length) {
+        if (Number.isSafeInteger(savedState.cur) && savedState.cur >= 0 && savedState.cur < items.length) {
             cur = savedState.cur;
         }
-        if (savedState.solved && typeof savedState.solved === 'object') solved = savedState.solved;
+        if (savedState.solved && typeof savedState.solved === 'object') Object.keys(savedState.solved).forEach(function(k){if(/^\d+$/.test(k)&&Number(k)<items.length&&savedState.solved[k]===true)solved[k]=true;});
     }
 
     function saveState() {
@@ -2953,6 +2948,10 @@ var PeipingStorage = {
         });
     }
 
+    var growthKeys=items.map(function(it){return it.f;});
+    PeipingGrowth.register('formula',growthKeys,solved);
+    PeipingGrowth.records('formula').forEach(function(r,i){if(r.stars)solved[i]=true;});
+    cur=PeipingGrowth.current('formula',cur);
     // ---------- 工具 ----------
     function fmt(f) { return f.replace(/(\d+)/g, '<sub>$1</sub>'); }
 
@@ -3002,7 +3001,7 @@ var PeipingStorage = {
             var cls = 'map-chip';
             if (i === cur) cls += ' current';
             else if (solved[i]) cls += ' done';
-            html += '<button class="' + cls + '" data-i="' + i + '">' + (i + 1) + '</button>';
+            html += '<button class="' + cls + '" data-i="' + i + '">' + (i + 1) + '<span class="map-stars">'+PeipingGrowth.stars('formula',growthKeys[i])+'</span></button>';
         }
         el.innerHTML = html;
     }
@@ -3023,12 +3022,14 @@ var PeipingStorage = {
         inputEl.value = '';
         inputEl.classList.remove('bad');
         updateStats();
+        PeipingGrowth.enter('formula',growthKeys[cur],document.getElementById('writeArea'),fbEl,function(){show(cur);});
         if (window.innerWidth > 480 && document.getElementById('writeArea').contains(document.activeElement)) {
             inputEl.focus({ preventScroll: true });
         }
     }
 
     function revealHint() {
+        PeipingGrowth.hint('formula',growthKeys[cur]);
         hintBox.innerHTML = '💡 思路点拨：' + hintOf(items[cur]);
         hintBox.classList.remove('hidden');
     }
@@ -3045,6 +3046,7 @@ var PeipingStorage = {
         }
 
         if (isRight(v, it.f)) {
+            var reward=PeipingGrowth.attempt('formula',growthKeys[cur],true);
             var isNew = !solved[cur];
             solved[cur] = true;
             saveState();
@@ -3052,21 +3054,21 @@ var PeipingStorage = {
             fbEl.className = 'feedback success';
             fbEl.innerHTML = '🎉 写对了！<strong>' + it.n + '</strong> 的化学式就是 <strong>' + fmt(it.f) + '</strong>。' +
                 (isNew ? '<br><span style="font-weight:normal;color:#607d8b;">这一题已完成，继续练习吧！</span>' : '');
-            if (window.burst) window.burst(24);
+            PeipingGrowth.success('formula',growthKeys[cur],document.getElementById('writeArea'),fbEl,reward,null,null,0);
             return;
         }
 
-        tries += 1;
+        PeipingGrowth.attempt('formula',growthKeys[cur],false);
+        tries=PeipingGrowth.session('formula',growthKeys[cur]).attempts;
         inputEl.classList.remove('bad');
         void inputEl.offsetWidth;
-        inputEl.classList.add('bad');
+        inputEl.classList.add('gentle-error');
 
         if (tries === 1) {
             fbEl.className = 'feedback error';
             fbEl.innerHTML = '再想一步：从元素符号和下标分别检查。' +
                 (/(^|[^A-Za-z])[a-z]/.test(v) || /^[a-z]/.test(v) ? '<br><span style="font-weight:normal;">先看大小写：元素符号首字母大写，第二个字母小写，例如 Ca。</span>' : '') +
-                '<br><span style="font-weight:normal;color:#607d8b;">读一读下面的提示，调整后再试一次。</span>';
-            revealHint();
+                '<br><span style="font-weight:normal;color:#607d8b;">核对元素符号和下标，再试一次；需要时可以点“提示”。</span>';
             return;
         }
 
@@ -3099,13 +3101,11 @@ var PeipingStorage = {
     btnPrev.addEventListener('click', function () { show(cur - 1); });
     btnNext.addEventListener('click', function () { show(cur + 1); });
     btnReset.addEventListener('click', function () {
-        if (confirm('确定要清除这部分写化学式的练习进度并重新开始吗？')) {
-            solved = {};
-            cur = 0;
-            PeipingStorage.remove('peiping_write');
-            updateStats();
-            show(0);
-        }
+        PeipingGrowth.review('formula');
+        cur = 0;
+        saveState();
+        updateStats();
+        show(0);
     });
     inputEl.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') check();
@@ -3114,7 +3114,7 @@ var PeipingStorage = {
     var mapEl2 = document.getElementById('qmap2');
     if (mapEl2) {
         mapEl2.addEventListener('click', function (e) {
-            var t = e.target;
+            var t = e.target.closest ? e.target.closest('.map-chip') : e.target;
             if (!t || !t.classList || !t.classList.contains('map-chip')) return;
             var i = parseInt(t.getAttribute('data-i'), 10);
             if (isNaN(i)) return;
@@ -3416,10 +3416,10 @@ var PeipingStorage = {
     // 读取本地存储进度
     var savedState = PeipingStorage.get('peiping_eq', null);
     if (savedState) {
-        if (typeof savedState.cur === 'number' && savedState.cur >= 0 && savedState.cur < items.length) {
+        if (Number.isSafeInteger(savedState.cur) && savedState.cur >= 0 && savedState.cur < items.length) {
             cur = savedState.cur;
         }
-        if (savedState.solved && typeof savedState.solved === 'object') solved = savedState.solved;
+        if (savedState.solved && typeof savedState.solved === 'object') Object.keys(savedState.solved).forEach(function(k){if(/^\d+$/.test(k)&&Number(k)<items.length&&savedState.solved[k]===true)solved[k]=true;});
         if (typeof savedState.showName === 'boolean') {
             showName = savedState.showName;
             if (chkName) chkName.checked = showName;
@@ -3434,6 +3434,10 @@ var PeipingStorage = {
         });
     }
 
+    var growthKeys=items.map(function(it){return it.left.map(function(t){return t[0];}).join('+')+'>'+it.right.map(function(t){return t[0];}).join('+');});
+    PeipingGrowth.register('equation',growthKeys,solved);
+    PeipingGrowth.records('equation').forEach(function(r,i){if(r.stars)solved[i]=true;});
+    cur=PeipingGrowth.current('equation',cur);
     // ---------- 工具 ----------
     function fmt(f) { return f.replace(/(\d+)/g, '<sub>$1</sub>'); }
 
@@ -3557,7 +3561,7 @@ var PeipingStorage = {
             var cls = 'map-chip';
             if (i === cur) cls += ' current';
             else if (solved[i]) cls += ' done';
-            html += '<button class="' + cls + '" data-i="' + i + '">' + (i + 1) + '</button>';
+            html += '<button class="' + cls + '" data-i="' + i + '">' + (i + 1) + '<span class="map-stars">'+PeipingGrowth.stars('equation',growthKeys[i])+'</span></button>';
         }
         mapEl.innerHTML = html;
     }
@@ -3572,6 +3576,7 @@ var PeipingStorage = {
         hintEl.innerHTML = '';
         render();
         updateStats();
+        PeipingGrowth.enter('equation',growthKeys[cur],document.getElementById('eqArea'),fbEl,function(){show(cur);});
     }
 
     function fullEquation() {
@@ -3605,7 +3610,7 @@ var PeipingStorage = {
             var cv = cEl.value.trim();
             var fv = fEl.value.trim();
             if (!cv || !fv) anyEmpty = true;
-            coefs.push(cv ? parseInt(cv, 10) : NaN);
+            coefs.push(cv ? Number(cv) : NaN);
             fmls.push(fv);
         });
 
@@ -3615,6 +3620,7 @@ var PeipingStorage = {
             return;
         }
 
+        if(!coefs.every(function(c){return Number.isInteger(c)&&c>0;})){fbEl.className='feedback error';fbEl.textContent='系数用正整数填写，调整后再一起检查。';return;}
         var fmlWrong = [], coefWrong = [];
         all.forEach(function (t, i) {
             var fOk = sameFormula(fmls[i], t[0]);
@@ -3622,9 +3628,9 @@ var PeipingStorage = {
             var cEl = document.getElementById('e-coef-' + i);
             var fEl = document.getElementById('e-fml-' + i);
             cEl.classList.toggle('ok', cOk);
-            cEl.classList.toggle('bad', !cOk);
+            cEl.classList.toggle('gentle-error', !cOk);
             fEl.classList.toggle('ok', fOk);
-            fEl.classList.toggle('bad', !fOk);
+            fEl.classList.toggle('gentle-error', !fOk);
             if (!fOk) fmlWrong.push(i);
             else if (!cOk) coefWrong.push(i);
             var mk = document.getElementById('e-mark-' + i);
@@ -3632,6 +3638,7 @@ var PeipingStorage = {
         });
 
         if (!fmlWrong.length && !coefWrong.length) {
+            var reward=PeipingGrowth.attempt('equation',growthKeys[cur],true);
             var isNew = !solved[cur];
             solved[cur] = true;
             saveState();
@@ -3639,19 +3646,22 @@ var PeipingStorage = {
             fbEl.className = 'feedback success';
             fbEl.innerHTML = '🎉 完整写对了！化学式和系数都已配好：<br><span style="font-size:17px;">' + fullEquation() + '</span>' +
                 (isNew ? '<br><span style="font-weight:normal;color:#607d8b;">这一题已完成，继续挑战下一题！</span>' : '');
-            if (window.burst) window.burst(40);
+            var lc={},rc={};it.left.forEach(function(t,i){var c=parseFormula(t[0]);for(var e in c)lc[e]=(lc[e]||0)+c[e]*coefs[i];});it.right.forEach(function(t,i){var c=parseFormula(t[0]);for(var e in c)rc[e]=(rc[e]||0)+c[e]*coefs[it.left.length+i];});
+            PeipingGrowth.success('equation',growthKeys[cur],document.getElementById('eqArea'),fbEl,reward,lc,rc,0);
             return;
         }
 
-        tries += 1;
+        PeipingGrowth.attempt('equation',growthKeys[cur],false);
+        tries=PeipingGrowth.session('equation',growthKeys[cur]).attempts;
 
         // 化学式写错了
         if (fmlWrong.length) {
             var list = fmlWrong.map(function (i) {
-                return '<li>' + all[i][1] + ' → 你写的是 <strong>' + (fmls[i] || '空') + '</strong></li>';
+                return '<li>' + all[i][1] + ' → 你写的是 <strong>' + PeipingGrowth.escape(fmls[i] || '空') + '</strong></li>';
             });
             fbEl.className = 'feedback error';
             if (tries >= 2) {
+                PeipingGrowth.hint('equation',growthKeys[cur]);
                 fmlWrong.forEach(function (i) {
                     var mk = document.getElementById('e-mark-' + i);
                     if (mk) mk.innerHTML = '应写 ' + fmt(all[i][0]);
@@ -3688,9 +3698,11 @@ var PeipingStorage = {
         fbEl.className = 'feedback error';
         fbEl.innerHTML = '👏 化学式全部写对了！接下来，把这些原子的数量配齐：<ul>' + lines.join('') + '</ul>' +
             '<span style="font-weight:normal;">试着调整前面的系数，让两边每种原子一样多，再验算一次。系数 1 也要填。</span>';
+        PeipingGrowth.error(document.getElementById('eqArea'),leftC,rightC,fbEl);
     }
 
     function showHint() {
+        PeipingGrowth.hint('equation',growthKeys[cur]);
         var it = items[cur];
         hintEl.innerHTML = '💡 思路点拨：' + (it.h || '先从描述中找出反应物和生成物，写好化学式，再逐种数原子、配系数。') +
             '<br><span style="font-weight:normal;color:#7f8c8d;">需要巩固化学式时，可以回到上面的“看名称，写化学式”练一练。</span>';
@@ -3703,13 +3715,11 @@ var PeipingStorage = {
     btnPrev.addEventListener('click', function () { show(cur - 1); });
     btnNext.addEventListener('click', function () { show(cur + 1); });
     btnReset.addEventListener('click', function () {
-        if (confirm('确定要清除这部分方程式填空的练习进度并重新开始吗？')) {
-            solved = {};
-            cur = 0;
-            PeipingStorage.remove('peiping_eq');
-            updateStats();
-            show(0);
-        }
+        PeipingGrowth.review('equation');
+        cur = 0;
+        saveState();
+        updateStats();
+        show(0);
     });
     if (chkName) {
         chkName.addEventListener('change', function () {
@@ -3724,12 +3734,13 @@ var PeipingStorage = {
                 var el = document.getElementById(id);
                 if (el) el.value = saved[id];
             }
+            PeipingGrowth.enter('equation',growthKeys[cur],document.getElementById('eqArea'),fbEl,function(){show(cur);});
         });
     }
 
     if (mapEl) {
         mapEl.addEventListener('click', function (e) {
-            var t = e.target;
+            var t = e.target.closest ? e.target.closest('.map-chip') : e.target;
             if (!t || !t.classList || !t.classList.contains('map-chip')) return;
             var i = parseInt(t.getAttribute('data-i'), 10);
             if (isNaN(i)) return;

@@ -1,0 +1,248 @@
+.growth-panel {
+  background: #f6faf8;
+  border: 1px solid #cfe4da;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 18px 0;
+  line-height: 1.7;
+}
+.growth-summary {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: #246247;
+}
+.growth-panel summary {
+  cursor: pointer;
+}
+.badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.badge {
+  font-size: 13px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #edf0f2;
+  color: #73818b;
+}
+.badge.earned {
+  background: #fff1c9;
+  color: #795314;
+}
+.question-stars {
+  color: #986300;
+  font-size: 14px;
+  margin: 8px 0;
+}
+.map-stars {
+  display: block;
+  font-size: 9px;
+  line-height: 1.3;
+  color: #986300;
+}
+.current .map-stars {
+  color: #fff;
+}
+.success-pop {
+  border-color: #2c9b67 !important;
+  background: #eaf8ef !important;
+  animation: coef-pop 0.65s ease-out;
+}
+.gentle-error {
+  border-color: #d4a050 !important;
+  background: #fff9ee !important;
+  animation: gentle-nudge 0.25s ease;
+}
+.feedback.error {
+  color: #8a5a21;
+}
+.atom-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+.atom-check {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #e7f4ed;
+  color: #246247;
+  animation: atom-light 0.65s both;
+  animation-delay: var(--delay);
+}
+.atom-check.mismatch {
+  background: #fff0d9;
+  color: #875518;
+  animation: none;
+}
+.reward-line {
+  color: #246247;
+  margin: 8px 0;
+}
+.mini-scale {
+  display: inline-block;
+  width: 62px;
+  height: 52px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.scale-beam {
+  transform-origin: 50px 20px;
+  animation: level-scale 0.85s ease-out forwards;
+}
+.local-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.local-particles i {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #dfa841;
+  animation: small-burst 0.75s ease-out forwards;
+  --x: 0px;
+  --y: 0px;
+}
+.quiz-area,
+.write-area,
+.eq-area {
+  position: relative;
+}
+.combo-mid {
+  animation: coef-pop 0.65s;
+}
+.combo-high {
+  animation: coef-pop 0.8s;
+}
+.milestone-flash {
+  animation: milestone 0.9s;
+}
+.badge-toast {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  background: #fff6d9;
+  color: #71541e;
+  padding: 10px 18px;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px #0002;
+  pointer-events: none;
+  max-width: 85vw;
+}
+.storage-status {
+  font-size: 12px;
+  color: #607d71;
+}
+.learning-retry {
+  border: 0;
+  background: transparent;
+  color: #287f65;
+  cursor: pointer;
+  margin-left: 12px;
+  text-decoration: underline;
+}
+@keyframes coef-pop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.12);
+  }
+  70% {
+    transform: scale(0.98);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes gentle-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  35% {
+    transform: translateX(-2px);
+  }
+  70% {
+    transform: translateX(2px);
+  }
+}
+@keyframes atom-light {
+  0% {
+    background: #fff4c6;
+    transform: scale(0.96);
+  }
+  45% {
+    background: #bde8cd;
+    transform: scale(1.04);
+  }
+  100% {
+    background: #e7f4ed;
+    transform: scale(1);
+  }
+}
+@keyframes level-scale {
+  0% {
+    transform: rotate(-16deg);
+  }
+  65% {
+    transform: rotate(4deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
+}
+@keyframes small-burst {
+  to {
+    transform: translate(var(--x), var(--y));
+    opacity: 0;
+  }
+}
+@keyframes milestone {
+  40% {
+    box-shadow: 0 0 0 4px #f0cc7177;
+    background: #fff9e8;
+  }
+  100% {
+    box-shadow: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .success-pop,
+  .gentle-error,
+  .atom-check,
+  .scale-beam,
+  .combo-mid,
+  .combo-high,
+  .milestone-flash,
+  .local-particles i {
+    animation: none !important;
+  }
+  .scale-beam {
+    transform: rotate(0);
+  }
+  .local-particles {
+    display: none;
+  }
+}
+
+.badge {
+  display: inline-flex;
+  flex-direction: column;
+  border-radius: 10px;
+}
+.badge small {
+  font-size: 11px;
+  opacity: 0.85;
+}
